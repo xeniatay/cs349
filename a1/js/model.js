@@ -65,8 +65,6 @@ _.extend(ActivityStoreModel.prototype, {
         _.each(this.listeners, function (listener_fn) {
             listener_fn(ACTIVITY_DATA_ADDED_EVENT, Date(), dataPoint);
         }, this);
-
-        //plotDataPoint(dataPoint);
     },
 
     /**
@@ -134,7 +132,7 @@ _.extend(GraphModel.prototype, {
      * *always* be one graph that is currently available.
      */
     getNameOfCurrentlySelectedGraph: function() {
-        // TODO
+        return this.selectedGraph;
     },
 
     /**
@@ -179,7 +177,6 @@ function generateFakeData(activityModel, numDataPointsToGenerate) {
                     energyLevel: _.random(10),
                     stressLevel: _.random(10),
                     happinessLevel: _.random(10),
-                    timeSpent: _.random(60)
                 },
                 _.random(60)
             );
