@@ -25,7 +25,8 @@ var ActivityData = function(activityType, healthMetricsDict, activityDurationInM
  * @constructor
  */
 var ActivityStoreModel = function() {
-
+    this.dataPoints = [];
+    this.listeners = [];
 };
 
 // _ is the Underscore library
@@ -41,7 +42,7 @@ _.extend(ActivityStoreModel.prototype, {
      * activityData the ActivityData added or removed.
      */
     addListener: function(listener) {
-        // TODO
+        this.listeners.push(listener);
     },
 
     /**
@@ -57,8 +58,15 @@ _.extend(ActivityStoreModel.prototype, {
      * been added.
      * @param activityDataPoint
      */
-    addActivityDataPoint: function(activityDataPoint) {
-        // TODO
+    addActivityDataPoint: function(dataPoint) {
+        this.dataPoints.push(dataPoint);
+
+        // Use underscore to iterate over all listeners, calling each in turn
+        _.each(this.listeners, function (listener_fn) {
+            listener_fn(ACTIVITY_DATA_ADDED_EVENT, Date(), dataPoint);
+        }, this);
+
+        //plotDataPoint(dataPoint);
     },
 
     /**
@@ -75,8 +83,8 @@ _.extend(ActivityStoreModel.prototype, {
      * Should return an array of all activity data points
      */
     getActivityDataPoints: function() {
-        // TODO
-    }
+        return this.dataPoints;
+    },
 });
 
 /**
@@ -89,7 +97,8 @@ _.extend(ActivityStoreModel.prototype, {
  * @constructor
  */
 var GraphModel = function() {
-
+    this.listeners = [];
+    this.selectedGraph = '';
 };
 
 _.extend(GraphModel.prototype, {
@@ -102,7 +111,7 @@ _.extend(GraphModel.prototype, {
      * and eventData indicates the name of the new graph.
      */
     addListener: function(listener) {
-        // TODO
+        this.listeners.push(listener);
     },
 
     /**
@@ -134,7 +143,10 @@ _.extend(GraphModel.prototype, {
      * @param graphName
      */
     selectGraph: function(graphName) {
-        // TODO
+        this.selectedGraph = graphName;
+        _.each(this.listeners, function(listener_fn) {
+            listener_fn(GRAPH_SELECTED_EVENT, Date(), this.selectedGraph);
+        }, this);
     }
 
 });
@@ -166,7 +178,8 @@ function generateFakeData(activityModel, numDataPointsToGenerate) {
                 {
                     energyLevel: _.random(10),
                     stressLevel: _.random(10),
-                    happinessLevel: _.random(10)
+                    happinessLevel: _.random(10),
+                    timeSpent: _.random(60)
                 },
                 _.random(60)
             );
