@@ -8,12 +8,24 @@
 </head>
 <body>
 
-<div id="app_container" class="container">
+<div id="app-container" class="container">
 
     <h1>UTrack!</h1>
     Track and analyze data that matters to you!
 
-    <div id="activity-input-container">
+    <ul class="nav nav-tabs nav-justified">
+        <li class="nav-link" data-view="activity-form">
+            <a href="javascript:void(0);">Input</a>
+        </li>
+        <li class="nav-link" data-view="graph">
+            <a href="javascript:void(0);">Analysis</a>
+        </li>
+    </ul>
+
+    <div id="activity-form-container" class="view-container"></div>
+    <div id="graph-container" class="view-container hidden"></div>
+
+    <template id="activity-form-view">
         <h2>Input Activity Data</h2>
         <form class="form-horizontal" id="input-form">
             <div class="form-group">
@@ -31,23 +43,23 @@
                 </div>
             </div>
             <div class="form-group">
-                <label for="energy" class="col-sm-2 control-label">Energy Level:</label>
+                <label for="energyLevel" class="col-sm-2 control-label">Energy Level:</label>
                 <div class="col-sm-4">
-                    <input id="energy" class="form-control" type="text" placeholder="Enter a number">
+                    <input id="energyLevel" class="form-control" type="text" placeholder="Enter a number">
                     <span class="input-note">(1 = Exhausted, 5 = Very Awake)</span>
                 </div>
             </div>
             <div class="form-group">
-                <label for="stress" class="col-sm-2 control-label">Stress Level:</label>
+                <label for="stressLevel" class="col-sm-2 control-label">Stress Level:</label>
                 <div class="col-sm-4">
-                    <input id="stress" class="form-control" type="text" placeholder="Enter a number">
+                    <input id="stressLevel" class="form-control" type="text" placeholder="Enter a number">
                     <span class="input-note">(1 = Very Stressed, 5 = Very Relaxed)</span>
                 </div>
             </div>
             <div class="form-group">
-                <label for="happiness" class="col-sm-2 control-label">Happiness Level:</label>
+                <label for="happinessLevel" class="col-sm-2 control-label">Happiness Level:</label>
                 <div class="col-sm-4">
-                    <input id="happiness" class="form-control" type="text" placeholder="Enter a number">
+                    <input id="happinessLevel" class="form-control" type="text" placeholder="Enter a number">
                     <span class="input-note">(1 = Depressed, 5 = Very Happy)</span>
                 </div>
             </div>
@@ -60,9 +72,12 @@
             <button type="button" class="btn btn-primary" id="input-submit">Submit</button>
         </form>
 
-    </div>
+        <div class="">
+            Last Data Entry was: <span id="timestamp"></span>
+        </div>
+    </template>
 
-    <div id="analysis_div">
+    <template id="graph-view">
         <!-- Put HTML here to support users in analyzing their data -->
         <div class="">
             <table id="analysis-table" class="table table-striped table-hover table-responsive">
@@ -85,7 +100,7 @@
                 Update your browser to enjoy canvas!
             </canvas>
         </div>
-    </div>
+    </template>
 
     <div id="unit_tests">
         <!-- Keep this here so TAs can run your unit tests -->

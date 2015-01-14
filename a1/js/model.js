@@ -73,8 +73,19 @@ _.extend(ActivityStoreModel.prototype, {
      * exist in the data store
      * @param activityDataPoint
      */
-    removeActivityDataPoint: function(activityDataPoint) {
-        // TODO
+    removeActivityDataPoint: function(dataPoint) {
+
+        // TODO not sure if this is right
+        _.reject(this.dataPoints, function(point) {
+            if ( _.isEqual(point, this.dataPoint) ) {
+                return true;
+            }
+        }, this);
+
+        // Use underscore to iterate over all listeners, calling each in turn
+        _.each(this.listeners, function (listener_fn) {
+            listener_fn(ACTIVITY_DATA_REMOVED_EVENT, Date(), dataPoint);
+        }, this);
     },
 
     /**

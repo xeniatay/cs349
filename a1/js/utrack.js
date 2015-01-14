@@ -21,10 +21,31 @@ window.addEventListener('load', function() {
     graphModel = new GraphModel();
 
     // Initialize views
+    activityView = new activityFormView('activity-form-container', activityModel);
     graphView = new GraphView('graph-container', graphModel);
-    activityView = new activityFormView('activity-input-container', activityModel);
 
-    generateFakeData(activityModel, 20);
+    generateFakeData(activityModel, 1);
+
+    initEvents();
 
 });
 
+function initEvents() {
+    var navLinks = document.getElementsByClassName('nav-link');
+
+    _.each(navLinks, function(navLink) {
+        navLink.addEventListener('click', function(e) {
+            // Toggle views
+
+            var views = document.getElementsByClassName('view-container');
+            _.each(views, function(view) {
+                view.classList.add('hidden');
+            });
+
+            var viewName = this.getAttribute('data-view'),
+                currentView = document.getElementById(viewName + '-container');
+
+            currentView.classList.remove('hidden');
+        });
+    });
+}

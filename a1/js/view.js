@@ -6,17 +6,19 @@ var AbstractView = function () {
 };
 
 _.extend(AbstractView.prototype, {
-    _instantiateInterface: function (templateId, attachToElement) {
-        var template = document.getElementById(templateId);
+    _instantiateInterface: function (templateId, containerId) {
+        var template = document.getElementById(templateId),
+            containerElem = document.getElementById(containerId);
         this.hostElement = document.createElement('div');
         this.hostElement.innerHTML = template.innerHTML;
-        attachToElement.appendChild(this.hostElement);
+        containerElem.appendChild(this.hostElement);
     }
 });
 
 /*** Activity Input Form View ***/
 
 var activityFormView = function (container, model) {
+    this._instantiateInterface('activity-form-view', container);
     this.container = document.getElementById(container);
     this.model = model;
     this.initialize();
@@ -38,25 +40,32 @@ _.extend(activityFormView.prototype, AbstractView.prototype, {
     },
     initListeners: function() {
         this.model.addListener( function(event, date, dataPoint) {
-            graphView.updateTable(dataPoint);
-            //graphView.plotDataPoint(dataPoint);
-            graphView.drawGraph();
-        }.bind(this));
+            // if ADD_EVENT
+            this.lastUpdated = date;
+            document.getElementById('timestamp').innerHTML = date;
+            // wipe form
 
-        this.model.addListener( function(event, date, dataPoint) {
-            // TODO
-        }.bind(this));
+            // else REMOVE_EVENT
+            // idk do what
+
+            // this shouldn't be necessary
+            graphView.updateTable(dataPoint);
+            graphView.drawGraph();
+        }.bind(this) );
     },
     onSubmit: function() {
         this.inputSubmit.addEventListener('click', function(e) {
-            var dataPoint = {};
+            var inputData = this.getInputData(this.inputs),
+                healthDict = _.omit(inputData, 'time-spent');
 
-            dataPoint['activity-id'] = this.activityTypeInput.getAttribute('data-activity-id');
-            _.extend(dataPoint, this.getInputData(this.inputs));
-            _.extend(dataPoint, this.getInputData(this.selects));
+            var dataPoint = new ActivityData(
+                this.activityTypeInput.value,
+                healthDict,
+                inputData['time-spent']
+            );
 
             console.log(dataPoint);
-            this.model.addActivityDataPoint(dataPoint);
+            activityModel.addActivityDataPoint(dataPoint);
         }.bind(this));
     },
     getInputData: function(inputs) {
@@ -72,8 +81,9 @@ _.extend(activityFormView.prototype, AbstractView.prototype, {
 /*** Graph View ***/
 
 var GraphView = function(container, model) {
-    this.COLOURS = ['black', 'red', 'blue', 'green', 'purple']
+    this._instantiateInterface('graph-view', container);
 
+    this.COLOURS = ['black', 'red', 'blue', 'green', 'purple']
     this.container = document.getElementById(container);
     this.model = model;
     this.initialize();
