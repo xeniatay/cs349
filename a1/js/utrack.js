@@ -24,7 +24,7 @@ window.addEventListener('load', function() {
     graphView = new GraphView('graph-container', graphModel);
     activityView = new activityFormView('activity-input-container', activityModel);
 
-    generateFakeData(activityModel, 5);
+    generateFakeData(activityModel, 20);
 
 });
 

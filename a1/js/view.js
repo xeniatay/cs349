@@ -83,11 +83,16 @@ _.extend(GraphView.prototype, AbstractView.prototype, {
     initialize: function() {
         this.canvas = document.getElementById('graph');
         this.context = this.canvas.getContext('2d');
-        this.width = this.canvas.width;
-        this.height = this.canvas.height;
+        this.scale = 2;
+        this.padding = 20;
+        this.yAxisWidth = 20;
+        this.xAxisHeight = 50;
+        this.yMaxScale = 10;
+        this.xInterval = 50;
+        this.yInterval = 20;
 
-        this.context.fillStyle = 'grey';
-        this.context.fillRect(0, 0, this.width, this.height);
+        // Scale graph
+        this.context.scale(this.scale, this.scale);
 
         this.initListeners();
     },
@@ -102,32 +107,131 @@ _.extend(GraphView.prototype, AbstractView.prototype, {
             return dataPoint.activityType;
         });
 
-        var i = 0;
+
+        // canvas width = width of all intervals + padding + y-axis height
+        this.canvas.width = ( _.size(groupedData) * this.xInterval )
+            + ( this.padding * 2 )
+            + this.yAxisWidth;
+
+        // canvas height = width of all intervals + padding + x-axis width
+        this.canvas.height = ( this.yMaxScale * this.yInterval )
+            + ( this.padding * 2 )
+            + this.xAxisHeight;
+
+        // Fill graph
+        // this.context.fillStyle = 'grey';
+        //this.context.fillRect(0, 0, this.canvas.width * this.scale, this.canvas.height * this.scale);
+
+        // this.drawGrid(20);
+        this.drawAxes();
 
         // Plot each data point
+        var i = 0;
+
         _.each(groupedData, function(dataPoints, index, list) {
             this.plotDataPoints(dataPoints, i);
+            this.drawLabel('x', index, this.getX(i, this.xInterval), 280)
             i++;
         }, this);
         this.plotDataPoints()
 
-        // Scale graph
+        for (var j = 0; j < 11; j++) {
+            this.drawLabel( 'y', j, this.getX(0, -15), this.getY(j, -5) );
+        }
+
     },
-    plotDataPoints: function(dataPoints, yIndex) {
+    plotDataPoints: function(dataPoints, xIndex) {
+        var w = 5,
+            h = 5;
+
         _.each(dataPoints, function(dataPoint) {
             var i = 0;
             _.each(dataPoint.activityDataDict, function(val, index) {
-                this.context.fillStyle = this.COLOURS[i];
-                this.context.fillRect( (yIndex + 1) * 20, val * 20, 5, 5);
+                this.drawPoint(this.COLOURS[i], this.getX(xIndex, this.xInterval), this.getY(val, h), w, h);
                 i++;
             }, this);
         }, this);
 
+    },
+    getX: function(val, width) {
+        width = width || 0;
+
+        var intervalCoord = val * this.xInterval,
+            leftOffset = this.padding + this.yAxisWidth + (width / 2);
+
+        return intervalCoord + leftOffset;
+    },
+    getY: function(val, height) {
+        height = height || 0;
+
+        var intervalCoord = val * this.yInterval,
+            bottomOffset = this.padding + this.xAxisHeight + (height / 2);
+
+        // Because y-axis increases downwards
+        return this.canvas.height - intervalCoord - bottomOffset;
+    },
+    drawLabel: function(axis, label, x, y, colour, font) {
+
+        if (axis === 'x') {
+            // Store existing context
+            this.context.save();
+
+            // Rotate context for vertical x-axis labels
+            this.context.translate(x, y);
+            this.context.rotate(Math.PI * 48/31);
+            this.context.translate(-x, -y);
+            this.context.textAlign = 'start';
+        } else if (axis === 'y') {
+            this.context.textAlign = 'end';
+        }
+
+        this.context.fillStyle = colour || 'black';
+        this.context.font = font || '10px Helvetica';
+        this.context.fillText(label, x, y);
+
+        // Revert context for vertical x-axis labels
+        if (axis === 'x') {
+            this.context.restore();
+        }
+    },
+    drawPoint: function(colour, x, y, xSize, ySize) {
+        this.context.fillStyle = colour;
+        this.context.fillRect( x, y, xSize, ySize);
+    },
+    drawGrid: function(gridSize) {
+        gridSize = gridSize || 10;
+
+        for (var y = 0; y <= this.canvas.height; y += gridSize) {
+            this.drawLine( [0, y], [this.canvas.width, y] );
+        }
+
+        for (var x = 0; x <= this.canvas.width; x += gridSize) {
+            this.drawLine( [x, 0], [x, this.canvas.height] );
+        }
+    },
+    drawAxes: function() {
+        var origin = [
+            this.padding + this.yAxisWidth,
+            this.canvas.height - this.xAxisHeight - this.padding
+        ];
+
+        // x-axis
+        this.drawLine( origin, [ this.canvas.width, origin[1] ], 'black');
+
+        // y-axis
+        this.drawLine( origin, [ origin[0], 0 ], 'black');
+
+
+    },
+    drawLine: function(a, b, colour) {
         // Draw line
-        // context.strokeStyle = 'red';
-        // context.moveTo(0, 0);
-        // context.lineTo(width, height);
-        // context.stroke();
+        this.context.save();
+        this.context.strokeStyle = colour || '#EFEFEF';
+        this.context.beginPath();
+        this.context.moveTo(a[0], a[1]);
+        this.context.lineTo(b[0], b[1]);
+        this.context.stroke();
+        this.context.restore();
     },
     updateTable: function(dataPoint) {
         var tbody = document.getElementById('analysis-table').getElementsByTagName('tbody')[0],
