@@ -107,7 +107,8 @@ _.extend(ActivityStoreModel.prototype, {
  */
 var GraphModel = function() {
     this.listeners = [];
-    this.selectedGraph = '';
+    this.selectedGraph = 'table';
+    this.graphList = ['table', 'scatter'];
 };
 
 _.extend(GraphModel.prototype, {
@@ -135,7 +136,7 @@ _.extend(GraphModel.prototype, {
      * Returns a list of graphs (strings) that can be selected by the user
      */
     getAvailableGraphNames: function() {
-        // TODO
+        return this.graphList;
     },
 
     /**

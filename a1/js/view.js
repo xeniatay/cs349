@@ -43,11 +43,11 @@ _.extend(activityFormView.prototype, AbstractView.prototype, {
             // if ADD_EVENT
                 this.lastUpdated = date;
                 var html = 'Last data entry was: ' + date.toLocaleString()
-                    + ' --- ' + dataPoint.activityType
+                    + ' - ' + dataPoint.activityType
                     + ', ' + dataPoint.activityDurationInMinutes + ' minutes';
 
                 document.getElementById('timestamp').innerHTML = html;
-                graphView.updateTable(dataPoint);
+                graphView.populateTable();
 
                 // TODO this shouldn't be necessary - draw once, update new points only
                 graphView.drawGraph();
@@ -60,27 +60,32 @@ _.extend(activityFormView.prototype, AbstractView.prototype, {
         }.bind(this) );
     },
     onSubmit: function() {
-        this.inputSubmit.addEventListener('click', function(e) {
-            var inputData = this.getInputData(this.inputs),
-                healthDict = _.omit(inputData, ['time-spent', 'activity']);
+        this.inputForm.addEventListener('submit', function(e) {
 
-            var dataPoint = new ActivityData(
-                this.activityTypeInput.value,
-                healthDict,
-                inputData['time-spent']
-            );
+            // Use submit event to validate fields
+            e.preventDefault();
+
+            var inputData = this.getInputData(this.inputs),
+                healthDict = _.omit(inputData, ['time-spent', 'activity']),
+                dataPoint = new ActivityData(
+                    this.activityTypeInput.value,
+                    healthDict,
+                    inputData['time-spent']
+                );
 
             console.log(dataPoint);
             activityModel.addActivityDataPoint(dataPoint);
+
         }.bind(this));
     },
     getInputData: function(inputs) {
-        var dataPoint = {};
+        var data = {};
+
         _.each(inputs, function(input) {
-            // TODO validate input
-            dataPoint[input.getAttribute('id')] = input.value;
-        });
-        return dataPoint;
+            data[input.getAttribute('id')] = input.value;
+        }, this);
+
+        return data;
     },
 });
 
@@ -89,7 +94,10 @@ _.extend(activityFormView.prototype, AbstractView.prototype, {
 var GraphView = function(container, model) {
     this._instantiateInterface('graph-view', container);
 
-    this.COLOURS = ['black', 'red', 'blue', 'green', 'purple']
+    this.COLOURS = ['red', 'blue', 'green', 'purple']
+
+    this.options = ['stressLevel', 'energyLevel', 'happinessLevel'];
+
     this.container = document.getElementById(container);
     this.model = model;
 
@@ -108,9 +116,6 @@ _.extend(GraphView.prototype, AbstractView.prototype, {
         this.xInterval = 50 * this.scale;
         this.yInterval = 20 * this.scale;
 
-        // Scale graph
-        // this.context.scale(this.scale, this.scale);
-
         this.initListeners();
         this.showSelectedGraph();
     },
@@ -119,13 +124,13 @@ _.extend(GraphView.prototype, AbstractView.prototype, {
             // TODO
         });
     },
-    drawGraph: function() {
-
-        // Get .uniq of different activities - each has an id, enum?
-        var groupedData = _.groupBy(activityModel.dataPoints, function(dataPoint) {
+    getGroupedData: function() {
+        return _.groupBy(activityModel.dataPoints, function(dataPoint) {
             return dataPoint.activityType;
         });
-
+    },
+    drawGraph: function() {
+        var groupedData = this.getGroupedData();
 
         // canvas width = width of all intervals + padding + y-axis height
         this.canvas.width = ( _.size(groupedData) * this.xInterval )
@@ -137,11 +142,7 @@ _.extend(GraphView.prototype, AbstractView.prototype, {
             + ( this.padding * 2 )
             + this.xAxisHeight;
 
-        // Fill graph
-        // this.context.fillStyle = 'grey';
-        // this.context.fillRect(0, 0, this.canvas.width * this.scale, this.canvas.height * this.scale);
-
-        // this.drawGrid(20);
+        this.drawGrid(10);
         this.drawAxes();
 
         // Plot each data point
@@ -149,8 +150,8 @@ _.extend(GraphView.prototype, AbstractView.prototype, {
 
         _.each(groupedData, function(dataPoints, index, list) {
             this.plotDataPoints(dataPoints, i);
-            // TODO dont hardcode y
-            this.drawLabel('x', index, this.getX(i, this.xInterval), 390)
+            // TODO use divs instead of canvas
+            this.drawLabel('x', index, this.getX(i, this.xInterval), this.canvas.height)
             i++;
         }, this);
         this.plotDataPoints()
@@ -162,11 +163,15 @@ _.extend(GraphView.prototype, AbstractView.prototype, {
     },
     plotDataPoints: function(dataPoints, xIndex) {
         var w = 10,
-            h = 10;
+            h = 10,
+            dict;
 
         _.each(dataPoints, function(dataPoint) {
-            var i = 0;
-            _.each(dataPoint.activityDataDict, function(val, index) {
+            var i = 0
+                // display only the data for selected options
+                dict = _.pick(dataPoint.activityDataDict, this.options);
+
+            _.each(dict, function(val, index) {
                 this.drawPoint(this.COLOURS[i], this.getX(xIndex, this.xInterval), this.getY(val, h), w, h);
                 i++;
             }, this);
@@ -191,7 +196,6 @@ _.extend(GraphView.prototype, AbstractView.prototype, {
         return this.canvas.height - intervalCoord - bottomOffset;
     },
     drawLabel: function(axis, label, x, y, colour, font) {
-
         if (axis === 'x') {
             // Store existing context
             this.context.save();
@@ -200,9 +204,9 @@ _.extend(GraphView.prototype, AbstractView.prototype, {
             this.context.translate(x, y);
             this.context.rotate(Math.PI * 48/31);
             this.context.translate(-x, -y);
-            this.context.textAlign = 'start';
+            this.context.textAlign = 'left';
         } else if (axis === 'y') {
-            this.context.textAlign = 'end';
+            this.context.textAlign = 'right';
         }
 
         this.context.fillStyle = colour || 'black';
@@ -240,8 +244,6 @@ _.extend(GraphView.prototype, AbstractView.prototype, {
 
         // y-axis
         this.drawLine( origin, [ origin[0], 0 ], 'black');
-
-
     },
     drawLine: function(a, b, colour) {
         // Draw line
@@ -253,7 +255,40 @@ _.extend(GraphView.prototype, AbstractView.prototype, {
         this.context.stroke();
         this.context.restore();
     },
-    updateTable: function(dataPoint) {
+    populateTable: function() {
+        var tbody = document.getElementById('graph-table').getElementsByTagName('tbody')[0],
+            groupedData = this.getGroupedData(),
+            totalDuration;
+
+        tbody.innerHTML = '';
+
+        _.each(groupedData, function(dataPoints, index, list) {
+            totalDuration = 0;
+
+            totalDuration = _.reduce(dataPoints, function(memo, dataPoint) {
+                return memo + dataPoint.activityDurationInMinutes;
+            }, 0);
+
+            this.updateTable(index, totalDuration);
+        }, this);
+
+    },
+    updateTable: function(name, time) {
+        var tbody = document.getElementById('graph-table').getElementsByTagName('tbody')[0],
+            tr = document.createElement('tr');
+
+        var td = document.createElement('td');
+        td.innerHTML = name;
+        tr.appendChild(td);
+
+        td = document.createElement('td');
+        td.innerHTML = time;
+        tr.appendChild(td);
+
+        // TODO why is it 0-prefixed?
+        tbody.appendChild(tr);
+    },
+    updateTableWithDataPoint: function(dataPoint) {
         var tbody = document.getElementById('graph-table').getElementsByTagName('tbody')[0],
             tr = document.createElement('tr');
 
@@ -273,6 +308,10 @@ _.extend(GraphView.prototype, AbstractView.prototype, {
 
         tbody.appendChild(tr);
     },
+    setSelectedGraph: function() {
+        graphModel.selectGraph(this.getSelectedGraph());
+        this.showSelectedGraph();
+    },
     getSelectedGraph: function() {
         var graphOptions = document.getElementById('graph-select-type'),
             inputs = graphOptions.getElementsByTagName('input'),
@@ -283,12 +322,12 @@ _.extend(GraphView.prototype, AbstractView.prototype, {
         return checkedInput.getAttribute('data-graphview');
     },
     showSelectedGraph: function() {
-        var selected = this.getSelectedGraph();
+        var selected = graphModel.selectedGraph;
 
-        this.showSelectedView('graph-view', 'graph-' + selected);
-        this.showSelectedView('graph-options', 'graph-' + selected + '-options');
+        this.toggleGraphView('graph-view', 'graph-' + selected);
+        this.toggleGraphView('graph-options', 'graph-' + selected + '-options');
     },
-    showSelectedView: function(viewClass, selected) {
+    toggleGraphView: function(viewClass, selected) {
         var views = document.getElementsByClassName(viewClass),
             selectedView = document.getElementById(selected);
 
@@ -299,6 +338,20 @@ _.extend(GraphView.prototype, AbstractView.prototype, {
                 view.classList.remove('hidden');
             }
         });
+    },
+    toggleOptions: function() {
+        var optionsContainer = document.getElementById('graph-scatter-options'),
+            inputs = optionsContainer.getElementsByTagName('input'),
+            newOptions = [];
+
+        _.each(inputs, function(input) {
+            if (input.checked) {
+                newOptions.push(input.getAttribute('data-option'));
+            }
+        });
+
+        this.options = newOptions;
+        this.drawGraph();
     }
 });
 

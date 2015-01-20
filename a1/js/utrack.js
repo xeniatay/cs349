@@ -36,7 +36,6 @@ function initEvents() {
     _.each(navLinks, function(navLink) {
         navLink.addEventListener('click', function(e) {
             // Toggle views
-
             var views = document.getElementsByClassName('view-container');
             _.each(views, function(view) {
                 view.classList.add('hidden');
@@ -49,12 +48,21 @@ function initEvents() {
         });
     });
 
+    var rangeInputs = document.getElementsByClassName('input-range');
+    _.each(rangeInputs, function(input) {
+        input.nextElementSibling.innerHTML = input.value;
+
+        input.addEventListener('input', function() {
+            input.nextElementSibling.innerHTML = input.value;
+        });
+    });
+
     var selectGraph = document.getElementById('graph-select-type'),
         selectGraphInputs = selectGraph.getElementsByTagName('input');
 
     _.each(selectGraphInputs, function(input) {
         input.addEventListener('change', function() {
-            graphView.showSelectedGraph();
+            graphView.setSelectedGraph();
         });
     });
 
@@ -63,8 +71,7 @@ function initEvents() {
 
     _.each(graphOptionsInputs, function(input) {
         input.addEventListener('change', function() {
-            // TODO
-            console.log('change');
+            graphView.toggleOptions();
         });
     });
 }

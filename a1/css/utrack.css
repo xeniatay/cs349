@@ -8,3 +8,46 @@
 body {
   font-family: 'Montserrat';
 }
+.nav {
+  margin-top: 20px;
+}
+
+form {
+  margin: 30px;
+}
+
+.form-group {
+  margin: 30px 0;
+}
+
+input {
+  margin-bottom: 10px;
+}
+
+input.error {
+  color: red;
+  border-color: red;
+}
+
+.range-value {
+  display: inline-block;
+}
+
+.range-value:before {
+  display: inline;
+  content: 'Level: ';
+}
+
+.input-note {
+  display: inline-block;
+  float: right;
+  font-size: 11px;
+}
+
+canvas, table {
+  margin: 40px 20px;
+}
+
+.graph-options-col {
+  margin: 40px 0;
+}

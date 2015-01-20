@@ -26,12 +26,12 @@
     <div id="graph-container" class="view-container hidden"></div>
 
     <template id="activity-form-view">
-        <h2>Input Activity Data</h2>
+        <h2 class="text-center">Input Activity Data!</h2>
         <form class="form-horizontal" id="input-form">
             <div class="form-group">
-                <label for="activity" class="col-sm-4 control-label">Activity:</label>
-                <div class="col-sm-6">
-                    <input type="text" class="form-control" id="activity" list="activity-list">
+                <label for="activity" class="col-sm-12 col-md-3 control-label">Activity:</label>
+                <div class="col-sm-12 col-md-6">
+                    <input type="text" class="form-control" id="activity" list="activity-list" placeholder="Enter an activity or choose from the list..." required>
                     <datalist id="activity-list">
                         <option data-activity-id="1">Writing Code</option>
                         <option data-activity-id="2">Eating</option>
@@ -44,33 +44,38 @@
                 </div>
             </div>
             <div class="form-group">
-                <label for="energyLevel" class="col-sm-4 control-label">Energy Level:</label>
-                <div class="col-sm-6">
-                    <input id="energyLevel" class="" type="range" min="1" max="5" placeholder="Enter a number">
+                <label for="energyLevel" class="col-sm-12 col-md-3 control-label">Energy Level:</label>
+                <div class="col-sm-12 col-md-6">
+                    <input id="energyLevel" class="input-range" type="range" min="1" max="5" placeholder="Enter a number">
+                    <span class="range-value"></span>
                     <span class="input-note">(1 = Exhausted, 5 = Very Awake)</span>
                 </div>
             </div>
             <div class="form-group">
-                <label for="stressLevel" class="col-sm-4 control-label">Stress Level:</label>
-                <div class="col-sm-6">
-                    <input id="stressLevel" class="" type="range" min="1" max="5" placeholder="Enter a number">
+                <label for="stressLevel" class="col-sm-12 col-md-3 control-label">Stress Level:</label>
+                <div class="col-sm-12 col-md-6">
+                    <input id="stressLevel" class="input-range" type="range" min="1" max="5" placeholder="Enter a number">
+                    <span class="range-value"></span>
                     <span class="input-note">(1 = Very Stressed, 5 = Very Relaxed)</span>
                 </div>
             </div>
             <div class="form-group">
-                <label for="happinessLevel" class="col-sm-4 control-label">Happiness Level:</label>
-                <div class="col-sm-6">
-                    <input id="happinessLevel" class="" type="range" min="1" max="5" placeholder="Enter a number">
+                <label for="happinessLevel" class="col-sm-12 col-md-3 control-label">Happiness Level:</label>
+                <div class="col-sm-12 col-md-6">
+                    <input id="happinessLevel" class="input-range" type="range" min="1" max="5" placeholder="Enter a number">
+                    <span class="range-value"></span>
                     <span class="input-note">(1 = Depressed, 5 = Very Happy)</span>
                 </div>
             </div>
             <div class="form-group">
-                <label for="time-spent" class="col-sm-4 control-label">Time Spent:</label>
-                <div class="col-sm-6">
-                    <input id="time-spent" class="form-control" type="text" placeholder="How many minutes?">
+                <label for="time-spent" class="col-sm-12 col-md-3 control-label">Time Spent:</label>
+                <div class="col-sm-12 col-md-6">
+                    <input id="time-spent" class="form-control" type="number" min="0" placeholder="How many minutes?" required>
                 </div>
             </div>
-            <button type="button" class="btn btn-primary" id="input-submit">Submit</button>
+            <div class="text-center">
+                <button type="submit" class="btn btn-primary btn-md" id="input-submit">Submit Data</button>
+            </div>
         </form>
 
         <div id="timestamp"></div>
@@ -78,44 +83,46 @@
 
     <template id="graph-view">
         <div class="row">
-            <div class="col-sm-3">
-                <div id="graph-select-type">
+            <div class="col-sm-12 col-md-3">
+                <div id="graph-select-type" class="graph-options-col">
                     <h4>Views</h4>
                     <div>
                         <input id="show-table" name="graphview" type="radio" data-graphview="table" checked>
-                        <label for="show-table">Table</label>
+                        <label for="show-table">Table Summary</label>
                     </div>
                     <div>
                         <input id="show-scatter" name="graphview" type="radio" data-graphview="scatter">
                         <label for="show-scatter">Scatter Plot</label>
                     </div>
                 </div>
-                <div id="graph-scatter-options" class="graph-options">
+                <div id="graph-scatter-options" class="graph-options graph-options-col">
                     <h4>Customize</h4>
                     <div>
-                        <input id="show-energy" type="checkbox" checked>
+                        <input id="show-energy" type="checkbox" checked data-option="energyLevel">
                         <label for="show-energy">Energy</label>
                     </div>
                     <div>
-                        <input id="show-stress" type="checkbox" checked>
+                        <input id="show-stress" type="checkbox" checked data-option="stressLevel">
                         <label for="show-stress">Stress</label>
                     </div>
                     <div>
-                        <input id="show-happiness" type="checkbox" checked>
+                        <input id="show-happiness" type="checkbox" checked data-option="happinessLevel">
                         <label for="show-happiness">Happiness Level</label>
                     </div>
                 </div>
             </div>
 
-            <div class="graph-display col-sm-9">
+            <div class="graph-display col-sm-12 col-md-9">
                 <table id="graph-table" class="graph-view table table-striped table-hover table-responsive">
                     <thead>
                         <tr>
                             <th>Activities you are tracking</th>
+                            <!--
                             <th>Energy Level</th>
                             <th>Stress Level</th>
                             <th>Happiness Level</th>
-                            <th>Time Spent</th>
+                            -->
+                            <th>Time Spent (Minutes)</th>
                         </tr>
                     </thead>
                     <tbody>
