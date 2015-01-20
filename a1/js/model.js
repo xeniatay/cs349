@@ -63,7 +63,7 @@ _.extend(ActivityStoreModel.prototype, {
 
         // Use underscore to iterate over all listeners, calling each in turn
         _.each(this.listeners, function (listener_fn) {
-            listener_fn(ACTIVITY_DATA_ADDED_EVENT, Date(), dataPoint);
+            listener_fn(ACTIVITY_DATA_ADDED_EVENT, new Date(), dataPoint);
         }, this);
     },
 

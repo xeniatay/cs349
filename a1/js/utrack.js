@@ -24,7 +24,7 @@ window.addEventListener('load', function() {
     activityView = new activityFormView('activity-form-container', activityModel);
     graphView = new GraphView('graph-container', graphModel);
 
-    generateFakeData(activityModel, 1);
+    generateFakeData(activityModel, 20);
 
     initEvents();
 
@@ -46,6 +46,25 @@ function initEvents() {
                 currentView = document.getElementById(viewName + '-container');
 
             currentView.classList.remove('hidden');
+        });
+    });
+
+    var selectGraph = document.getElementById('graph-select-type'),
+        selectGraphInputs = selectGraph.getElementsByTagName('input');
+
+    _.each(selectGraphInputs, function(input) {
+        input.addEventListener('change', function() {
+            graphView.showSelectedGraph();
+        });
+    });
+
+    var graphOptions = document.getElementById('graph-scatter-options'),
+        graphOptionsInputs = graphOptions.getElementsByTagName('input');
+
+    _.each(graphOptionsInputs, function(input) {
+        input.addEventListener('change', function() {
+            // TODO
+            console.log('change');
         });
     });
 }

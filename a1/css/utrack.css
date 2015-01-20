@@ -1,1 +1,10 @@
 /* Put any additional CSS here */
+
+@font-face {
+  font-family: 'Montserrat';
+  src: url(../fonts/Montserrat/Montserrat-Regular.ttf);
+}
+
+body {
+  font-family: 'Montserrat';
+}

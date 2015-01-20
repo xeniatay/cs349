@@ -41,22 +41,28 @@ _.extend(activityFormView.prototype, AbstractView.prototype, {
     initListeners: function() {
         this.model.addListener( function(event, date, dataPoint) {
             // if ADD_EVENT
-            this.lastUpdated = date;
-            document.getElementById('timestamp').innerHTML = date;
-            // wipe form
+                this.lastUpdated = date;
+                var html = 'Last data entry was: ' + date.toLocaleString()
+                    + ' --- ' + dataPoint.activityType
+                    + ', ' + dataPoint.activityDurationInMinutes + ' minutes';
+
+                document.getElementById('timestamp').innerHTML = html;
+                graphView.updateTable(dataPoint);
+
+                // TODO this shouldn't be necessary - draw once, update new points only
+                graphView.drawGraph();
+
+                // TODO wipe form
 
             // else REMOVE_EVENT
-            // idk do what
+                // graph remove point
 
-            // this shouldn't be necessary
-            graphView.updateTable(dataPoint);
-            graphView.drawGraph();
         }.bind(this) );
     },
     onSubmit: function() {
         this.inputSubmit.addEventListener('click', function(e) {
             var inputData = this.getInputData(this.inputs),
-                healthDict = _.omit(inputData, 'time-spent');
+                healthDict = _.omit(inputData, ['time-spent', 'activity']);
 
             var dataPoint = new ActivityData(
                 this.activityTypeInput.value,
@@ -86,25 +92,27 @@ var GraphView = function(container, model) {
     this.COLOURS = ['black', 'red', 'blue', 'green', 'purple']
     this.container = document.getElementById(container);
     this.model = model;
+
     this.initialize();
 }
 
 _.extend(GraphView.prototype, AbstractView.prototype, {
     initialize: function() {
-        this.canvas = document.getElementById('graph');
+        this.canvas = document.getElementById('graph-scatter');
         this.context = this.canvas.getContext('2d');
-        this.scale = 2;
+        this.scale = 1.5;
         this.padding = 20;
-        this.yAxisWidth = 20;
-        this.xAxisHeight = 50;
+        this.yAxisWidth = 20 * this.scale;
+        this.xAxisHeight = 50 * this.scale;
         this.yMaxScale = 10;
-        this.xInterval = 50;
-        this.yInterval = 20;
+        this.xInterval = 50 * this.scale;
+        this.yInterval = 20 * this.scale;
 
         // Scale graph
-        this.context.scale(this.scale, this.scale);
+        // this.context.scale(this.scale, this.scale);
 
         this.initListeners();
+        this.showSelectedGraph();
     },
     initListeners: function() {
         this.model.addListener(function(GRAPH_SELECTED_EVENT, date, eventData) {
@@ -112,6 +120,7 @@ _.extend(GraphView.prototype, AbstractView.prototype, {
         });
     },
     drawGraph: function() {
+
         // Get .uniq of different activities - each has an id, enum?
         var groupedData = _.groupBy(activityModel.dataPoints, function(dataPoint) {
             return dataPoint.activityType;
@@ -130,7 +139,7 @@ _.extend(GraphView.prototype, AbstractView.prototype, {
 
         // Fill graph
         // this.context.fillStyle = 'grey';
-        //this.context.fillRect(0, 0, this.canvas.width * this.scale, this.canvas.height * this.scale);
+        // this.context.fillRect(0, 0, this.canvas.width * this.scale, this.canvas.height * this.scale);
 
         // this.drawGrid(20);
         this.drawAxes();
@@ -140,7 +149,8 @@ _.extend(GraphView.prototype, AbstractView.prototype, {
 
         _.each(groupedData, function(dataPoints, index, list) {
             this.plotDataPoints(dataPoints, i);
-            this.drawLabel('x', index, this.getX(i, this.xInterval), 280)
+            // TODO dont hardcode y
+            this.drawLabel('x', index, this.getX(i, this.xInterval), 390)
             i++;
         }, this);
         this.plotDataPoints()
@@ -151,8 +161,8 @@ _.extend(GraphView.prototype, AbstractView.prototype, {
 
     },
     plotDataPoints: function(dataPoints, xIndex) {
-        var w = 5,
-            h = 5;
+        var w = 10,
+            h = 10;
 
         _.each(dataPoints, function(dataPoint) {
             var i = 0;
@@ -196,7 +206,7 @@ _.extend(GraphView.prototype, AbstractView.prototype, {
         }
 
         this.context.fillStyle = colour || 'black';
-        this.context.font = font || '10px Helvetica';
+        this.context.font = font || '12px Montserrat';
         this.context.fillText(label, x, y);
 
         // Revert context for vertical x-axis labels
@@ -244,15 +254,15 @@ _.extend(GraphView.prototype, AbstractView.prototype, {
         this.context.restore();
     },
     updateTable: function(dataPoint) {
-        var tbody = document.getElementById('analysis-table').getElementsByTagName('tbody')[0],
+        var tbody = document.getElementById('graph-table').getElementsByTagName('tbody')[0],
             tr = document.createElement('tr');
 
         var td = document.createElement('td');
         td.innerHTML = dataPoint.activityType;
         tr.appendChild(td);
 
-        _.each(dataPoint.activityDataDict, function(val, index) {
-            var td = document.createElement('td');
+        _.each(dataPoint.activityDataDict, function(val, key) {
+            td = document.createElement('td');
             td.innerHTML = val;
             tr.appendChild(td);
         }, this);
@@ -262,5 +272,33 @@ _.extend(GraphView.prototype, AbstractView.prototype, {
         tr.appendChild(td);
 
         tbody.appendChild(tr);
+    },
+    getSelectedGraph: function() {
+        var graphOptions = document.getElementById('graph-select-type'),
+            inputs = graphOptions.getElementsByTagName('input'),
+            checkedInput = _.find(inputs, function(input) {
+                return input.checked;
+            });
+
+        return checkedInput.getAttribute('data-graphview');
+    },
+    showSelectedGraph: function() {
+        var selected = this.getSelectedGraph();
+
+        this.showSelectedView('graph-view', 'graph-' + selected);
+        this.showSelectedView('graph-options', 'graph-' + selected + '-options');
+    },
+    showSelectedView: function(viewClass, selected) {
+        var views = document.getElementsByClassName(viewClass),
+            selectedView = document.getElementById(selected);
+
+        _.each(views, function(view) {
+            if (view !== selectedView) {
+                view.classList.add('hidden');
+            } else {
+                view.classList.remove('hidden');
+            }
+        });
     }
 });
+

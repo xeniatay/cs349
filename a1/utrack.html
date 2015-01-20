@@ -29,9 +29,10 @@
         <h2>Input Activity Data</h2>
         <form class="form-horizontal" id="input-form">
             <div class="form-group">
-                <label for="activity" class="col-sm-2 control-label">Activity:</label>
-                <div class="col-sm-4">
-                    <select id="activity" class="form-control">
+                <label for="activity" class="col-sm-4 control-label">Activity:</label>
+                <div class="col-sm-6">
+                    <input type="text" class="form-control" id="activity" list="activity-list">
+                    <datalist id="activity-list">
                         <option data-activity-id="1">Writing Code</option>
                         <option data-activity-id="2">Eating</option>
                         <option data-activity-id="3">Exercising</option>
@@ -39,66 +40,92 @@
                         <option data-activity-id="5">Surfing Reddit</option>
                         <option data-activity-id="6">Walking to class</option>
                         <option data-activity-id="7">Talking to peers</option>
-                    </select>
+                    </datalist>
                 </div>
             </div>
             <div class="form-group">
-                <label for="energyLevel" class="col-sm-2 control-label">Energy Level:</label>
-                <div class="col-sm-4">
-                    <input id="energyLevel" class="form-control" type="text" placeholder="Enter a number">
+                <label for="energyLevel" class="col-sm-4 control-label">Energy Level:</label>
+                <div class="col-sm-6">
+                    <input id="energyLevel" class="" type="range" min="1" max="5" placeholder="Enter a number">
                     <span class="input-note">(1 = Exhausted, 5 = Very Awake)</span>
                 </div>
             </div>
             <div class="form-group">
-                <label for="stressLevel" class="col-sm-2 control-label">Stress Level:</label>
-                <div class="col-sm-4">
-                    <input id="stressLevel" class="form-control" type="text" placeholder="Enter a number">
+                <label for="stressLevel" class="col-sm-4 control-label">Stress Level:</label>
+                <div class="col-sm-6">
+                    <input id="stressLevel" class="" type="range" min="1" max="5" placeholder="Enter a number">
                     <span class="input-note">(1 = Very Stressed, 5 = Very Relaxed)</span>
                 </div>
             </div>
             <div class="form-group">
-                <label for="happinessLevel" class="col-sm-2 control-label">Happiness Level:</label>
-                <div class="col-sm-4">
-                    <input id="happinessLevel" class="form-control" type="text" placeholder="Enter a number">
+                <label for="happinessLevel" class="col-sm-4 control-label">Happiness Level:</label>
+                <div class="col-sm-6">
+                    <input id="happinessLevel" class="" type="range" min="1" max="5" placeholder="Enter a number">
                     <span class="input-note">(1 = Depressed, 5 = Very Happy)</span>
                 </div>
             </div>
             <div class="form-group">
-                <label for="time-spent" class="col-sm-2 control-label">Time Spent:</label>
-                <div class="col-sm-4">
-                    <input id="time-spent" class="form-control" type="text" placeholder="Enter a number">
+                <label for="time-spent" class="col-sm-4 control-label">Time Spent:</label>
+                <div class="col-sm-6">
+                    <input id="time-spent" class="form-control" type="text" placeholder="How many minutes?">
                 </div>
             </div>
             <button type="button" class="btn btn-primary" id="input-submit">Submit</button>
         </form>
 
-        <div class="">
-            Last Data Entry was: <span id="timestamp"></span>
-        </div>
+        <div id="timestamp"></div>
     </template>
 
     <template id="graph-view">
-        <!-- Put HTML here to support users in analyzing their data -->
-        <div class="">
-            <table id="analysis-table" class="table table-striped table-hover table-responsive">
-                <thead>
-                    <tr>
-                        <th>Activities you are tracking</th>
-                        <th>Energy Level</th>
-                        <th>Stress Level</th>
-                        <th>Happiness Level</th>
-                        <th>Time Spent</th>
-                    </tr>
-                </thead>
-                <tbody>
-                </tbody>
-            </table>
-        </div>
+        <div class="row">
+            <div class="col-sm-3">
+                <div id="graph-select-type">
+                    <h4>Views</h4>
+                    <div>
+                        <input id="show-table" name="graphview" type="radio" data-graphview="table" checked>
+                        <label for="show-table">Table</label>
+                    </div>
+                    <div>
+                        <input id="show-scatter" name="graphview" type="radio" data-graphview="scatter">
+                        <label for="show-scatter">Scatter Plot</label>
+                    </div>
+                </div>
+                <div id="graph-scatter-options" class="graph-options">
+                    <h4>Customize</h4>
+                    <div>
+                        <input id="show-energy" type="checkbox" checked>
+                        <label for="show-energy">Energy</label>
+                    </div>
+                    <div>
+                        <input id="show-stress" type="checkbox" checked>
+                        <label for="show-stress">Stress</label>
+                    </div>
+                    <div>
+                        <input id="show-happiness" type="checkbox" checked>
+                        <label for="show-happiness">Happiness Level</label>
+                    </div>
+                </div>
+            </div>
 
-        <div>
-            <canvas id="graph">
-                Update your browser to enjoy canvas!
-            </canvas>
+            <div class="graph-display col-sm-9">
+                <table id="graph-table" class="graph-view table table-striped table-hover table-responsive">
+                    <thead>
+                        <tr>
+                            <th>Activities you are tracking</th>
+                            <th>Energy Level</th>
+                            <th>Stress Level</th>
+                            <th>Happiness Level</th>
+                            <th>Time Spent</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    </tbody>
+                </table>
+
+                <canvas id="graph-scatter" class="graph-view">
+                    Update your browser to enjoy canvas!
+                </canvas>
+            </div>
         </div>
     </template>
 
