@@ -50,8 +50,7 @@ _.extend(activityFormView.prototype, AbstractView.prototype, {
                 this.resetForm();
                 this.onSuccess();
             } else if (event === ACTIVITY_DATA_REMOVED_EVENT) {
-                // TODO rerender graph?
-                graphView.displayGraph();
+                // Nothing
             }
         }.bind(this) );
     },
@@ -104,7 +103,7 @@ _.extend(activityFormView.prototype, AbstractView.prototype, {
                     inputData['time-spent']
                 );
 
-            console.log(dataPoint);
+            // console.log(dataPoint);
             this.model.addActivityDataPoint(dataPoint);
 
         }.bind(this));

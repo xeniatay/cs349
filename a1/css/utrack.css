@@ -12,17 +12,14 @@ body {
 }
 
 body {
-  background: url(../images/chalkboardburgandy.jpg);
+  /*background: url(../images/chalkboardburgandy.jpg);*/
   background-size: cover;
 }
 
 #app-container {
   transition: all 0.2s ease-in-out;
   background: white;
-  opacity: 0.8;
-  margin: 20px auto;
   padding: 10px 40px;
-  min-height: 100%;
 }
 
 .nav {

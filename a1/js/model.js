@@ -50,7 +50,9 @@ _.extend(ActivityStoreModel.prototype, {
      * @param listener
      */
     removeListener: function(listener) {
-        // TODO
+        this.listeners = _.reject(this.listeners, function(fn) {
+            if ( _.isEqual(fn, listener) ) { return true; }
+        }, this);
     },
 
     /**
@@ -77,9 +79,8 @@ _.extend(ActivityStoreModel.prototype, {
     removeActivityDataPoint: function(dataPoint) {
         this.lastUpdated = new Date();
 
-        // TODO not sure if this is right
-        _.reject(this.dataPoints, function(point) {
-            if ( _.isEqual(point, this.dataPoint) ) {
+        this.dataPoints = _.reject(this.dataPoints, function(point) {
+            if ( _.isEqual(point, dataPoint) ) {
                 return true;
             }
         }, this);
@@ -126,7 +127,7 @@ var GraphModel = function() {
         'scatterKeys': ['stressLevel', 'energyLevel', 'happinessLevel'],
         'colours': { // orange, purple, green
             'stressLevel': '#FF8C00',
-            'energyLevel': '#2E0927',
+            'energyLevel': '#911146',
             'happinessLevel': '#04756F'
         }
     }
@@ -165,7 +166,9 @@ _.extend(GraphModel.prototype, {
      * @param listener
      */
     removeListener: function(listener) {
-        // TODO
+        this.listeners = _.reject(this.listeners, function(fn) {
+            if ( _.isEqual(fn, listener) ) { return true; }
+        }, this);
     },
 
     /**
