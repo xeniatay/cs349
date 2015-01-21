@@ -13,132 +13,149 @@
     <h1>UTrack!</h1>
     Track and analyze data that matters to you!
 
-    <ul class="nav nav-tabs nav-justified">
-        <li class="nav-link" data-view="activity-form">
-            <a href="javascript:void(0);">Input</a>
-        </li>
-        <li class="nav-link" data-view="graph">
-            <a href="javascript:void(0);">Analysis</a>
-        </li>
-    </ul>
+    <div class="main-container">
+        <ul class="nav nav-tabs nav-justified">
+            <li id="activity-form-nav" class="nav-link active" data-view="activity-form">
+                <a href="javascript:void(0);">Input</a>
+            </li>
+            <li id="graph-nav" class="nav-link" data-view="graph">
+                <a href="javascript:void(0);">Analysis</a>
+            </li>
+        </ul>
 
-    <div id="activity-form-container" class="view-container"></div>
-    <div id="graph-container" class="view-container hidden"></div>
-
-    <template id="activity-form-view">
-        <h2 class="text-center">Input Activity Data!</h2>
-        <form class="form-horizontal" id="input-form">
-            <div class="form-group">
-                <label for="activity" class="col-sm-12 col-md-3 control-label">Activity:</label>
-                <div class="col-sm-12 col-md-6">
-                    <input type="text" class="form-control" id="activity" list="activity-list" placeholder="Enter an activity or choose from the list..." required>
-                    <datalist id="activity-list">
-                        <option data-activity-id="1">Writing Code</option>
-                        <option data-activity-id="2">Eating</option>
-                        <option data-activity-id="3">Exercising</option>
-                        <option data-activity-id="4">Studying</option>
-                        <option data-activity-id="5">Surfing Reddit</option>
-                        <option data-activity-id="6">Walking to class</option>
-                        <option data-activity-id="7">Talking to peers</option>
-                    </datalist>
-                </div>
-            </div>
-            <div class="form-group">
-                <label for="energyLevel" class="col-sm-12 col-md-3 control-label">Energy Level:</label>
-                <div class="col-sm-12 col-md-6">
-                    <input id="energyLevel" class="input-range" type="range" min="1" max="5" placeholder="Enter a number">
-                    <span class="range-value"></span>
-                    <span class="input-note">(1 = Exhausted, 5 = Very Awake)</span>
-                </div>
-            </div>
-            <div class="form-group">
-                <label for="stressLevel" class="col-sm-12 col-md-3 control-label">Stress Level:</label>
-                <div class="col-sm-12 col-md-6">
-                    <input id="stressLevel" class="input-range" type="range" min="1" max="5" placeholder="Enter a number">
-                    <span class="range-value"></span>
-                    <span class="input-note">(1 = Very Stressed, 5 = Very Relaxed)</span>
-                </div>
-            </div>
-            <div class="form-group">
-                <label for="happinessLevel" class="col-sm-12 col-md-3 control-label">Happiness Level:</label>
-                <div class="col-sm-12 col-md-6">
-                    <input id="happinessLevel" class="input-range" type="range" min="1" max="5" placeholder="Enter a number">
-                    <span class="range-value"></span>
-                    <span class="input-note">(1 = Depressed, 5 = Very Happy)</span>
-                </div>
-            </div>
-            <div class="form-group">
-                <label for="time-spent" class="col-sm-12 col-md-3 control-label">Time Spent:</label>
-                <div class="col-sm-12 col-md-6">
-                    <input id="time-spent" class="form-control" type="number" min="0" placeholder="How many minutes?" required>
-                </div>
-            </div>
-            <div class="text-center">
-                <button type="submit" class="btn btn-primary btn-md" id="input-submit">Submit Data</button>
-            </div>
-        </form>
-
-        <div id="timestamp"></div>
-    </template>
-
-    <template id="graph-view">
-        <div class="row">
-            <div class="col-sm-12 col-md-3">
-                <div id="graph-select-type" class="graph-options-col">
-                    <h4>Views</h4>
-                    <div>
-                        <input id="show-table" name="graphview" type="radio" data-graphview="table" checked>
-                        <label for="show-table">Table Summary</label>
-                    </div>
-                    <div>
-                        <input id="show-scatter" name="graphview" type="radio" data-graphview="scatter">
-                        <label for="show-scatter">Scatter Plot</label>
-                    </div>
-                </div>
-                <div id="graph-scatter-options" class="graph-options graph-options-col">
-                    <h4>Customize</h4>
-                    <div>
-                        <input id="show-energy" type="checkbox" checked data-option="energyLevel">
-                        <label for="show-energy">Energy</label>
-                    </div>
-                    <div>
-                        <input id="show-stress" type="checkbox" checked data-option="stressLevel">
-                        <label for="show-stress">Stress</label>
-                    </div>
-                    <div>
-                        <input id="show-happiness" type="checkbox" checked data-option="happinessLevel">
-                        <label for="show-happiness">Happiness Level</label>
-                    </div>
-                </div>
-            </div>
-
-            <div class="graph-display col-sm-12 col-md-9">
-                <table id="graph-table" class="graph-view table table-striped table-hover table-responsive">
-                    <thead>
-                        <tr>
-                            <th>Activities you are tracking</th>
-                            <!--
-                            <th>Energy Level</th>
-                            <th>Stress Level</th>
-                            <th>Happiness Level</th>
-                            -->
-                            <th>Time Spent (Minutes)</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                    </tbody>
-                </table>
-
-                <canvas id="graph-scatter" class="graph-view">
-                    Update your browser to enjoy canvas!
-                </canvas>
-            </div>
+        <div id="activity-form-container" class="view-container"></div>
+        <div id="graph-container" class="view-container hidden">
+            <p id="empty-warning" class="text-danger text-center hide-sibling">
+                No data to display!
+                <br>
+                Please input your activity data.
+            </p>
         </div>
-    </template>
 
-    <div id="unit_tests">
-        <!-- Keep this here so TAs can run your unit tests -->
-        <a href="unit_tests.html">Run Unit Tests</a>
+        <template id="activity-form-view">
+            <h2 class="text-center">Input Activity Data!</h2>
+            <form class="form-horizontal" id="input-form">
+                <div class="form-group">
+                    <label for="activity" class="col-sm-12 col-md-3 control-label">Activity:</label>
+                    <div class="col-sm-12 col-md-6">
+                        <input type="text" class="form-control" id="activity" list="activity-list" placeholder="Enter an activity or choose from the list..." required>
+                        <datalist id="activity-list">
+                            <option data-activity-id="1">Writing Code</option>
+                            <option data-activity-id="2">Eating</option>
+                            <option data-activity-id="3">Exercising</option>
+                            <option data-activity-id="4">Studying</option>
+                            <option data-activity-id="5">Surfing Reddit</option>
+                            <option data-activity-id="6">Walking to class</option>
+                            <option data-activity-id="7">Talking to peers</option>
+                        </datalist>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="energyLevel" class="col-sm-12 col-md-3 control-label">Energy Level:</label>
+                    <div class="col-sm-12 col-md-6">
+                        <input id="energyLevel" class="input-range" type="range" min="1" max="5" placeholder="Enter a number">
+                        <span class="range-value"></span>
+                        <span class="input-note">(1 = Exhausted, 5 = Very Awake)</span>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="stressLevel" class="col-sm-12 col-md-3 control-label">Stress Level:</label>
+                    <div class="col-sm-12 col-md-6">
+                        <input id="stressLevel" class="input-range" type="range" min="1" max="5" placeholder="Enter a number">
+                        <span class="range-value"></span>
+                        <span class="input-note">(1 = Very Stressed, 5 = Very Relaxed)</span>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="happinessLevel" class="col-sm-12 col-md-3 control-label">Happiness Level:</label>
+                    <div class="col-sm-12 col-md-6">
+                        <input id="happinessLevel" class="input-range" type="range" min="1" max="5" placeholder="Enter a number">
+                        <span class="range-value"></span>
+                        <span class="input-note">(1 = Depressed, 5 = Very Happy)</span>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="time-spent" class="col-sm-12 col-md-3 control-label">Time Spent:</label>
+                    <div class="col-sm-12 col-md-6">
+                        <input id="time-spent" class="form-control" type="number" min="0" placeholder="How many minutes?" required>
+                    </div>
+                </div>
+                <div class="text-center">
+                    <button type="submit" class="btn btn-primary btn-md" id="input-submit">Submit Data</button>
+                    <div id="form-submit-msg" class="text-success form-submit-msg">
+                        Data submitted!
+                    </div>
+                    <div id="timestamp"></div>
+                </div>
+            </form>
+        </template>
+
+        <template id="graph-view">
+            <div class="row">
+                <div class="col-xs-12 col-sm-3">
+                    <div id="graph-select-type" class="graph-options-col">
+                        <h4>Views</h4>
+                        <div>
+                            <label for="show-table">
+                                <input id="show-table" name="graphview" type="radio" data-option="table">
+                                Table Summary
+                            </label>
+                        </div>
+                        <div>
+                            <label for="show-scatter">
+                                <input id="show-scatter" name="graphview" type="radio" data-option="scatter">
+                                Scatter Plot
+                            </label>
+                        </div>
+                    </div>
+                    <div id="graph-scatter-options" class="graph-options graph-options-col" data-toggle="graph-scatter">
+                        <h4>Customize</h4>
+                        <label for="show-energy">
+                            <input id="show-energy" type="checkbox" checked data-option="energyLevel">
+                            Energy
+                        </label>
+                        <label for="show-stress">
+                            <input id="show-stress" type="checkbox" checked data-option="stressLevel">
+                            Stress
+                        </label>
+                        <label for="show-happiness">
+                            <input id="show-happiness" type="checkbox" checked data-option="happinessLevel">
+                            Happiness Level
+                        </label>
+                    </div>
+                </div>
+
+                <div class="graph-display col-xs-12 col-sm-6">
+                    <table id="graph-table" class="graph-view table table-striped table-hover table-responsive" data-toggle="graph-table">
+                        <thead>
+                            <tr>
+                                <th>Activities you are tracking</th>
+                                <!--
+                                <th>Energy Level</th>
+                                <th>Stress Level</th>
+                                <th>Happiness Level</th>
+                                -->
+                                <th>Time Spent (Minutes)</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                        </tbody>
+                    </table>
+
+                    <canvas id="graph-scatter" class="graph-view" data-toggle="graph-scatter">
+                        Update your browser to enjoy canvas!
+                    </canvas>
+                    <div id="xaxis" data-toggle="graph-scatter"></div>
+                </div>
+            </div>
+        </template>
+
+        <div id="unit_tests">
+            <!-- Keep this here so TAs can run your unit tests -->
+            <a href="unit_tests.html">
+                <button class="btn btn-default">Run Unit Tests</button>
+            </a>
+        </div>
     </div>
 
 </div>

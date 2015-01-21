@@ -60,10 +60,11 @@ _.extend(ActivityStoreModel.prototype, {
      */
     addActivityDataPoint: function(dataPoint) {
         this.dataPoints.push(dataPoint);
+        this.lastUpdated = new Date();
 
         // Use underscore to iterate over all listeners, calling each in turn
         _.each(this.listeners, function (listener_fn) {
-            listener_fn(ACTIVITY_DATA_ADDED_EVENT, new Date(), dataPoint);
+            listener_fn(ACTIVITY_DATA_ADDED_EVENT, this.lastUpdated, dataPoint);
         }, this);
     },
 
@@ -74,6 +75,7 @@ _.extend(ActivityStoreModel.prototype, {
      * @param activityDataPoint
      */
     removeActivityDataPoint: function(dataPoint) {
+        this.lastUpdated = new Date();
 
         // TODO not sure if this is right
         _.reject(this.dataPoints, function(point) {
@@ -84,7 +86,7 @@ _.extend(ActivityStoreModel.prototype, {
 
         // Use underscore to iterate over all listeners, calling each in turn
         _.each(this.listeners, function (listener_fn) {
-            listener_fn(ACTIVITY_DATA_REMOVED_EVENT, Date(), dataPoint);
+            listener_fn(ACTIVITY_DATA_REMOVED_EVENT, this.lastUpdated, dataPoint);
         }, this);
     },
 
@@ -93,6 +95,15 @@ _.extend(ActivityStoreModel.prototype, {
      */
     getActivityDataPoints: function() {
         return this.dataPoints;
+    },
+
+    /**
+     * Returns list of dataPoints, grouped by activityType
+     */
+    getGroupedData: function() {
+        return _.groupBy(this.dataPoints, function(dataPoint) {
+            return dataPoint.activityType;
+        });
     },
 });
 
@@ -106,9 +117,34 @@ _.extend(ActivityStoreModel.prototype, {
  * @constructor
  */
 var GraphModel = function() {
+    this.settings = {
+        'scale': 1.5,
+        'padding': 20,
+        'yMaxScale': 10,
+        'gridSize': 10,
+        'graphList': ['table', 'scatter'],
+        'scatterKeys': ['stressLevel', 'energyLevel', 'happinessLevel'],
+        'colours': { // orange, purple, green
+            'stressLevel': '#FF8C00',
+            'energyLevel': '#2E0927',
+            'happinessLevel': '#04756F'
+        }
+    }
+
+    // Set scaleable settings
+    var scale = this.settings['scale'];
+    _.extend(this.settings, {
+        'yAxisWidth': 20 * scale,
+        'xAxisHeight': 60 * scale,
+        'xInterval': 50 * scale,
+        'yInterval': 20 * scale
+    });
+
     this.listeners = [];
+
+    // Set defaults
     this.selectedGraph = 'table';
-    this.graphList = ['table', 'scatter'];
+    this.selectedScatterKeys = this.settings.scatterKeys;
 };
 
 _.extend(GraphModel.prototype, {
@@ -136,7 +172,7 @@ _.extend(GraphModel.prototype, {
      * Returns a list of graphs (strings) that can be selected by the user
      */
     getAvailableGraphNames: function() {
-        return this.graphList;
+        return this.settings.graphList;
     },
 
     /**
@@ -155,8 +191,12 @@ _.extend(GraphModel.prototype, {
     selectGraph: function(graphName) {
         this.selectedGraph = graphName;
         _.each(this.listeners, function(listener_fn) {
-            listener_fn(GRAPH_SELECTED_EVENT, Date(), this.selectedGraph);
+            listener_fn(GRAPH_SELECTED_EVENT, new Date(), this.selectedGraph);
         }, this);
+    },
+
+    selectScatterKeys: function(scatterKeys) {
+        this.selectedScatterKeys = scatterKeys;
     }
 
 });
