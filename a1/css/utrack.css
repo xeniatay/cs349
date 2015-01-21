@@ -117,3 +117,8 @@ canvas, table {
 #empty-warning.hidden + div {
   display: block !important;
 }
+
+footer div {
+  display: inline-block;
+  margin-right: 10px;
+}

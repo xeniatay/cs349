@@ -404,7 +404,9 @@ _.extend(GraphView.prototype, AbstractView.prototype, {
             checked = _.find(inputs, function(i) { return i.checked; }),
             selected = checked.getAttribute('data-option');
 
-        this.model.selectGraph(selected);
+        if ( selected !== this.model.selectedGraph ) {
+            this.model.selectGraph(selected);
+        }
     },
 
     setSelectGraphCheckbox: function() {

@@ -79,21 +79,107 @@ describe('First unit test', function() {
         // This should help you understand the listener testing code below
     });
 
-    it('Listener unit test for GraphModel', function() {
+    it('Broken test from original code', function() {
         var graphModel = new GraphModel();
         var firstListener = sinon.spy();
 
         graphModel.addListener(firstListener);
         graphModel.selectGraph("MyGraph");
 
-        expect(firstListener.called, 'GraphModel listener should be called').to.be.ok;
-        expect(firstListener.calledWith('MyGraph'), 'GraphModel argument verification').to.be.true;
+        expect(firstListener.called, 'GraphModel listener should not be called').to.be.false;
 
         var secondListener = sinon.spy();
         graphModel.addListener(secondListener);
         graphModel.selectGraph("MyGraph");
-        // expect(firstListener.callCount, 'GraphModel first listener should have been called twice').to.equal(2);
-        // expect(secondListener.called, "GraphModel second listener should have been called").to.be.ok;
+        expect(firstListener.called, 'GraphModel listener should not be called').to.be.false;
+        expect(secondListener.called, "GraphModel second listener should not have been called").to.be.false;
+    });
+
+});
+
+describe('Selecting a Graph', function() {
+    var graphModel = new GraphModel();
+
+    it('There is a default selected graph', function() {
+        expect(graphModel.selectedGraph).to.be.ok;
+    });
+
+    it('Default graph belongs to list of available graphs', function() {
+        var graphs = graphModel.getAvailableGraphNames();
+        expect(graphs.indexOf(graphModel.selectedGraph)).to.be.above(-1);
+    });
+
+    it('Select an already selected graph', function() {
+        var firstListener = sinon.spy();
+
+        graphModel.addListener(firstListener);
+        graphModel.selectGraph(graphModel.selectedGraph);
+
+        expect(firstListener.called, 'GraphModel listener should not be called').to.be.false;
+    });
+
+    it('Select a different available graph', function() {
+        var firstListener = sinon.spy(),
+            graphs = graphModel.getAvailableGraphNames(),
+            // Get list of available graphs that are currently selected
+            availGraphs = _.reject(graphs, function(graphName) {
+                return graphName === graphModel.selectedGraph;
+            }),
+            // Pick a random new graph name
+            newGraph = availGraphs[_.random(availGraphs.length-1)];
+
+        graphModel.addListener(firstListener);
+        graphModel.selectGraph(newGraph);
+        expect(firstListener.callCount, 'GraphModel first listener should have been called once').to.equal(1);
+        expect(firstListener.calledWith(GRAPH_SELECTED_EVENT, graphModel.lastUpdated, graphModel.selectedGraph), 'GraphModel argument verification').to.be.true;
+    });
+
+
+    it('Select an invalid graph', function() {
+        var firstListener = sinon.spy();
+
+        graphModel.addListener(firstListener);
+        graphModel.selectGraph("MyGraph");
+
+        expect(firstListener.called, 'GraphModel listener should not be called').to.be.false;
+    });
+});
+
+describe('Activity Data Tests', function() {
+    var dataPoint = new ActivityData(
+            'Activity 1',
+            {
+                energyLevel: _.random(5),
+                stressLevel: _.random(5),
+                happinessLevel: _.random(5),
+            },
+            _.random(60)
+        );
+
+    it('Add new activity data point', function() {
+        var activityModel = new ActivityStoreModel(),
+            firstListener = sinon.spy();
+
+        activityModel.addListener(firstListener);
+        activityModel.addActivityDataPoint(dataPoint);
+        expect(firstListener.called, 'AcivityModel listener should be called').to.be.true;
+        expect(firstListener.calledWith(ACTIVITY_DATA_ADDED_EVENT, activityModel.lastUpdated, dataPoint), 'ActivityStoreModel argument verification').to.be.true;
+    });
+
+    it('Add multiple activity data points', function() {
+        var activityModel = new ActivityStoreModel(),
+            firstListener = sinon.spy();
+
+        activityModel.addListener(firstListener);
+        activityModel.addActivityDataPoint(dataPoint);
+        expect(activityModel.dataPoints).to.have.length(1);
+        expect(firstListener.called, 'AcivityModel listener should be called').to.be.true;
+        expect(firstListener.calledWith(ACTIVITY_DATA_ADDED_EVENT, activityModel.lastUpdated, dataPoint), 'ActivityStoreModel argument verification').to.be.true;
+
+        activityModel.addActivityDataPoint(dataPoint);
+        expect(activityModel.dataPoints).to.have.length(2);
+        expect(firstListener.callCount, 'AcivityModel listener should be called twice').to.equal(2);
+        expect(firstListener.calledWith(ACTIVITY_DATA_ADDED_EVENT, activityModel.lastUpdated, dataPoint), 'ActivityStoreModel argument verification').to.be.true;
     });
 
 });

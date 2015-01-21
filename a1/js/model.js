@@ -121,7 +121,7 @@ var GraphModel = function() {
     this.settings = {
         'scale': 1.5,
         'padding': 20,
-        'yMaxScale': 10,
+        'yMaxScale': 6,
         'gridSize': 10,
         'graphList': ['table', 'scatter'],
         'scatterKeys': ['stressLevel', 'energyLevel', 'happinessLevel'],
@@ -192,9 +192,15 @@ _.extend(GraphModel.prototype, {
      * @param graphName
      */
     selectGraph: function(graphName) {
+        if (graphName === this.selectedGraph || (this.settings.graphList.indexOf(graphName) === -1) )  {
+            return;
+        }
+
         this.selectedGraph = graphName;
+        this.lastUpdated = new Date();
+
         _.each(this.listeners, function(listener_fn) {
-            listener_fn(GRAPH_SELECTED_EVENT, new Date(), this.selectedGraph);
+            listener_fn(GRAPH_SELECTED_EVENT, this.lastUpdated, this.selectedGraph);
         }, this);
     },
 
@@ -229,9 +235,9 @@ function generateFakeData(activityModel, numDataPointsToGenerate) {
             var activityDataPoint = new ActivityData(
                 fakeActivities[_.random(fakeActivities.length-1)],
                 {
-                    energyLevel: _.random(10),
-                    stressLevel: _.random(10),
-                    happinessLevel: _.random(10),
+                    energyLevel: _.random(5),
+                    stressLevel: _.random(5),
+                    happinessLevel: _.random(5),
                 },
                 _.random(60)
             );

@@ -24,8 +24,6 @@ window.addEventListener('load', function() {
     activityView = new activityFormView('activity-form-container', activityModel);
     graphView = new GraphView('graph-container', graphModel);
 
-    // generateFakeData(activityModel, 1000);
-
     initEvents();
 
 });
@@ -35,6 +33,7 @@ function initEvents() {
     initSliders();
     initSelectGraph();
     initGraphOptions();
+    initFakeData();
 }
 
 function initNav() {
@@ -91,5 +90,12 @@ function initGraphOptions() {
         input.addEventListener('change', function() {
             graphView.toggleScatterKeys();
         });
+    });
+}
+
+function initFakeData() {
+    var fakeDataBtn = document.getElementById('generate-fake-data');
+    fakeDataBtn.addEventListener('click', function() {
+        generateFakeData(activityModel, 20)
     });
 }
