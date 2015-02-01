@@ -14,7 +14,7 @@ function createViewModule() {
      */
     var ImageRenderer = function(imageModel) {
         this.init();
-        this.setImageMode(imageModel);
+        this.setImageModel(imageModel);
     };
 
     _.extend(ImageRenderer.prototype, {
@@ -27,6 +27,13 @@ function createViewModule() {
             this.viewType = LIST_VIEW;
         },
 
+        initListeners: function() {
+            this.model.addListener( function(imageModel, date) {
+                // META DATA CHANGED
+                console.debug('meta data changed');
+            }.bind(this) );
+        },
+
         /**
          * Returns an element representing the ImageModel, which can be attached to the DOM
          * to display the ImageModel.
@@ -36,10 +43,25 @@ function createViewModule() {
         },
 
         /**
+         * Renders image elements
+         */
+        render: function() {
+            var img = this.imageDiv.getElementsByTagName('img')[0],
+                caption = this.imageDiv.querySelector('.img-caption'),
+                dateModified = this.imageDiv.querySelector('.img-date-modified'),
+                rating = this.imageDiv.querySelector('.img-rating');
+
+            img.src = this.model.getPath();
+            caption.innerHTML = this.model.getCaption();
+            dateModified.innerHTML = this.model.getModificationDate();
+            rating.innerHTML = this.model.getRating();
+        },
+
+        /**
          * Returns the ImageModel represented by this ImageRenderer.
          */
         getImageModel: function() {
-            return this.imageModel;
+            return this.model;
         },
 
         /**
@@ -47,8 +69,20 @@ function createViewModule() {
          * contents as necessary.
          */
         setImageModel: function(imageModel) {
-            this.imageModel = imageModel;
+            var date = new Date();
+
+            if (this.model !== imageModel) {
+                var oldModel = this.model;
+                this.model = imageModel;
+
+                // TODO listener stuff
+                // this.model.addListener(this.model, date);
+                // oldModel.removeListener(oldModel, date);
+                this.initListeners();
+            }
+
         },
+
 
         /**
          * Changes the rendering of the ImageModel to either list or grid view.
@@ -83,6 +117,8 @@ function createViewModule() {
         createImageRenderer: function(imageModel) {
             var newRenderer = new ImageRenderer(imageModel);
             this.renderers.push(newRenderer);
+
+            return newRenderer;
         }
     });
 
@@ -101,9 +137,26 @@ function createViewModule() {
             this.imageRendererFactory = new ImageRendererFactory();
 
             var collectionTemplate = document.getElementById('img-collection');
-
             this.collectionDiv = document.createElement('div');
             this.collectionDiv.appendChild(document.importNode(collectionTemplate.content, true));
+        },
+
+
+        initListeners: function() {
+            this.model.addListener( function(event, imageModelCollection, imageModel, date) {
+                if (event === 'IMAGE_ADDED_TO_COLLECTION_EVENT') {
+                    // TODO
+                    console.debug('image added');
+                    var image = this.imageRendererFactory.createImageRenderer(imageModel);
+
+                    image.render();
+                    this.getElement().appendChild(image.getElement());
+
+                } else if (event === 'IMAGE_REMOVED_FROM_COLLECTION_EVENT') {
+                    // TODO
+                    console.debug('image removed');
+                }
+            }.bind(this) );
         },
 
         /**
@@ -135,7 +188,7 @@ function createViewModule() {
          * Returns the ImageCollectionModel represented by this view.
          */
         getImageCollectionModel: function() {
-            return this.imageCollectionModel;
+            return this.model;
         },
 
         /**
@@ -144,8 +197,8 @@ function createViewModule() {
          * any changes to the given model.
          */
         setImageCollectionModel: function(imageCollectionModel) {
-            this.imageCollectionModel = imageCollectionModel;
-            // TODO listeners
+            this.model = imageCollectionModel;
+            this.initListeners();
         },
 
         /**
@@ -162,7 +215,7 @@ function createViewModule() {
          */
         getCurrentView: function() {
             // TODO wtf
-            return this.imageCollectionModel.last().getCurrentView();
+            return this.model.last().getCurrentView();
         }
     });
 
