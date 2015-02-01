@@ -39,7 +39,7 @@ window.addEventListener('load', function() {
         storedImageCollection.getImageModels(),
         function(imageModel) {
             var imageModelDiv = document.createElement('div');
-            imageModelDiv.innerText = "ImageModel from storage: " + JSON.stringify(imageModel);
+            imageModelDiv.innerHTML = '<img src=".' + imageModel.path + '">';
             storedImageDiv.appendChild(imageModelDiv);
         }
     );

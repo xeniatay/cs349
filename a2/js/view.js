@@ -13,24 +13,33 @@ function createViewModule() {
      * An object representing a DOM element that will render the given ImageModel object.
      */
     var ImageRenderer = function(imageModel) {
-        // TODO
+        this.init();
+        this.setImageMode(imageModel);
     };
 
     _.extend(ImageRenderer.prototype, {
+
+        init: function() {
+            var imageTemplate = document.getElementById('single-img');
+
+            this.imageDiv = document.createElement('div');
+            this.imageDiv.appendChild(document.importNode(imageTemplate.content, true));
+            this.viewType = LIST_VIEW;
+        },
 
         /**
          * Returns an element representing the ImageModel, which can be attached to the DOM
          * to display the ImageModel.
          */
         getElement: function() {
-            // TODO
+            return this.imageDiv;
         },
 
         /**
          * Returns the ImageModel represented by this ImageRenderer.
          */
         getImageModel: function() {
-            // TODO
+            return this.imageModel;
         },
 
         /**
@@ -38,7 +47,7 @@ function createViewModule() {
          * contents as necessary.
          */
         setImageModel: function(imageModel) {
-            // TODO
+            this.imageModel = imageModel;
         },
 
         /**
@@ -46,7 +55,7 @@ function createViewModule() {
          * @param viewType A string, either LIST_VIEW or GRID_VIEW
          */
         setToView: function(viewType) {
-
+            this.viewType = viewType;
         },
 
         /**
@@ -54,7 +63,7 @@ function createViewModule() {
          * currently rendering.
          */
         getCurrentView: function() {
-
+            return this.viewType;
         }
     });
 
@@ -63,6 +72,7 @@ function createViewModule() {
      * objects that fulfill the ImageRenderer class's contract defined above.
      */
     var ImageRendererFactory = function() {
+        this.renderers = [];
     };
 
     _.extend(ImageRendererFactory.prototype, {
@@ -71,7 +81,8 @@ function createViewModule() {
          * Creates a new ImageRenderer object for the given ImageModel
          */
         createImageRenderer: function(imageModel) {
-            // TODO
+            var newRenderer = new ImageRenderer(imageModel);
+            this.renderers.push(newRenderer);
         }
     });
 
@@ -81,23 +92,33 @@ function createViewModule() {
      * assume there is only one ImageCollectionView that will ever be created).
      */
     var ImageCollectionView = function() {
-        // TODO
+        this.init();
     };
 
     _.extend(ImageCollectionView.prototype, {
+
+        init: function() {
+            this.imageRendererFactory = new ImageRendererFactory();
+
+            var collectionTemplate = document.getElementById('img-collection');
+
+            this.collectionDiv = document.createElement('div');
+            this.collectionDiv.appendChild(document.importNode(collectionTemplate.content, true));
+        },
+
         /**
          * Returns an element that can be attached to the DOM to display the ImageCollectionModel
          * this object represents.
          */
         getElement: function() {
-            // TODO
+            return this.collectionDiv;
         },
 
         /**
          * Gets the current ImageRendererFactory being used to create new ImageRenderer objects.
          */
         getImageRendererFactory: function() {
-            // TODO
+            return this.imageRendererFactory;
         },
 
         /**
@@ -106,14 +127,15 @@ function createViewModule() {
          * ImageRenderer objects with new ImageRenderer objects produced by the factory.
          */
         setImageRendererFactory: function(imageRendererFactory) {
-            // TODO
+            this.imageRendererFactory = imageRendererFactory;
+            // TODO redo presentation
         },
 
         /**
          * Returns the ImageCollectionModel represented by this view.
          */
         getImageCollectionModel: function() {
-            // TODO
+            return this.imageCollectionModel;
         },
 
         /**
@@ -122,7 +144,8 @@ function createViewModule() {
          * any changes to the given model.
          */
         setImageCollectionModel: function(imageCollectionModel) {
-            // TODO
+            this.imageCollectionModel = imageCollectionModel;
+            // TODO listeners
         },
 
         /**
@@ -130,7 +153,7 @@ function createViewModule() {
          * @param viewType A string of either LIST_VIEW or GRID_VIEW.
          */
         setToView: function(viewType) {
-            // TODO
+            this.viewType = viewType;
         },
 
         /**
@@ -138,7 +161,8 @@ function createViewModule() {
          * being rendered.
          */
         getCurrentView: function() {
-            // TODO
+            // TODO wtf
+            return this.imageCollectionModel.last().getCurrentView();
         }
     });
 
@@ -146,15 +170,27 @@ function createViewModule() {
      * An object representing a DOM element that will render the toolbar to the screen.
      */
     var Toolbar = function() {
-
+        this.init();
     };
 
     _.extend(Toolbar.prototype, {
+
+        init: function() {
+            var toolbarTemplate = document.getElementById('toolbar');
+
+            this.listeners = [];
+            this.viewType = LIST_VIEW;
+            this.ratingFilter = 0;
+
+            this.toolbarDiv = document.createElement('div');
+            this.toolbarDiv.appendChild(document.importNode(toolbarTemplate.content, true));
+        },
+
         /**
          * Returns an element representing the toolbar, which can be attached to the DOM.
          */
         getElement: function() {
-            // TODO
+            return this.toolbarDiv;
         },
 
         /**
@@ -168,14 +204,14 @@ function createViewModule() {
          *                    eventDate is a Date object representing when the event occurred.
          */
         addListener: function(listener_fn) {
-            // TODO
+            this.listeners.push(listener_fn);
         },
 
         /**
          * Removes the given listener from the toolbar.
          */
         removeListener: function(listener_fn) {
-            // TODO
+            this.listeners = _.without(this.listeners, listener_fn);
         },
 
         /**
@@ -183,7 +219,7 @@ function createViewModule() {
          * @param viewType A string of either LIST_VIEW or GRID_VIEW representing the desired view.
          */
         setToView: function(viewType) {
-
+            this.viewType = viewType;
         },
 
         /**
@@ -191,7 +227,7 @@ function createViewModule() {
          * either LIST_VIEW or GRID_VIEW.
          */
         getCurrentView: function() {
-
+            return this.viewType;
         },
 
         /**
@@ -199,7 +235,7 @@ function createViewModule() {
          * filtering should take place.
          */
         getCurrentRatingFilter: function() {
-
+            return this.ratingFilter;
         },
 
         /**
@@ -207,7 +243,7 @@ function createViewModule() {
          * @param rating An integer in the range [0,5], where 0 indicates no filtering should take place.
          */
         setRatingFilter: function(rating) {
-            // TODO
+            this.ratingFilter = rating;
         }
     });
 

@@ -20,21 +20,42 @@
 </head>
 <body>
 
-<!-- This header can be replaced -->
-<h1>Fotag!</h1>
-Import, organize, and rate your photos!
+<template id="toolbar">
+    <header>
+        <h1>Fotag!</h1>
+        <h2>Import, organize, and rate your photos!</h2>
+
+        <div class="layout-btn">
+            Tile
+        </div>
+        <div class="layout-btn">
+            List
+        </div>
+
+        <div class="filter-by">
+            Filter By:
+        </div>
+    </header>
+</template>
 
 <div id="app-container">
-    <!--
-         An attachment point to place all of your dynamically created content. Do not remove or
-         rename this div.
-    -->
 </div>
 
 <!-- A template for a file chooser, to select multiple files. See FileChooser in view.js. -->
 <template id="file-chooser">
     <input type="file" class="files-input" name="file_results[]" multiple />
     <output id="list"></output>
+</template>
+
+<template id="single-img">
+    <img>
+    <span class="img-name">Name</span>
+    <span class="img-date-modified">Date Modified</span>
+    <div class="img-rating">Rating</div>
+</template>
+
+<template id="img-collection">
+    image collection hi
 </template>
 
 <!-- Keep this here so TAs can run your unit tests -->
