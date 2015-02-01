@@ -83,6 +83,7 @@ function createModelModule() {
          */
         setCaption: function(caption) {
             this.caption = caption || '';
+            this.onMetaDataChange();
         },
 
         /**
@@ -99,6 +100,7 @@ function createModelModule() {
          */
         setRating: function(rating) {
             this.rating = rating || 0;
+            this.onMetaDataChange();
         },
 
         /**
@@ -106,7 +108,14 @@ function createModelModule() {
          */
         getPath: function() {
             // Relative path from current dir, i.e. './image/...'
-            return '.' + this.path;
+            return this.path;
+        },
+
+        /**
+         * Sets modification date to new date
+         */
+        setModificationDate: function(date) {
+            this.modificationDate = date || new Date();
         },
 
         /**
@@ -114,7 +123,20 @@ function createModelModule() {
          */
         getModificationDate: function() {
             return this.modificationDate;
+        },
+
+        /**
+         * Trigger META_DATA_CHANGED_EVENT for all listeners
+         */
+        onMetaDataChange: function() {
+            this.setModificationDate();
+
+            // Use underscore to iterate over all listeners, calling each in turn
+            _.each(this.listeners, function (listener_fn) {
+                listener_fn(this, this.getModificationDate());
+            }, this);
         }
+
     });
 
     /**
@@ -169,7 +191,7 @@ function createModelModule() {
          */
         addImageModel: function(imageModel) {
             this.imageModels.push(imageModel);
-            // TODO: See contract above
+            this.onAddImage(imageModel);
         },
 
         /**
@@ -178,7 +200,8 @@ function createModelModule() {
          * @param imageModel
          */
         removeImageModel: function(imageModel) {
-            // TODO
+            this.onRemoveImage(imageModel);
+            // TODO remove listenrs?
         },
 
         /**
@@ -186,8 +209,27 @@ function createModelModule() {
          */
         getImageModels: function() {
             return this.imageModels.slice();
-        }
+        },
 
+        /**
+         * Trigger IMAGE_ADDED_TO_COLLECTION_EVENT for all listeners
+         */
+        onAddImage: function(imageModel) {
+            // Use underscore to iterate over all listeners, calling each in turn
+            _.each(this.listeners, function (listener_fn) {
+                listener_fn(IMAGE_ADDED_TO_COLLECTION_EVENT, this, imageModel, new Date);
+            }, this);
+        },
+
+        /**
+         * Trigger IMAGE_REMOVED_FROM_COLLECTION_EVENT for all listeners
+         */
+        onRemoveImage: function(imageModel) {
+            // Use underscore to iterate over all listeners, calling each in turn
+            _.each(this.listeners, function (listener_fn) {
+                listener_fn(IMAGE_REMOVED_FROM_COLLECTION_EVENT, this, imageModel, new Date);
+            }, this);
+        }
     });
 
     /**
