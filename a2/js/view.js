@@ -204,6 +204,9 @@ function createViewModule() {
          *                    eventDate is a Date object representing when the event occurred.
          */
         addListener: function(listener_fn) {
+            if (!_.isFunction(listener_fn)) {
+                throw new Error("Invalid arguments to Toolbar.removeListener: " + JSON.stringify(arguments));
+            }
             this.listeners.push(listener_fn);
         },
 
@@ -211,6 +214,9 @@ function createViewModule() {
          * Removes the given listener from the toolbar.
          */
         removeListener: function(listener_fn) {
+            if (!_.isFunction(listener_fn)) {
+                throw new Error("Invalid arguments to Toolbar.removeListener: " + JSON.stringify(arguments));
+            }
             this.listeners = _.without(this.listeners, listener_fn);
         },
 
