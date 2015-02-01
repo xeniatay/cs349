@@ -24,22 +24,26 @@ function createModelModule() {
         caption,
         rating
     ) {
-        if (!(
-                _.isString(pathToFile)
+        if ( !(_.isString(pathToFile)
                 && _.isString(caption)
                 && (modificationDate instanceof Date)
-                && (_.isNumber(rating) && rating >= 0 && rating <= 5)
-            ))
-        {
+                && (_.isNumber(rating) && rating >= 0 && rating <= 5) )) {
             throw new Error("Invalid arguments supplied to ImageModel: " + JSON.stringify(arguments));
         }
+
         this.path = pathToFile;
         this.modificationDate = modificationDate;
-        this.caption = caption;
-        this.rating = rating;
+
+        this.init();
+        this.setCaption(caption);
+        this.setRating(rating);
     };
 
     _.extend(ImageModel.prototype, {
+
+        init: function() {
+            this.listeners = [];
+        },
 
         /**
          * Adds a listener to be notified of when the model changes.
@@ -48,7 +52,10 @@ function createModelModule() {
          * object indicating the time of the event.
          */
         addListener: function(listener_fn) {
-            // TODO
+            if (!_.isFunction(listener_fn)) {
+                throw new Error("Invalid arguments to ImageModel.removeListener: " + JSON.stringify(arguments));
+            }
+            this.listeners.push(listener_fn);
         },
 
         /**
@@ -56,7 +63,10 @@ function createModelModule() {
          * @param listener_fn
          */
         removeListener: function(listener_fn) {
-            // TODO
+            if (!_.isFunction(listener_fn)) {
+                throw new Error("Invalid arguments to ImageModel.removeListener: " + JSON.stringify(arguments));
+            }
+            this.listeners = _.without(listeners, listener_fn);
         },
 
         /**
@@ -72,7 +82,7 @@ function createModelModule() {
          * @param caption A string representing a user caption.
          */
         setCaption: function(caption) {
-            // TODO
+            this.caption = caption || '';
         },
 
         /**
@@ -88,14 +98,15 @@ function createModelModule() {
          * @param rating An integer in the range [0,5] (where a 0 indicates the user is clearing their rating)
          */
         setRating: function(rating) {
-            // TODO
+            this.rating = rating || 0;
         },
 
         /**
          * Returns a complete path to the image suitable for inserting into an img tag.
          */
         getPath: function() {
-            return this.path;
+            // Relative path from current dir, i.e. './image/...'
+            return '.' + this.path;
         },
 
         /**
@@ -111,9 +122,14 @@ function createModelModule() {
      */
     var ImageCollectionModel = function() {
         this.imageModels = [];
+        this.init();
     };
 
     _.extend(ImageCollectionModel.prototype, {
+
+        init: function() {
+            this.listeners = [];
+        },
 
         /**
          * Adds a listener to the collection to be notified of when the collection or an image
@@ -128,7 +144,10 @@ function createModelModule() {
          *                    time when the change occurred.
          */
         addListener: function(listener_fn) {
-            // TODO
+            if (!_.isFunction(listener_fn)) {
+                throw new Error("Invalid arguments to ImageModelCollection.removeListener: " + JSON.stringify(arguments));
+            }
+            this.listeners.push(listener_fn);
         },
 
         /**
@@ -136,7 +155,10 @@ function createModelModule() {
          * @param listener_fn
          */
         removeListener: function(listener_fn) {
-            // TODO
+            if (!_.isFunction(listener_fn)) {
+                throw new Error("Invalid arguments to ImageModelCollection.removeListener: " + JSON.stringify(arguments));
+            }
+            this.listeners = _.without(listeners, listener_fn);
         },
 
         /**
@@ -190,27 +212,21 @@ function createModelModule() {
      * Returns a new ImageCollectionModel object with contents loaded from localStorage.
      */
     function loadImageCollectionModel() {
-        var imageCollectionModel = new ImageCollectionModel();
-        var modelsJSON = localStorage.getItem('imageCollectionModel');
-        if (modelsJSON) {
-            var models = JSON.parse(modelsJSON);
-            _.each(
-                models,
-                function(model) {
-                    try {
-                        var imageModel = new ImageModel(
-                            model.path,
-                            new Date(model.modificationDate),
-                            model.caption,
-                            model.rating
-                        );
-                        imageCollectionModel.addImageModel(imageModel);
-                    } catch (err) {
-                        console.log("Error creating ImageModel: " + err);
-                    }
-                }
-            );
-        }
+        var imageCollectionModel = new ImageCollectionModel(),
+            modelsJSON = localStorage.getItem('imageCollectionModel');
+
+        if (!modelsJSON) { return imageCollectionModel; }
+
+        var models = JSON.parse(modelsJSON);
+        _.each(models, function(model) {
+            try {
+                var imageModel = new ImageModel( model.path, new Date(model.modificationDate), model.caption, model.rating );
+                imageCollectionModel.addImageModel(imageModel);
+            } catch (err) {
+                console.log("Error creating ImageModel: " + err);
+            }
+        });
+
         return imageCollectionModel;
     }
 
