@@ -1,0 +1,214 @@
+@import 'reset.less';
+@import 'utilities.less';
+@import 'icons.less';
+
+/*** VARIABLES ***/
+
+@mobile: ~"(max-width: 759px)";
+@desktop: ~"(min-width: 760px)";
+
+/*** STYLES ***/
+
+@font-face {
+  font-family: 'Montserrat';
+  src: url(../fonts/Montserrat/Montserrat-Regular.ttf);
+}
+
+html,
+body {
+  font-family: 'Montserrat';
+  font-size: 16px;
+}
+
+#app-container {
+  margin: 0 auto;
+  max-width: 800px;
+}
+
+/*** Typography and Icons ***/
+h1 {
+  font-size: 2.5em;
+  line-height: 1.5em;
+}
+
+h2 {
+  font-size: 1.2em;
+  line-height: 1.2em;
+}
+
+
+
+/*** Header / Toolbar ***/
+.toolbar-container {
+  margin: 20px 0;
+}
+
+.toolbar-controls {
+  float: right;
+}
+
+.layout-btn {
+  transition: opacity .2s ease-in-out;
+  display: inline-block;
+  padding: 10px 10px;
+  margin: 10px 0 10px 10px;
+  background: #CFCFCF;
+  border: 2px solid gray;
+  opacity: 0.7;
+
+  &.selected {
+    border: 2px solid red;
+  }
+
+  &:hover {
+    opacity: 1;
+    cursor: pointer;
+  }
+}
+
+/*** Images ***/
+
+.img-collection-container {
+  text-align: center;
+}
+
+.img-container {
+  display: inline-block;
+  width: 30%;
+  padding: 20px 20px 20px 0;
+  font-size: 13px;
+  text-align: left;
+
+  &:last-child {
+    padding-right: 0;
+  }
+
+  @media @mobile {
+    max-width: 400px;
+    width: 90%;
+  }
+}
+
+.img-wrapper {
+  background: #EFEFEF;
+}
+
+img {
+  display: block;
+  margin: 0 auto;
+  max-height: 180px;
+  max-width: 100%;
+
+  @media @mobile {
+    max-height: none;
+  }
+}
+
+.img-details {
+  display: block;
+  padding-top: 10px;
+  line-height: 1.3em;
+}
+
+.img-name,
+.img-date-modified,
+.img-rating,
+.img-caption {
+  display: block;
+}
+
+/*** List View ***/
+
+@media @desktop {
+  [data-viewtype='LIST_VIEW'] .img-container {
+    display: block;
+    width: 100%;
+    margin: 0 auto;
+    overflow: hidden;
+
+    img, .img-details {
+      float: left;
+    }
+
+    img {
+      max-height: auto;
+      max-width: 200px;
+    }
+
+    .img-details {
+      padding: 20px;
+    }
+  }
+}
+
+/* Star Ratings from http://css-tricks.com/star-ratings/ */
+.filter-by-text {
+  display: inline-block;
+  margin-top: 13px;
+  margin-right: 1em;
+}
+
+.rating {
+  display: block;
+  width: 300px;
+  unicode-bidi: bidi-override;
+  direction: rtl;
+  font-size: 1.5em;
+  cursor: pointer;
+}
+
+.rating > .rating-star {
+  display: inline-block;
+  position: relative;
+  margin-left: -6px;
+  padding: 10px 5px;
+  color: gray;
+}
+
+.rating > .icon-close {
+  display: inline-block;
+  color: #5F5F5F;
+  font-size: 12px;
+
+  &:before {
+    content: 'Clear Filter';
+    padding-left: 5px;
+  }
+
+  &:hover {
+    color: red;
+    text-decoration: underline;
+  }
+}
+
+/* Persistent ratings for rated images */
+.set-rating(@i) when (@i > 0) {
+  .set-rating(@i - 1);
+  .rating[data-persist-rating="@{i}"] {
+    > .rating-star[data-rating="@{i}"]:before,
+    > .rating-star[data-rating="@{i}"] ~ .rating-star:before {
+      color: orange;
+      content: "\2605";
+      position: absolute;
+    }
+
+    // &:hover {
+    //   > .rating-star[data-rating="@{i}"]:before,
+    //   > .rating-star[data-rating="@{i}"] ~ .rating-star:before {
+    //     color: red;
+    //     content: "";
+    //   }
+    // }
+  }
+}
+
+#app-container {
+  .set-rating(5);
+}
+
+.rating > .rating-star:hover:before,
+.rating > .rating-star:hover ~ .rating-star:before {
+  color: red !important;
+  content: "\2605";
+  position: absolute;
+}

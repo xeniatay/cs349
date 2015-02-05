@@ -8,6 +8,7 @@ function createViewModule() {
     var LIST_VIEW = 'LIST_VIEW';
     var GRID_VIEW = 'GRID_VIEW';
     var RATING_CHANGE = 'RATING_CHANGE';
+    var VIEW_TYPE_CHANGED = 'VIEW_TYPE_CHANGED';
 
     /**
      * An object representing a DOM element that will render the given ImageModel object.
@@ -23,14 +24,15 @@ function createViewModule() {
             var imageTemplate = document.getElementById('single-img');
 
             this.imageDiv = document.createElement('div');
+            this.imageDiv.classList.add('img-container');
             this.imageDiv.appendChild(document.importNode(imageTemplate.content, true));
-            this.viewType = LIST_VIEW;
         },
 
         initListeners: function() {
             this.model.addListener( function(imageModel, date) {
                 // META DATA CHANGED
                 console.debug('meta data changed');
+                this.render();
             }.bind(this) );
         },
 
@@ -47,14 +49,18 @@ function createViewModule() {
          */
         render: function() {
             var img = this.imageDiv.getElementsByTagName('img')[0],
+                name = this.imageDiv.querySelector('.img-name'),
                 caption = this.imageDiv.querySelector('.img-caption'),
                 dateModified = this.imageDiv.querySelector('.img-date-modified'),
                 rating = this.imageDiv.querySelector('.img-rating');
 
-            img.src = this.model.getPath();
+            this.imageDiv.setAttribute('data-id', this.model.getId());
+            this.imageDiv.setAttribute('data-img-container-rating', this.model.getRating());
+
+            img.src = name.innerHTML = this.model.getPath();
             caption.innerHTML = this.model.getCaption();
-            dateModified.innerHTML = this.model.getModificationDate();
-            rating.innerHTML = this.model.getRating();
+            dateModified.innerHTML = this.model.getModificationDate().toLocaleString();
+            rating.setAttribute( 'data-persist-rating', this.model.getRating() );
         },
 
         /**
@@ -97,7 +103,7 @@ function createViewModule() {
          * currently rendering.
          */
         getCurrentView: function() {
-            return this.viewType;
+            return this.viewType = this.imageDiv.parentNode.getAttribute('data-viewtype');
         }
     });
 
@@ -138,13 +144,16 @@ function createViewModule() {
 
             var collectionTemplate = document.getElementById('img-collection');
             this.collectionDiv = document.createElement('div');
+            this.collectionDiv.classList.add('img-collection-container');
             this.collectionDiv.appendChild(document.importNode(collectionTemplate.content, true));
         },
 
 
         initListeners: function() {
             this.model.addListener( function(event, imageModelCollection, imageModel, date) {
-                if (event === 'IMAGE_ADDED_TO_COLLECTION_EVENT') {
+                if (event === 'IMAGE_META_DATA_CHANGED_EVENT') {
+                    console.log('img collection metadatachanged');
+                } else if (event === 'IMAGE_ADDED_TO_COLLECTION_EVENT') {
                     // TODO
                     console.debug('image added');
                     var image = this.imageRendererFactory.createImageRenderer(imageModel);
@@ -207,6 +216,7 @@ function createViewModule() {
          */
         setToView: function(viewType) {
             this.viewType = viewType;
+            this.collectionDiv.setAttribute('data-viewtype', this.getCurrentView());
         },
 
         /**
@@ -214,8 +224,7 @@ function createViewModule() {
          * being rendered.
          */
         getCurrentView: function() {
-            // TODO wtf
-            return this.model.last().getCurrentView();
+            return this.viewType;
         }
     });
 
@@ -231,12 +240,13 @@ function createViewModule() {
         init: function() {
             var toolbarTemplate = document.getElementById('toolbar');
 
-            this.listeners = [];
-            this.viewType = LIST_VIEW;
-            this.ratingFilter = 0;
-
             this.toolbarDiv = document.createElement('div');
+            this.toolbarDiv.classList.add('toolbar-container');
             this.toolbarDiv.appendChild(document.importNode(toolbarTemplate.content, true));
+
+            this.listeners = [];
+            this.setToView(GRID_VIEW);
+            this.setRatingFilter();
         },
 
         /**
@@ -278,7 +288,27 @@ function createViewModule() {
          * @param viewType A string of either LIST_VIEW or GRID_VIEW representing the desired view.
          */
         setToView: function(viewType) {
+
+            if (this.viewType === viewType) { return; }
             this.viewType = viewType;
+
+            this.highlightSelectedBtn();
+
+            // Iterate over all listeners, calling each in turn
+            _.each(this.listeners, function (listener_fn) {
+                listener_fn(this, VIEW_TYPE_CHANGED, new Date());
+            }, this);
+        },
+
+        highlightSelectedBtn: function() {
+            var btns = this.toolbarDiv.querySelectorAll('.layout-btn'),
+                selectedBtn = this.toolbarDiv.querySelector('[data-viewtype="' + this.viewType + '"]');
+
+            _.each(btns, function(btn) {
+                btn.classList.remove('selected');
+            });
+
+            selectedBtn.classList.add('selected');
         },
 
         /**
@@ -302,7 +332,8 @@ function createViewModule() {
          * @param rating An integer in the range [0,5], where 0 indicates no filtering should take place.
          */
         setRatingFilter: function(rating) {
-            this.ratingFilter = rating;
+            this.ratingFilter = Number(rating) || 0;
+            this.toolbarDiv.querySelector('.filter-rating').setAttribute('data-persist-rating', rating);
         }
     });
 
@@ -320,6 +351,7 @@ function createViewModule() {
         _init: function() {
             var self = this;
             this.fileChooserDiv = document.createElement('div');
+            this.fileChooserDiv.classList.add('file-chooser-container');
             var fileChooserTemplate = document.getElementById('file-chooser');
             this.fileChooserDiv.appendChild(document.importNode(fileChooserTemplate.content, true));
             var fileChooserInput = this.fileChooserDiv.querySelector('.files-input');

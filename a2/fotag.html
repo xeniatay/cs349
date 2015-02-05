@@ -21,19 +21,32 @@
 <body>
 
 <template id="toolbar">
-    <header>
-        <h1>Fotag!</h1>
-        <h2>Import, organize, and rate your photos!</h2>
-
-        <div class="layout-btn">
-            Tile
-        </div>
-        <div class="layout-btn">
-            List
+    <header class="clearfix">
+        <div class="pull-left">
+            <h1>Fotag!</h1>
+            <h2>Import, organize, and rate your photos!</h2>
         </div>
 
-        <div class="filter-by">
-            Filter By:
+        <div class="toolbar-controls pull-right">
+            <div class="layout-btn" data-viewtype="GRID_VIEW">
+                <i class="icon icon-grid"></i>
+            </div>
+            <div class="layout-btn" data-viewtype="LIST_VIEW">
+                <i class="icon icon-list"></i>
+            </div>
+
+            <div class="filter-by">
+                <div class="pull-left filter-by-text">Filter By:</div>
+
+                <div class="rating filter-rating">
+                    <div class="rating-star" data-rating="5">☆</div>
+                    <div class="rating-star" data-rating="4">☆</div>
+                    <div class="rating-star" data-rating="3">☆</div>
+                    <div class="rating-star" data-rating="2">☆</div>
+                    <div class="rating-star" data-rating="1">☆</div>
+                    <div class="icon-close" data-rating="0"></div>
+                </div>
+            </div>
         </div>
     </header>
 </template>
@@ -48,14 +61,24 @@
 </template>
 
 <template id="single-img">
-    <img class="img-src">
-    <span class="img-date-modified"></span>
-    <div class="img-rating"></div>
-    <div class="img-caption"></div>
+    <div class="img-wrapper">
+        <img class="img-src">
+    </div>
+    <div class="img-details">
+        <span class="img-name"></span>
+        <span class="img-date-modified"></span>
+        <div class="rating img-rating">
+            <div class="rating-star" data-rating="5">☆</div>
+            <div class="rating-star" data-rating="4">☆</div>
+            <div class="rating-star" data-rating="3">☆</div>
+            <div class="rating-star" data-rating="2">☆</div>
+            <div class="rating-star" data-rating="1">☆</div>
+        </div>
+        <span class="img-caption"></span>
+    </div>
 </template>
 
 <template id="img-collection">
-    image collection hi
 </template>
 
 <!-- Keep this here so TAs can run your unit tests -->

@@ -31,6 +31,7 @@ function createModelModule() {
             throw new Error("Invalid arguments supplied to ImageModel: " + JSON.stringify(arguments));
         }
 
+        this.id = _.uniqueId('img-');
         this.path = pathToFile;
         this.modificationDate = modificationDate;
 
@@ -99,7 +100,8 @@ function createModelModule() {
          * @param rating An integer in the range [0,5] (where a 0 indicates the user is clearing their rating)
          */
         setRating: function(rating) {
-            this.rating = rating || 0;
+            if (Number(rating) === this.rating) { return; }
+            this.rating = Number(rating) || 0;
             this.onMetaDataChange();
         },
 
@@ -109,6 +111,13 @@ function createModelModule() {
         getPath: function() {
             // Relative path from current dir, i.e. './image/...'
             return this.path;
+        },
+
+        /**
+         * Returns unique ID
+         */
+        getId: function() {
+            return this.id;
         },
 
         /**
@@ -191,6 +200,7 @@ function createModelModule() {
          */
         addImageModel: function(imageModel) {
             this.imageModels.push(imageModel);
+            imageModel.addListener( _.bind(this.onMetaDataChange, this) );
             this.onAddImage(imageModel);
         },
 
@@ -212,6 +222,16 @@ function createModelModule() {
         },
 
         /**
+         * Returns an ImageModel by given ID
+         */
+        getImageModel: function(id) {
+            return _.find(this.imageModels, function(imageModel) {
+                return imageModel.getId() === id;
+            });
+
+        },
+
+        /**
          * Trigger IMAGE_ADDED_TO_COLLECTION_EVENT for all listeners
          */
         onAddImage: function(imageModel) {
@@ -228,6 +248,17 @@ function createModelModule() {
             // Use underscore to iterate over all listeners, calling each in turn
             _.each(this.listeners, function (listener_fn) {
                 listener_fn(IMAGE_REMOVED_FROM_COLLECTION_EVENT, this, imageModel, new Date);
+            }, this);
+        },
+
+        /**
+         * Trigger IMAGE_META_DATA_CHANGED_EVENT for all listeners
+         */
+        onMetaDataChange: function(imageModel, date) {
+            // Use underscore to iterate over all listeners, calling each in turn
+            _.each(this.listeners, function (listener_fn) {
+                storeImageCollectionModel(this);
+                listener_fn(IMAGE_META_DATA_CHANGED_EVENT, this, imageModel, date);
             }, this);
         }
     });
@@ -265,6 +296,7 @@ function createModelModule() {
                 var imageModel = new ImageModel( model.path, new Date(model.modificationDate), model.caption, model.rating );
                 imageCollectionModel.addImageModel(imageModel);
             } catch (err) {
+                debugger;
                 console.log("Error creating ImageModel: " + err);
             }
         });

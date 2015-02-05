@@ -1,15 +1,353 @@
-/* Put any additional CSS here */
-
+/*** RESET ***/
+/* http://meyerweb.com/eric/tools/css/reset/
+   v2.0 | 20110126
+   License: none (public domain)
+*/
+html,
+body,
+div,
+span,
+applet,
+object,
+iframe,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+p,
+blockquote,
+pre,
+a,
+abbr,
+acronym,
+address,
+big,
+cite,
+code,
+del,
+dfn,
+em,
+img,
+ins,
+kbd,
+q,
+s,
+samp,
+small,
+strike,
+strong,
+sub,
+sup,
+tt,
+var,
+b,
+u,
+i,
+center,
+dl,
+dt,
+dd,
+ol,
+ul,
+li,
+fieldset,
+form,
+label,
+legend,
+table,
+caption,
+tbody,
+tfoot,
+thead,
+tr,
+th,
+td,
+article,
+aside,
+canvas,
+details,
+embed,
+figure,
+figcaption,
+footer,
+header,
+hgroup,
+menu,
+nav,
+output,
+ruby,
+section,
+summary,
+time,
+mark,
+audio,
+video {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  font-size: 100%;
+  font: inherit;
+  vertical-align: baseline;
+}
+/* HTML5 display-role reset for older browsers */
+article,
+aside,
+details,
+figcaption,
+figure,
+footer,
+header,
+hgroup,
+menu,
+nav,
+section {
+  display: block;
+}
+body {
+  line-height: 1;
+}
+ol,
+ul {
+  list-style: none;
+}
+blockquote,
+q {
+  quotes: none;
+}
+blockquote:before,
+blockquote:after,
+q:before,
+q:after {
+  content: '';
+  content: none;
+}
+table {
+  border-collapse: collapse;
+  border-spacing: 0;
+}
+/*** Helper Classes ***/
+.clearfix:after {
+  visibility: hidden;
+  display: block;
+  font-size: 0;
+  content: " ";
+  clear: both;
+  height: 0;
+}
+.clearfix {
+  display: inline-block;
+}
+* html .clearfix {
+  height: 1%;
+}
+.clearfix {
+  display: block;
+}
+.pull-left {
+  float: left;
+}
+.pull-right {
+  float: right;
+}
+.hide {
+  display: none !important;
+}
+/*** Icons ***/
+i.icon {
+  display: block;
+  width: 20px;
+  height: 20px;
+}
+.icon-grid {
+  background: url('../images/icons/Grid.png');
+  background-size: contain;
+}
+.icon-list {
+  background: url('../images/icons/List1.png');
+  background-size: contain;
+}
+/*** VARIABLES ***/
+/*** STYLES ***/
 @font-face {
   font-family: 'Montserrat';
   src: url(../fonts/Montserrat/Montserrat-Regular.ttf);
 }
-
 html,
 body {
   font-family: 'Montserrat';
+  font-size: 16px;
 }
-
+#app-container {
+  margin: 0 auto;
+  max-width: 800px;
+}
+/*** Typography and Icons ***/
+h1 {
+  font-size: 2.5em;
+  line-height: 1.5em;
+}
+h2 {
+  font-size: 1.2em;
+  line-height: 1.2em;
+}
+/*** Header / Toolbar ***/
+.toolbar-container {
+  margin: 20px 0;
+}
+.toolbar-controls {
+  float: right;
+}
+.layout-btn {
+  transition: opacity 0.2s ease-in-out;
+  display: inline-block;
+  padding: 10px 10px;
+  margin: 10px 0 10px 10px;
+  background: #CFCFCF;
+  border: 2px solid gray;
+  opacity: 0.7;
+}
+.layout-btn.selected {
+  border: 2px solid red;
+}
+.layout-btn:hover {
+  opacity: 1;
+  cursor: pointer;
+}
+/*** Images ***/
+.img-collection-container {
+  text-align: center;
+}
+.img-container {
+  display: inline-block;
+  width: 30%;
+  padding: 20px 20px 20px 0;
+  font-size: 13px;
+  text-align: left;
+}
+.img-container:last-child {
+  padding-right: 0;
+}
+@media (max-width: 759px) {
+  .img-container {
+    max-width: 400px;
+    width: 90%;
+  }
+}
+.img-wrapper {
+  background: #EFEFEF;
+}
 img {
-  width: 50px;
+  display: block;
+  margin: 0 auto;
+  max-height: 180px;
+  max-width: 100%;
+}
+@media (max-width: 759px) {
+  img {
+    max-height: none;
+  }
+}
+.img-details {
+  display: block;
+  padding-top: 10px;
+  line-height: 1.3em;
+}
+.img-name,
+.img-date-modified,
+.img-rating,
+.img-caption {
+  display: block;
+}
+/*** List View ***/
+@media (min-width: 760px) {
+  [data-viewtype='LIST_VIEW'] .img-container {
+    display: block;
+    width: 100%;
+    margin: 0 auto;
+    overflow: hidden;
+  }
+  [data-viewtype='LIST_VIEW'] .img-container img,
+  [data-viewtype='LIST_VIEW'] .img-container .img-details {
+    float: left;
+  }
+  [data-viewtype='LIST_VIEW'] .img-container img {
+    max-height: auto;
+    max-width: 200px;
+  }
+  [data-viewtype='LIST_VIEW'] .img-container .img-details {
+    padding: 20px;
+  }
+}
+/* Star Ratings from http://css-tricks.com/star-ratings/ */
+.filter-by-text {
+  display: inline-block;
+  margin-top: 13px;
+  margin-right: 1em;
+}
+.rating {
+  display: block;
+  width: 300px;
+  unicode-bidi: bidi-override;
+  direction: rtl;
+  font-size: 1.5em;
+  cursor: pointer;
+}
+.rating > .rating-star {
+  display: inline-block;
+  position: relative;
+  margin-left: -6px;
+  padding: 10px 5px;
+  color: gray;
+}
+.rating > .icon-close {
+  display: inline-block;
+  color: #5F5F5F;
+  font-size: 12px;
+}
+.rating > .icon-close:before {
+  content: 'Clear Filter';
+  padding-left: 5px;
+}
+.rating > .icon-close:hover {
+  color: red;
+  text-decoration: underline;
+}
+/* Persistent ratings for rated images */
+#app-container .rating[data-persist-rating="1"] > .rating-star[data-rating="1"]:before,
+#app-container .rating[data-persist-rating="1"] > .rating-star[data-rating="1"] ~ .rating-star:before {
+  color: orange;
+  content: "\2605";
+  position: absolute;
+}
+#app-container .rating[data-persist-rating="2"] > .rating-star[data-rating="2"]:before,
+#app-container .rating[data-persist-rating="2"] > .rating-star[data-rating="2"] ~ .rating-star:before {
+  color: orange;
+  content: "\2605";
+  position: absolute;
+}
+#app-container .rating[data-persist-rating="3"] > .rating-star[data-rating="3"]:before,
+#app-container .rating[data-persist-rating="3"] > .rating-star[data-rating="3"] ~ .rating-star:before {
+  color: orange;
+  content: "\2605";
+  position: absolute;
+}
+#app-container .rating[data-persist-rating="4"] > .rating-star[data-rating="4"]:before,
+#app-container .rating[data-persist-rating="4"] > .rating-star[data-rating="4"] ~ .rating-star:before {
+  color: orange;
+  content: "\2605";
+  position: absolute;
+}
+#app-container .rating[data-persist-rating="5"] > .rating-star[data-rating="5"]:before,
+#app-container .rating[data-persist-rating="5"] > .rating-star[data-rating="5"] ~ .rating-star:before {
+  color: orange;
+  content: "\2605";
+  position: absolute;
+}
+.rating > .rating-star:hover:before,
+.rating > .rating-star:hover ~ .rating-star:before {
+  color: red !important;
+  content: "\2605";
+  position: absolute;
 }
