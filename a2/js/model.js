@@ -225,7 +225,6 @@ function createModelModule() {
          * @param imageModel
          */
         removeImageModel: function(imageModel) {
-            // TODO remove listenrs?
             this.imageModels = _.without(this.imageModels, imageModel);
 
             var id = imageModel.id;
@@ -235,6 +234,12 @@ function createModelModule() {
             });
 
             this.onRemoveImage(imageModel);
+        },
+
+        removeImageModels: function() {
+            _.each(this.imageModels, function(imageModel) {
+                this.removeImageModel(imageModel);
+            }, this);
         },
 
         /**
@@ -303,7 +308,6 @@ function createModelModule() {
                 };
             }
         );
-        console.log('storeImageCollectionModel');
         localStorage.setItem('imageCollectionModel', JSON.stringify(models));
     }
 
@@ -323,7 +327,7 @@ function createModelModule() {
                 imageCollectionModel.addImageModel(imageModel);
             } catch (err) {
                 debugger;
-                console.log("Error creating ImageModel: " + err);
+                console.debug("Error creating ImageModel: " + err);
             }
         });
 
