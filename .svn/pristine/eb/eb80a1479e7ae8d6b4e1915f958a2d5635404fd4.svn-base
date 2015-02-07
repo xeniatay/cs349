@@ -1,0 +1,32 @@
+/* Palette color codes */
+/* Palette URL: http://paletton.com/#uid=71J0u0kllllaFw0g0qFqFg0w0aF */
+
+@color-primary-0: #E90000;  /* Main Primary color */
+@color-primary-1: #FF1414;
+@color-primary-2: #FF0000;
+@color-primary-3: #BC0000;
+@color-primary-4: #8D0000;
+
+@color-secondary-0: #E98600;  /* Main Secondary color (1) */
+@color-secondary-1: #FF9B14;
+@color-secondary-2: #FF9200;
+@color-secondary-3: #BC6C00;
+@color-secondary-4: #8D5100;
+
+@color-tertiary-0: #035696;  /* Main Secondary color (2) */
+@color-tertiary-1: #1D82D0;
+@color-tertiary-2: #0675CA;
+@color-tertiary-3: #024679;
+@color-tertiary-4: #01345B;
+
+@color-complement-0: #00BB00; /* Main Complement color */
+@color-complement-1: #12E512;
+@color-complement-2: #00E100;
+@color-complement-3: #009700;
+@color-complement-4: #007100;
+
+@light-gray: #EFEFEF;
+@middle-gray: #CFCFCF;
+@dark-gray: #2F2F2F;
+@white: #FFFFFF;
+@success: @color-complement-0;

@@ -1,0 +1,18 @@
+/*** Icons ***/
+
+i.icon {
+  display: block;
+  width: 15px;
+  height: 15px;
+}
+
+.icon-grid {
+  background: url('../images/icons/Grid.png');
+  background-size: contain;
+}
+
+.icon-list {
+  background: url('../images/icons/List1.png');
+  background-size: contain;
+}
+
