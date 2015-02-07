@@ -157,8 +157,8 @@ table {
 /*** Icons ***/
 i.icon {
   display: block;
-  width: 20px;
-  height: 20px;
+  width: 15px;
+  height: 15px;
 }
 .icon-grid {
   background: url('../images/icons/Grid.png');
@@ -168,6 +168,12 @@ i.icon {
   background: url('../images/icons/List1.png');
   background-size: contain;
 }
+/* Palette color codes */
+/* Palette URL: http://paletton.com/#uid=71J0u0kllllaFw0g0qFqFg0w0aF */
+/* Main Primary color */
+/* Main Secondary color (1) */
+/* Main Secondary color (2) */
+/* Main Complement color */
 /*** VARIABLES ***/
 /*** STYLES ***/
 @font-face {
@@ -181,7 +187,6 @@ body {
 }
 #app-container {
   margin: 0 auto;
-  max-width: 800px;
 }
 /*** Typography and Icons ***/
 h1 {
@@ -194,30 +199,152 @@ h2 {
 }
 /*** Header / Toolbar ***/
 .toolbar-container {
-  margin: 20px 0;
+  position: fixed;
+  background: #ffffff;
+  top: 0;
+  width: 100%;
+  z-index: 1000;
+  border-bottom: 2px solid #efefef;
 }
-.toolbar-controls {
-  float: right;
+.toolbar-container header {
+  max-width: 1000px;
+  margin: 0 auto;
 }
-.layout-btn {
-  transition: opacity 0.2s ease-in-out;
+.toolbar-offset {
+  margin-top: 99px !important;
+}
+.fotag-heading {
+  font-size: 12px;
+  padding: 10px 0;
+}
+.toolbar-control-wrapper {
+  float: left;
+  padding: 0 20px 0 20px;
+  margin: 15px 0 10px;
+  border-right: 1px solid #efefef;
+}
+.toolbar-control-wrapper:last-child {
+  border: none;
+}
+.toolbar-control-wrapper:hover .layout-btn {
+  border: 2px solid #efefef;
+}
+.toolbar-control-wrapper .layout-btn {
+  transition: opacity 0.1s ease-in-out;
   display: inline-block;
-  padding: 10px 10px;
-  margin: 10px 0 10px 10px;
-  background: #CFCFCF;
-  border: 2px solid gray;
-  opacity: 0.7;
+  padding: 8px 8px;
+  margin: 10px 8px 10px 0;
+  background: #efefef;
+  border: 2px solid #efefef;
+  opacity: 0.6;
 }
-.layout-btn.selected {
-  border: 2px solid red;
-}
-.layout-btn:hover {
+.toolbar-control-wrapper .layout-btn.selected {
+  border: 2px solid #1d82d0;
   opacity: 1;
+}
+.toolbar-control-wrapper .layout-btn:hover:not(.selected) {
+  border: 2px solid #024679;
+  opacity: 1;
+  cursor: pointer;
+}
+.toolbar-control-wrapper .control-label {
+  display: block;
+  font-size: 14px;
+}
+/* Star Ratings from http://css-tricks.com/star-ratings/ */
+.rating {
+  display: block;
+  width: 170px;
+  unicode-bidi: bidi-override;
+  direction: rtl;
+  font-size: 1.5em;
+}
+.rating > .rating-star {
+  display: inline-block;
+  position: relative;
+  margin-left: -6px;
+  padding: 10px 5px 0 5px;
+  color: #cfcfcf;
+  cursor: pointer;
+}
+.rating > .icon-close {
+  display: inline-block;
+  position: absolute;
+  margin-top: 5px;
+  font-size: 12px;
+  color: #bcbcbc;
+  cursor: pointer;
+}
+.rating > .icon-close:before {
+  content: 'Clear Filter';
+  padding-left: 5px;
+  margin-top: -3px;
+}
+.rating > .icon-close:hover {
+  color: #ff1414;
+  text-decoration: underline;
+}
+/* Persistent ratings for rated images */
+#app-container .rating[data-persist-rating="1"] > .rating-star[data-rating="1"]:before,
+#app-container .rating[data-persist-rating="1"] > .rating-star[data-rating="1"] ~ .rating-star:before {
+  color: #ff9b14;
+  content: "\2605";
+  position: absolute;
+}
+#app-container .rating[data-persist-rating="2"] > .rating-star[data-rating="2"]:before,
+#app-container .rating[data-persist-rating="2"] > .rating-star[data-rating="2"] ~ .rating-star:before {
+  color: #ff9b14;
+  content: "\2605";
+  position: absolute;
+}
+#app-container .rating[data-persist-rating="3"] > .rating-star[data-rating="3"]:before,
+#app-container .rating[data-persist-rating="3"] > .rating-star[data-rating="3"] ~ .rating-star:before {
+  color: #ff9b14;
+  content: "\2605";
+  position: absolute;
+}
+#app-container .rating[data-persist-rating="4"] > .rating-star[data-rating="4"]:before,
+#app-container .rating[data-persist-rating="4"] > .rating-star[data-rating="4"] ~ .rating-star:before {
+  color: #ff9b14;
+  content: "\2605";
+  position: absolute;
+}
+#app-container .rating[data-persist-rating="5"] > .rating-star[data-rating="5"]:before,
+#app-container .rating[data-persist-rating="5"] > .rating-star[data-rating="5"] ~ .rating-star:before {
+  color: #ff9b14;
+  content: "\2605";
+  position: absolute;
+}
+.rating > .rating-star:hover:before,
+.rating > .rating-star:hover ~ .rating-star:before {
+  color: #ff1414 !important;
+  content: "\2605";
+  position: absolute;
+}
+/*** File Chooser ***/
+.file-chooser-container {
+  background: #efefef;
+  text-align: center;
+}
+.file-chooser-container h2 {
+  display: inline-block;
+}
+.file-chooser-wrapper {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+.files-input {
+  display: inline-block;
+  font-size: 12px;
+  padding: 20px 10px;
   cursor: pointer;
 }
 /*** Images ***/
 .img-collection-container {
+  max-width: 1200px;
+  margin: 0 auto;
   text-align: center;
+  background: #ffffff;
 }
 .img-container {
   display: inline-block;
@@ -235,13 +362,34 @@ h2 {
     width: 90%;
   }
 }
+.img-container:hover .img-remove {
+  opacity: 0.8;
+}
 .img-wrapper {
-  background: #EFEFEF;
+  position: relative;
+  background: #ffffff;
+  border: 1px solid #efefef;
+  padding: 10px;
+}
+.img-remove {
+  transition: all 0.1s ease-in-out;
+  opacity: 0;
+  position: absolute;
+  top: 5px;
+  right: 5px;
+  padding: 10px;
+  font-size: 25px;
+  background: #ffffff;
+}
+.img-remove:hover {
+  color: #ff1414;
+  cursor: pointer;
+  opacity: 1 !important;
 }
 img {
   display: block;
   margin: 0 auto;
-  max-height: 180px;
+  max-height: 200px;
   max-width: 100%;
 }
 @media (max-width: 759px) {
@@ -279,75 +427,4 @@ img {
   [data-viewtype='LIST_VIEW'] .img-container .img-details {
     padding: 20px;
   }
-}
-/* Star Ratings from http://css-tricks.com/star-ratings/ */
-.filter-by-text {
-  display: inline-block;
-  margin-top: 13px;
-  margin-right: 1em;
-}
-.rating {
-  display: block;
-  width: 300px;
-  unicode-bidi: bidi-override;
-  direction: rtl;
-  font-size: 1.5em;
-  cursor: pointer;
-}
-.rating > .rating-star {
-  display: inline-block;
-  position: relative;
-  margin-left: -6px;
-  padding: 10px 5px;
-  color: gray;
-}
-.rating > .icon-close {
-  display: inline-block;
-  color: #5F5F5F;
-  font-size: 12px;
-}
-.rating > .icon-close:before {
-  content: 'Clear Filter';
-  padding-left: 5px;
-}
-.rating > .icon-close:hover {
-  color: red;
-  text-decoration: underline;
-}
-/* Persistent ratings for rated images */
-#app-container .rating[data-persist-rating="1"] > .rating-star[data-rating="1"]:before,
-#app-container .rating[data-persist-rating="1"] > .rating-star[data-rating="1"] ~ .rating-star:before {
-  color: orange;
-  content: "\2605";
-  position: absolute;
-}
-#app-container .rating[data-persist-rating="2"] > .rating-star[data-rating="2"]:before,
-#app-container .rating[data-persist-rating="2"] > .rating-star[data-rating="2"] ~ .rating-star:before {
-  color: orange;
-  content: "\2605";
-  position: absolute;
-}
-#app-container .rating[data-persist-rating="3"] > .rating-star[data-rating="3"]:before,
-#app-container .rating[data-persist-rating="3"] > .rating-star[data-rating="3"] ~ .rating-star:before {
-  color: orange;
-  content: "\2605";
-  position: absolute;
-}
-#app-container .rating[data-persist-rating="4"] > .rating-star[data-rating="4"]:before,
-#app-container .rating[data-persist-rating="4"] > .rating-star[data-rating="4"] ~ .rating-star:before {
-  color: orange;
-  content: "\2605";
-  position: absolute;
-}
-#app-container .rating[data-persist-rating="5"] > .rating-star[data-rating="5"]:before,
-#app-container .rating[data-persist-rating="5"] > .rating-star[data-rating="5"] ~ .rating-star:before {
-  color: orange;
-  content: "\2605";
-  position: absolute;
-}
-.rating > .rating-star:hover:before,
-.rating > .rating-star:hover ~ .rating-star:before {
-  color: red !important;
-  content: "\2605";
-  position: absolute;
 }

@@ -22,21 +22,24 @@
 
 <template id="toolbar">
     <header class="clearfix">
-        <div class="pull-left">
+        <div class="fotag-heading pull-left">
             <h1>Fotag!</h1>
             <h2>Import, organize, and rate your photos!</h2>
         </div>
 
-        <div class="toolbar-controls pull-right">
-            <div class="layout-btn" data-viewtype="GRID_VIEW">
-                <i class="icon icon-grid"></i>
-            </div>
-            <div class="layout-btn" data-viewtype="LIST_VIEW">
-                <i class="icon icon-list"></i>
+        <div class="toolbar-controls pull-right clearfix">
+            <div class="toolbar-control-wrapper">
+                <span class="control-label">Layout</span>
+                <div class="layout-btn" data-viewtype="GRID_VIEW">
+                    <i class="icon icon-grid"></i>
+                </div>
+                <div class="layout-btn" data-viewtype="LIST_VIEW">
+                    <i class="icon icon-list"></i>
+                </div>
             </div>
 
-            <div class="filter-by">
-                <div class="pull-left filter-by-text">Filter By:</div>
+            <div class="toolbar-control-wrapper">
+                <div class="control-label">Filter By Rating</div>
 
                 <div class="rating filter-rating">
                     <div class="rating-star" data-rating="5">☆</div>
@@ -56,12 +59,16 @@
 
 <!-- A template for a file chooser, to select multiple files. See FileChooser in view.js. -->
 <template id="file-chooser">
-    <input type="file" class="files-input" name="file_results[]" multiple />
-    <output id="list"></output>
+    <div class="file-chooser-wrapper">
+        <h2>Upload images: </h2>
+        <input type="file" class="files-input" name="file_results[]" multiple />
+        <output id="list"></output>
+    </div>
 </template>
 
 <template id="single-img">
     <div class="img-wrapper">
+        <span class="img-remove">&times;</span>
         <img class="img-src">
     </div>
     <div class="img-details">
