@@ -162,7 +162,9 @@ function createViewModule() {
                     this.getElement().appendChild(image.getElement());
 
                 } else if (event === 'IMAGE_REMOVED_FROM_COLLECTION_EVENT') {
-                    // TODO
+                    var image = document.querySelector('[data-id="' + imageModel.id + '"]');
+
+                    image.parentNode.removeChild(image);
                     console.debug('image removed');
                 }
             }.bind(this) );

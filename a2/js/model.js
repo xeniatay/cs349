@@ -67,7 +67,8 @@ function createModelModule() {
             if (!_.isFunction(listener_fn)) {
                 throw new Error("Invalid arguments to ImageModel.removeListener: " + JSON.stringify(arguments));
             }
-            this.listeners = _.without(listeners, listener_fn);
+
+            this.listeners = _.without(this.listeners, listener_fn);
         },
 
         /**
@@ -160,6 +161,7 @@ function createModelModule() {
 
         init: function() {
             this.listeners = [];
+            this.imageModelListeners = {};
         },
 
         /**
@@ -189,7 +191,7 @@ function createModelModule() {
             if (!_.isFunction(listener_fn)) {
                 throw new Error("Invalid arguments to ImageModelCollection.removeListener: " + JSON.stringify(arguments));
             }
-            this.listeners = _.without(listeners, listener_fn);
+            this.listeners = _.without(this.listeners, listener_fn);
         },
 
         /**
@@ -200,7 +202,20 @@ function createModelModule() {
          */
         addImageModel: function(imageModel) {
             this.imageModels.push(imageModel);
-            imageModel.addListener( _.bind(this.onMetaDataChange, this) );
+
+            var newListener = _.bind(this.onMetaDataChange, this),
+                id = imageModel.id,
+                listeners = this.imageModelListeners[id];
+
+            // Keep track of listeners in order to remove them if needed
+
+            imageModel.addListener(newListener);
+            if (!this.imageModelListeners[id]) {
+                this.imageModelListeners[id] = [newListener];
+            } else {
+                this.imageModelListeners[id].push[newListener];
+            }
+
             this.onAddImage(imageModel);
         },
 
@@ -210,8 +225,16 @@ function createModelModule() {
          * @param imageModel
          */
         removeImageModel: function(imageModel) {
-            this.onRemoveImage(imageModel);
             // TODO remove listenrs?
+            this.imageModels = _.without(this.imageModels, imageModel);
+
+            var id = imageModel.id;
+
+            _.each(this.imageModelListeners[id], function(listener) {
+                imageModel.removeListener(listener);
+            });
+
+            this.onRemoveImage(imageModel);
         },
 
         /**
@@ -236,6 +259,7 @@ function createModelModule() {
          */
         onAddImage: function(imageModel) {
             // Use underscore to iterate over all listeners, calling each in turn
+            storeImageCollectionModel(this);
             _.each(this.listeners, function (listener_fn) {
                 listener_fn(IMAGE_ADDED_TO_COLLECTION_EVENT, this, imageModel, new Date);
             }, this);
@@ -246,6 +270,7 @@ function createModelModule() {
          */
         onRemoveImage: function(imageModel) {
             // Use underscore to iterate over all listeners, calling each in turn
+            storeImageCollectionModel(this);
             _.each(this.listeners, function (listener_fn) {
                 listener_fn(IMAGE_REMOVED_FROM_COLLECTION_EVENT, this, imageModel, new Date);
             }, this);
@@ -256,8 +281,8 @@ function createModelModule() {
          */
         onMetaDataChange: function(imageModel, date) {
             // Use underscore to iterate over all listeners, calling each in turn
+            storeImageCollectionModel(this);
             _.each(this.listeners, function (listener_fn) {
-                storeImageCollectionModel(this);
                 listener_fn(IMAGE_META_DATA_CHANGED_EVENT, this, imageModel, date);
             }, this);
         }
@@ -278,6 +303,7 @@ function createModelModule() {
                 };
             }
         );
+        console.log('storeImageCollectionModel');
         localStorage.setItem('imageCollectionModel', JSON.stringify(models));
     }
 

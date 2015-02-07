@@ -16,6 +16,7 @@ window.addEventListener('load', function() {
     imageCollectionView.setImageCollectionModel(imageCollectionModel);
 
     appContainer.appendChild(toolbarView.getElement());
+    appContainer.classList.add('toolbar-offset');
     appContainer.appendChild(fileChooser.getElement());
     appContainer.appendChild(imageCollectionView.getElement());
 
@@ -30,6 +31,7 @@ window.addEventListener('load', function() {
     initRatingFilter();
     initViewButtons();
     initToolbarListeners();
+    initRemoveImageBtns();
 
     // Demo that we can choose files and save to local storage. This can be replaced, later
     fileChooser.addListener(function(fileChooser, files, eventDate) {
@@ -40,7 +42,8 @@ window.addEventListener('load', function() {
             appContainer.appendChild(newDiv);
             imageCollectionModel.addImageModel( new modelModule.ImageModel('./images/' + file.name, file.lastModifiedDate, '', 0));
         });
-        modelModule.storeImageCollectionModel(imageCollectionModel);
+        // console.log('storeImageCollectionModel from filechooser');
+        // modelModule.storeImageCollectionModel(imageCollectionModel);
     });
 
 
@@ -64,8 +67,10 @@ window.addEventListener('load', function() {
         var filters = appContainer.getElementsByClassName('filter-rating');
         _.each(filters, function(filter) {
             filter.addEventListener('click', function(e) {
-                var rating = e.target.getAttribute('data-rating'),
-                    images = appContainer.querySelectorAll('.img-container'),
+                var rating = e.target.getAttribute('data-rating');
+                if (!rating) { return; }
+
+                var images = appContainer.querySelectorAll('.img-container'),
                     selector = '.img-container:not([data-img-container-rating="' + rating + '"])',
                     notSelected = appContainer.querySelectorAll(selector);
 
@@ -98,6 +103,19 @@ window.addEventListener('load', function() {
                 imageCollectionView.setToView(toolbar.getCurrentView());
             }
         });
+    }
+
+    function initRemoveImageBtns() {
+        var deleteBtns = appContainer.querySelectorAll('.img-remove');
+        _.each(deleteBtns, function(btn) {
+            btn.addEventListener('click', function(e) {
+                var id = this.parentNode.parentNode.getAttribute('data-id'),
+                    model = imageCollectionModel.getImageModel(id);
+
+                imageCollectionModel.removeImageModel(model);
+            });
+
+        })
     }
 
 });
