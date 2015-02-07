@@ -23,17 +23,21 @@ function createViewModule() {
         init: function() {
             var imageTemplate = document.getElementById('single-img');
 
+            this.modelListeners = [];
+
             this.imageDiv = document.createElement('div');
             this.imageDiv.classList.add('img-container');
             this.imageDiv.appendChild(document.importNode(imageTemplate.content, true));
         },
 
         initListeners: function() {
-            this.model.addListener( function(imageModel, date) {
-                // META DATA CHANGED
-                console.debug('meta data changed');
+            // Metadata Changed
+            var newListener = function(imageModel, date) {
                 this.render();
-            }.bind(this) );
+            }.bind(this)
+
+            this.model.addListener(newListener);
+            this.modelListeners.push(newListener);
         },
 
         /**
@@ -81,9 +85,14 @@ function createViewModule() {
                 var oldModel = this.model;
                 this.model = imageModel;
 
-                // TODO listener stuff
-                // this.model.addListener(this.model, date);
-                // oldModel.removeListener(oldModel, date);
+                if (oldModel) {
+                    _.each(this.listeners, function(listener) {
+                        oldModel.removeListener(listener);
+                    });
+
+                    this.listeners = [];
+                }
+
                 this.initListeners();
             }
 
@@ -125,6 +134,12 @@ function createViewModule() {
             this.renderers.push(newRenderer);
 
             return newRenderer;
+        },
+
+        getImageRenderer: function(imageModel) {
+            return _.find(this.renderers, function(renderer) {
+                return renderer.model === imageModel;
+            });
         }
     });
 
@@ -145,6 +160,7 @@ function createViewModule() {
             var collectionTemplate = document.getElementById('img-collection');
             this.collectionDiv = document.createElement('div');
             this.collectionDiv.classList.add('img-collection-container');
+            this.collectionDiv.classList.add('clearfix');
             this.collectionDiv.appendChild(document.importNode(collectionTemplate.content, true));
         },
 
@@ -152,20 +168,20 @@ function createViewModule() {
         initListeners: function() {
             this.model.addListener( function(event, imageModelCollection, imageModel, date) {
                 if (event === 'IMAGE_META_DATA_CHANGED_EVENT') {
-                    console.log('img collection metadatachanged');
+                    var image = this.imageRendererFactory.getImageRenderer(imageModel);
+                    image.render();
                 } else if (event === 'IMAGE_ADDED_TO_COLLECTION_EVENT') {
-                    // TODO
-                    console.debug('image added');
                     var image = this.imageRendererFactory.createImageRenderer(imageModel);
-
                     image.render();
                     this.getElement().appendChild(image.getElement());
 
                 } else if (event === 'IMAGE_REMOVED_FROM_COLLECTION_EVENT') {
-                    var image = document.querySelector('[data-id="' + imageModel.id + '"]');
+                    var image = this.imageRendererFactory.getImageRenderer(imageModel);
 
-                    image.parentNode.removeChild(image);
-                    console.debug('image removed');
+                    image.getElement().parentNode.removeChild(image.getElement());
+                    _.each(image.modelListeners, function(listener) {
+                        image.model.removeListener(listener);
+                    }, this);
                 }
             }.bind(this) );
         },
@@ -191,8 +207,14 @@ function createViewModule() {
          * ImageRenderer objects with new ImageRenderer objects produced by the factory.
          */
         setImageRendererFactory: function(imageRendererFactory) {
-            this.imageRendererFactory = imageRendererFactory;
-            // TODO redo presentation
+            if (this.imageRendererFactory !== imageRendererFactory) {
+                this.model.removeImageModels();
+                this.imageRendererFactory = imageRendererFactory;
+
+                _.each(this.imageRendererFactory.renderers, function(image) {
+                    this.model.addImageModel(image.model);
+                }, this);
+            }
         },
 
         /**

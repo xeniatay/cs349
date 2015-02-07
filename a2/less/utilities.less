@@ -17,3 +17,10 @@
 .pull-right { float: right; }
 
 .hide { display: none !important; }
+
+.truncate(@width: 250px;) {
+  width: @width;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}

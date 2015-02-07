@@ -2,16 +2,25 @@
 
 // This should be your main point of entry for your app
 
+// Globals - this is notgood lol
+var modelModule,
+    viewModule,
+    appContainer,
+    imageCollectionView,
+    imageCollectionModel,
+    toolbarView,
+    fileChooser;
+
 window.addEventListener('load', function() {
-    var modelModule = createModelModule(),
-        viewModule = createViewModule(),
-        appContainer = document.getElementById('app-container'),
+    modelModule = createModelModule();
+    viewModule = createViewModule();
+    appContainer = document.getElementById('app-container');
 
-        imageCollectionView = new viewModule.ImageCollectionView(),
-        imageCollectionModel = new modelModule.ImageCollectionModel(),
+    imageCollectionView = new viewModule.ImageCollectionView();
+    imageCollectionModel = new modelModule.ImageCollectionModel();
 
-        toolbarView = new viewModule.Toolbar(),
-        fileChooser = new viewModule.FileChooser();
+    toolbarView = new viewModule.Toolbar();
+    fileChooser = new viewModule.FileChooser();
 
     imageCollectionView.setImageCollectionModel(imageCollectionModel);
 
@@ -27,40 +36,60 @@ window.addEventListener('load', function() {
     });
 
     // Initialize all event listeners
-    initImageRatingListeners();
+    initImageListeners();
+    initToolbarListeners();
     initRatingFilter();
     initViewButtons();
-    initToolbarListeners();
-    initRemoveImageBtns();
-
-    // Demo that we can choose files and save to local storage. This can be replaced, later
-    fileChooser.addListener(function(fileChooser, files, eventDate) {
-        _.each(files, function(file) {
-            var newDiv = document.createElement('div');
-            var fileInfo = "File name: " + file.name + ", last modified: " + file.lastModifiedDate;
-            newDiv.innerText = fileInfo;
-            appContainer.appendChild(newDiv);
-            imageCollectionModel.addImageModel( new modelModule.ImageModel('./images/' + file.name, file.lastModifiedDate, '', 0));
-        });
-        // console.log('storeImageCollectionModel from filechooser');
-        // modelModule.storeImageCollectionModel(imageCollectionModel);
-    });
+    initFileChooser();
 
 
     /*** Functions ***/
 
-    function initImageRatingListeners() {
-        var ratings = appContainer.getElementsByClassName('img-rating');
-        _.each(ratings, function(rating) {
-            rating.addEventListener('click', function(e) {
-                var newRating = e.target.getAttribute('data-rating'),
-                    id = this.parentNode.parentNode.getAttribute('data-id'),
-                    model = imageCollectionModel.getImageModel(id);
+    function initFileChooser() {
+        // Choose files and save to local storage
+        fileChooser.addListener(function(fileChooser, files, eventDate) {
+            _.each(files, function(file) {
+                imageCollectionModel.addImageModel( new modelModule.ImageModel('./images/' + file.name, file.lastModifiedDate, '', 0));
+            });
 
-                model.setRating(newRating);
-            }, this);
+            var fileChooserElem = fileChooser.getElement();
+            fileChooserElem.classList.add('success');
 
+            window.setTimeout(function() {
+                fileChooserElem.classList.remove('success');
+            }, 2000)
         });
+    }
+
+    function initImageListeners() {
+        var imgContainer = appContainer.getElementsByClassName('img-collection-container');
+
+        _.each(imgContainer, function(container) {
+            container.addEventListener('click', function(e) {
+                var classes = e.target.className.split(" "),
+                    elemClass;
+
+                if (classes) {
+                    elemClass = _.find(classes, function(c) {
+                        if (c === 'rating-star') {
+                            onClickImgRating(e);
+                            return c;
+                        } else if (c === 'img-remove') {
+                            onClickImgRemove(e);
+                            return c;
+                        }
+                    });
+                }
+            });
+        });
+    }
+
+    function onClickImgRating(e) {
+        var newRating = e.target.getAttribute('data-rating'),
+            id = e.target.parentNode.parentNode.parentNode.getAttribute('data-id'), // ughhh wtf
+            model = imageCollectionModel.getImageModel(id);
+
+        model.setRating(newRating);
     }
 
     function initRatingFilter() {
@@ -105,18 +134,13 @@ window.addEventListener('load', function() {
         });
     }
 
-    function initRemoveImageBtns() {
-        var deleteBtns = appContainer.querySelectorAll('.img-remove');
-        _.each(deleteBtns, function(btn) {
-            btn.addEventListener('click', function(e) {
-                var id = this.parentNode.parentNode.getAttribute('data-id'),
-                    model = imageCollectionModel.getImageModel(id);
+    function onClickImgRemove(e) {
+        var id = e.target.parentNode.parentNode.getAttribute('data-id'),
+            model = imageCollectionModel.getImageModel(id);
 
-                imageCollectionModel.removeImageModel(model);
-            });
-
-        })
+        imageCollectionModel.removeImageModel(model);
     }
 
+    // TODO delete all button
 });
 
