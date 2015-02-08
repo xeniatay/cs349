@@ -382,12 +382,19 @@ function createViewModule() {
             fileChooserInput.addEventListener('change', function(evt) {
                 var files = evt.target.files;
                 var eventDate = new Date();
+
                 _.each(
                     self.listeners,
                     function(listener_fn) {
                         listener_fn(self, files, eventDate);
                     }
                 );
+
+                console.log(files);
+                // Clear file input
+                this.value = '';
+                console.log(files);
+
             });
         },
 

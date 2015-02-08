@@ -20,6 +20,7 @@ body {
   font-family: 'Montserrat';
   font-size: 16px;
   margin-bottom: 20px;
+  color: @color-tertiary-4;
 }
 
 .btn {
@@ -152,13 +153,24 @@ h2 {
 }
 
 .layout-btn {
-  transition: opacity .1s ease-in-out;
+  transition: all .15s ease-in-out;
   display: inline-block;
+  position: relative;
   padding: 8px 8px;
   margin: 0 8px 10px 0;
   background: @layout-btn-background;
   border: 2px solid @layout-btn-background;
   opacity: 0.6;
+
+  &:after {
+    position: absolute;
+    content: attr(label);
+    font-size: 11px;
+    left: 0;
+    right: 0;
+    bottom: -20px;
+    color: darken(@middle-gray, 20%);
+  }
 
   &.selected {
     border: 2px solid @color-tertiary-1 !important;
@@ -281,12 +293,13 @@ h2 {
 
 .file-chooser-container {
   transition: height 0.1s ease-in-out;
-  background: @light-gray;
+  background: @color-secondary-1;
   text-align: center;
-  height: 58px;
+  position: relative;
+  padding-bottom: 10px;
 
   @media @mobile {
-    padding-top: 10px;
+    padding: 10px 0 15px;
   }
 
   h2 {
@@ -318,24 +331,17 @@ h2 {
   transition: opacity 0.2s ease-in-out;
   display: none;
   color: @success;
-  padding-bottom: 20px;
   opacity: 0;
-
-  @media @mobile {
-    padding-bottom: 10px;
-  }
 }
 
 .file-chooser-container.success {
-  height: 99px;
-
-  @media @mobile {
-    height: 79px;
-  }
-
   .file-chooser-msg {
-    display: block;
+    display: inline-block;
     opacity: 1;
+    position: absolute;
+    bottom: 5px;
+    left: 0;
+    right: 0;
   }
 }
 
@@ -344,8 +350,27 @@ h2 {
 .img-collection-container {
   .page-container;
   text-align: center;
-  background: @white;
+  background: lighten(@light-gray, 5%);
   margin-bottom: 20px;
+  padding-bottom: 40px;
+}
+
+.clear-filters {
+  color: @color-primary-1;
+
+  &:hover {
+    text-decoration: underline;
+    cursor: pointer;
+  }
+}
+
+.img-collection-container .msg {
+  padding: 20px;
+  line-height: 1.5;
+
+  @media @mobile {
+    font-size: 14px;
+  }
 }
 
 .img-container {
@@ -358,7 +383,7 @@ h2 {
   box-sizing: border-box;
 
   &:nth-child(3) {
-    padding-right: 0;
+    // padding-right: 0;
   }
 
   @media @mobile {
