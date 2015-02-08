@@ -185,6 +185,7 @@ body {
   font-family: 'Montserrat';
   font-size: 16px;
   margin-bottom: 20px;
+  color: #01345b;
 }
 .btn {
   display: inline-block;
@@ -302,13 +303,23 @@ h2 {
   }
 }
 .layout-btn {
-  transition: opacity 0.1s ease-in-out;
+  transition: all 0.15s ease-in-out;
   display: inline-block;
+  position: relative;
   padding: 8px 8px;
   margin: 0 8px 10px 0;
   background: #efefef;
   border: 2px solid #efefef;
   opacity: 0.6;
+}
+.layout-btn:after {
+  position: absolute;
+  content: attr(label);
+  font-size: 11px;
+  left: 0;
+  right: 0;
+  bottom: -20px;
+  color: #9c9c9c;
 }
 .layout-btn.selected {
   border: 2px solid #1d82d0 !important;
@@ -424,13 +435,14 @@ h2 {
 /*** File Chooser ***/
 .file-chooser-container {
   transition: height 0.1s ease-in-out;
-  background: #efefef;
+  background: #ff9b14;
   text-align: center;
-  height: 58px;
+  position: relative;
+  padding-bottom: 10px;
 }
 @media (max-width: 759px) {
   .file-chooser-container {
-    padding-top: 10px;
+    padding: 10px 0 15px;
   }
 }
 .file-chooser-container h2 {
@@ -461,26 +473,16 @@ h2 {
   font-size: 13px;
   transition: opacity 0.2s ease-in-out;
   display: none;
-  color: #00bb00;
-  padding-bottom: 20px;
+  color: #007100;
   opacity: 0;
 }
-@media (max-width: 759px) {
-  .file-chooser-msg {
-    padding-bottom: 10px;
-  }
-}
-.file-chooser-container.success {
-  height: 99px;
-}
-@media (max-width: 759px) {
-  .file-chooser-container.success {
-    height: 79px;
-  }
-}
 .file-chooser-container.success .file-chooser-msg {
-  display: block;
+  display: inline-block;
   opacity: 1;
+  position: absolute;
+  bottom: 5px;
+  left: 0;
+  right: 0;
 }
 /*** Images ***/
 .img-collection-container {
@@ -488,8 +490,25 @@ h2 {
   margin: 0 auto;
   padding: 0 20px;
   text-align: center;
-  background: #ffffff;
+  background: #fcfcfc;
   margin-bottom: 20px;
+  padding-bottom: 40px;
+}
+.clear-filters {
+  color: #ff1414;
+}
+.clear-filters:hover {
+  text-decoration: underline;
+  cursor: pointer;
+}
+.img-collection-container .msg {
+  padding: 20px;
+  line-height: 1.5;
+}
+@media (max-width: 759px) {
+  .img-collection-container .msg {
+    font-size: 14px;
+  }
 }
 .img-container {
   float: left;
@@ -499,9 +518,6 @@ h2 {
   font-size: 14px;
   text-align: left;
   box-sizing: border-box;
-}
-.img-container:nth-child(3) {
-  padding-right: 0;
 }
 @media (max-width: 759px) {
   .img-container {

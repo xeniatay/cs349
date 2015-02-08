@@ -90,28 +90,41 @@ window.addEventListener('load', function() {
             model = imageCollectionModel.getImageModel(id);
 
         model.setRating(newRating);
+        filterImages();
     }
 
     function initRatingFilter() {
-        var filters = appContainer.getElementsByClassName('filter-rating');
+        var filters = appContainer.querySelectorAll('[data-filter-rating]');
         _.each(filters, function(filter) {
             filter.addEventListener('click', function(e) {
                 var rating = e.target.getAttribute('data-rating');
                 if (!rating) { return; }
 
-                var images = appContainer.querySelectorAll('.img-container'),
-                    selector = '.img-container:not([data-img-container-rating="' + rating + '"])',
-                    notSelected = appContainer.querySelectorAll(selector);
-
                 toolbarView.setRatingFilter(rating);
+                filterImages();
+            }, this);
+        });
+    }
 
-                _.each(images, function(img) { img.classList.remove('hide'); });
+    function filterImages() {
+        var rating = toolbarView.getCurrentRatingFilter(),
+            images = appContainer.querySelectorAll('.img-container'),
+            selector = '.img-container:not([data-img-container-rating="' + rating + '"])',
+            notSelected = appContainer.querySelectorAll(selector),
+            selected = appContainer.querySelectorAll('.img-container[data-img-container-rating="' + rating + '"]'),
+            noImagesMsg = appContainer.querySelector('.no-images-msg');
 
-                if (rating != 0) {
-                    _.each(notSelected, function(img) { img.classList.add('hide'); });
-                }
-            });
-        }, this);
+        _.each(images, function(img) { img.classList.remove('hide'); });
+
+        if (rating != 0) {
+            _.each(notSelected, function(img) { img.classList.add('hide'); });
+        }
+
+        if (!selected.length && rating != 0) {
+            noImagesMsg.classList.remove('hide');
+        } else {
+            noImagesMsg.classList.add('hide');
+        }
     }
 
     function initViewButtons() {
@@ -140,8 +153,5 @@ window.addEventListener('load', function() {
 
         imageCollectionModel.removeImageModel(model);
     }
-
-    // TODO delete all button
-    // TODO unit tests
 });
 

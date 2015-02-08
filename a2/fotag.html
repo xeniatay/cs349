@@ -25,10 +25,10 @@
         <div class="toolbar-controls clearfix">
             <div class="toolbar-control-wrapper layout-controls">
                 <span class="control-label">Layout:</span>
-                <div class="layout-btn" data-viewtype="GRID_VIEW">
+                <div class="layout-btn" data-viewtype="GRID_VIEW" label="Grid">
                     <i class="icon icon-grid"></i>
                 </div>
-                <div class="layout-btn" data-viewtype="LIST_VIEW">
+                <div class="layout-btn" data-viewtype="LIST_VIEW" label="List">
                     <i class="icon icon-list"></i>
                 </div>
             </div>
@@ -37,12 +37,12 @@
                 <div class="control-label">Filter By Rating:</div>
 
                 <div class="rating filter-rating">
-                    <div class="rating-star" data-rating="5">☆</div>
-                    <div class="rating-star" data-rating="4">☆</div>
-                    <div class="rating-star" data-rating="3">☆</div>
-                    <div class="rating-star" data-rating="2">☆</div>
-                    <div class="rating-star" data-rating="1">☆</div>
-                    <div class="icon-close" data-rating="0"></div>
+                    <div class="rating-star" data-filter-rating data-rating="5">☆</div>
+                    <div class="rating-star" data-filter-rating data-rating="4">☆</div>
+                    <div class="rating-star" data-filter-rating data-rating="3">☆</div>
+                    <div class="rating-star" data-filter-rating data-rating="2">☆</div>
+                    <div class="rating-star" data-filter-rating data-rating="1">☆</div>
+                    <div class="icon-close" data-filter-rating data-rating="0"></div>
                 </div>
             </div>
         </div>
@@ -80,6 +80,7 @@
 </template>
 
 <template id="img-collection">
+    <p class="no-images-msg msg hide">No images found! Please try another filter or <span class="clear-filters" data-filter-rating data-rating="0">clear all filters</span>.</p>
 </template>
 
 <!-- Keep this here so TAs can run your unit tests -->
