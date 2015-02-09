@@ -2,6 +2,7 @@
 <html>
 <head lang="en">
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Fotag!</title>
 
     <!--
@@ -18,7 +19,7 @@
 <template id="toolbar">
     <header class="clearfix">
         <div class="fotag-heading">
-            <h1>Fotag!</h1>
+            <h1 class="app-name">Fotag!</h1>
             <h2>Import, organize, and rate your photos!</h2>
         </div>
 
@@ -52,10 +53,10 @@
 <!-- A template for a file chooser, to select multiple files. See FileChooser in view.js. -->
 <template id="file-chooser">
     <div class="file-chooser-wrapper">
-        <h2>Upload photos: </h2>
+        <h2>Photo Upload</h2>
+        <span class="file-chooser-msg">Success!</span>
         <input type="file" class="files-input" name="file_results[]" multiple />
         <output id="list"></output>
-        <span class="file-chooser-msg">Successfully uploaded!</span>
     </div>
 </template>
 
@@ -87,7 +88,7 @@
 <div id="unit-tests">
 
     <!-- This button is for marking purposes to test your architecture. Do not remove it-->
-    <button class="marking-button btn">Mark Me!</button>
+    <button class="marking-button btn pull-right">Mark Me!</button>
     <a href="unit_tests.html" class="btn">Run Unit Tests</a>
 </div>
 

@@ -173,7 +173,7 @@ function createViewModule() {
                 } else if (event === 'IMAGE_ADDED_TO_COLLECTION_EVENT') {
                     var image = this.imageRendererFactory.createImageRenderer(imageModel);
                     image.render();
-                    this.getElement().appendChild(image.getElement());
+                    this.getElement().insertBefore(image.getElement(), this.getElement().firstChild);
 
                 } else if (event === 'IMAGE_REMOVED_FROM_COLLECTION_EVENT') {
                     var image = this.imageRendererFactory.getImageRenderer(imageModel);
@@ -389,12 +389,6 @@ function createViewModule() {
                         listener_fn(self, files, eventDate);
                     }
                 );
-
-                console.log(files);
-                // Clear file input
-                this.value = '';
-                console.log(files);
-
             });
         },
 

@@ -225,6 +225,10 @@ function createModelModule() {
          * @param imageModel
          */
         removeImageModel: function(imageModel) {
+            if ( !_.contains(this.imageModels, imageModel) ) {
+                return;
+            }
+
             this.imageModels = _.without(this.imageModels, imageModel);
 
             var id = imageModel.id;

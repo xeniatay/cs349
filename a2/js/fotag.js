@@ -52,12 +52,20 @@ window.addEventListener('load', function() {
                 imageCollectionModel.addImageModel( new modelModule.ImageModel('./images/' + file.name, file.lastModifiedDate, '', 0));
             });
 
-            var fileChooserElem = fileChooser.getElement();
+            var fileChooserElem = fileChooser.getElement(),
+                input = fileChooserElem.querySelector('.files-input');
+
             fileChooserElem.classList.add('success');
+            input.setAttribute('disabled', 'disabled');
+
+            window.setTimeout(function() {
+                input.value = '';
+                input.removeAttribute('disabled');
+            }, 500)
 
             window.setTimeout(function() {
                 fileChooserElem.classList.remove('success');
-            }, 2000)
+            }, 1500)
         });
     }
 
