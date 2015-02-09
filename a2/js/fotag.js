@@ -156,7 +156,7 @@ window.addEventListener('load', function() {
     }
 
     function onClickImgRemove(e) {
-        var id = e.target.parentNode.parentNode.getAttribute('data-id'),
+        var id = e.target.parentNode.parentNode.parentNode.getAttribute('data-id'),
             model = imageCollectionModel.getImageModel(id);
 
         imageCollectionModel.removeImageModel(model);
