@@ -186,6 +186,7 @@ body {
   font-size: 16px;
   margin-bottom: 20px;
   color: #01345b;
+  background: #fcfcfc;
 }
 .btn {
   display: inline-block;
@@ -226,7 +227,7 @@ h1 {
   font-size: 2.5em;
   line-height: 1.5em;
 }
-@media (max-width: 759px) {
+@media all and (max-width: 759px) {
   h1 {
     font-size: 1.5em;
   }
@@ -235,19 +236,23 @@ h2 {
   font-size: 1.2em;
   line-height: 1.2em;
 }
+.app-name {
+  display: inline;
+  transition-duration: 0.5s;
+  color: #00e100;
+}
+.app-name:hover {
+  transform: rotate(360deg);
+}
 /*** Header / Toolbar ***/
 .toolbar-container {
+  transition: all 0.2s ease-in-out;
   position: fixed;
   background: #ffffff;
   top: 0;
   width: 100%;
   z-index: 1000;
   border-bottom: 2px solid #efefef;
-}
-@media (max-width: 759px) {
-  .toolbar-container {
-    position: relative;
-  }
 }
 .toolbar-container header {
   max-width: 1000px;
@@ -257,9 +262,14 @@ h2 {
 .toolbar-offset {
   margin-top: 99px !important;
 }
-@media (max-width: 759px) {
+@media all and (max-width: 759px) {
   .toolbar-offset {
-    margin-top: 0 !important;
+    margin-top: 61px !important;
+  }
+}
+@media all and (max-width: 630px) {
+  .toolbar-offset {
+    margin-top: 117px !important;
   }
 }
 .fotag-heading {
@@ -267,12 +277,12 @@ h2 {
   padding: 10px 0;
   float: left;
 }
-@media (max-width: 759px) {
+@media all and (max-width: 759px) {
   .fotag-heading {
     font-size: 11px;
   }
 }
-@media (max-width: 630px) {
+@media all and (max-width: 630px) {
   .fotag-heading {
     float: none;
     text-align: center;
@@ -297,7 +307,7 @@ h2 {
 .toolbar-controls {
   float: right;
 }
-@media (max-width: 630px) {
+@media all and (max-width: 630px) {
   .toolbar-controls {
     float: none;
   }
@@ -335,18 +345,18 @@ h2 {
   font-size: 14px;
   margin-bottom: 10px;
 }
-@media (max-width: 759px) {
+@media all and (max-width: 759px) {
   .layout-controls {
     display: none;
   }
 }
-@media (max-width: 759px) {
+@media all and (max-width: 759px) {
   .filter-by-controls {
     font-size: 12px;
     width: 270px;
   }
 }
-@media (max-width: 630px) {
+@media all and (max-width: 630px) {
   .filter-by-controls {
     width: 100%;
     padding: 10px 0 20px;
@@ -356,7 +366,7 @@ h2 {
     text-align: center;
   }
 }
-@media (max-width: 759px) {
+@media all and (max-width: 759px) {
   .filter-by-controls .control-label {
     display: inline-block;
     margin-right: 10px;
@@ -438,17 +448,12 @@ h2 {
   background: #ff9b14;
   text-align: center;
   position: relative;
-  padding-bottom: 10px;
-}
-@media (max-width: 759px) {
-  .file-chooser-container {
-    padding: 10px 0 15px;
-  }
+  padding: 10px 0;
 }
 .file-chooser-container h2 {
   display: inline-block;
 }
-@media (max-width: 759px) {
+@media all and (max-width: 759px) {
   .file-chooser-container h2 {
     font-size: 16px;
   }
@@ -459,15 +464,18 @@ h2 {
   padding: 0 20px;
 }
 .files-input {
-  display: inline-block;
+  display: block;
+  padding: 15px 20px;
+  margin: 10px auto 0;
+  box-sizing: border-box;
   font-size: 12px;
-  padding: 20px 10px;
   cursor: pointer;
+  background: #ffc67a;
+  border-radius: 2px;
+  max-width: 270px;
 }
-@media (max-width: 759px) {
-  .files-input {
-    padding: 10px 10px;
-  }
+.files-input:hover {
+  background: #ffdcad;
 }
 .file-chooser-msg {
   font-size: 13px;
@@ -480,9 +488,8 @@ h2 {
   display: inline-block;
   opacity: 1;
   position: absolute;
-  bottom: 5px;
-  left: 0;
-  right: 0;
+  margin-left: 10px;
+  margin-top: 5px;
 }
 /*** Images ***/
 .img-collection-container {
@@ -490,7 +497,6 @@ h2 {
   margin: 0 auto;
   padding: 0 20px;
   text-align: center;
-  background: #fcfcfc;
   margin-bottom: 20px;
   padding-bottom: 40px;
 }
@@ -505,7 +511,7 @@ h2 {
   padding: 20px;
   line-height: 1.5;
 }
-@media (max-width: 759px) {
+@media all and (max-width: 759px) {
   .img-collection-container .msg {
     font-size: 14px;
   }
@@ -519,7 +525,7 @@ h2 {
   text-align: left;
   box-sizing: border-box;
 }
-@media (max-width: 759px) {
+@media all and (max-width: 759px) {
   .img-container {
     float: none;
     height: auto;
@@ -549,6 +555,11 @@ h2 {
   font-size: 25px;
   background: #ffffff;
 }
+@media all and (max-width: 759px) {
+  .img-remove {
+    opacity: 0.8;
+  }
+}
 .img-remove:hover {
   color: #ff1414;
   cursor: pointer;
@@ -560,7 +571,7 @@ img {
   max-height: 180px;
   max-width: 100%;
 }
-@media (max-width: 759px) {
+@media all and (max-width: 759px) {
   img {
     max-height: none;
   }
@@ -576,19 +587,20 @@ img {
 .img-caption {
   display: block;
 }
-@media (min-width: 760px) {
+@media all and (min-width: 760px) {
   .img-name {
     max-height: 3em;
     overflow: hidden;
   }
 }
 /*** List View ***/
-@media (min-width: 760px) {
+@media all and (min-width: 760px) {
   [data-viewtype='LIST_VIEW'] .img-container {
     display: block;
     width: 100%;
     margin: 0 auto;
     overflow: hidden;
+    height: auto;
   }
   [data-viewtype='LIST_VIEW'] .img-container .img-wrapper,
   [data-viewtype='LIST_VIEW'] .img-container .img-details {

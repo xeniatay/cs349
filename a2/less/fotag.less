@@ -5,8 +5,9 @@
 
 /*** VARIABLES ***/
 
-@mobile: ~"(max-width: 759px)";
-@desktop: ~"(min-width: 760px)";
+@mobile: ~"all and (max-width: 630px)";
+@tablet: ~"all and (max-width: 759px)";
+@desktop: ~"all and (min-width: 760px)";
 
 /*** STYLES ***/
 
@@ -21,6 +22,7 @@ body {
   font-size: 16px;
   margin-bottom: 20px;
   color: @color-tertiary-4;
+  background: lighten(@light-gray, 5%);
 }
 
 .btn {
@@ -69,11 +71,12 @@ body {
 }
 
 /*** Typography and Icons ***/
+
 h1 {
   font-size: 2.5em;
   line-height: 1.5em;
 
-  @media @mobile {
+  @media @tablet {
     font-size: 1.5em;
   }
 }
@@ -83,23 +86,31 @@ h2 {
   line-height: 1.2em;
 }
 
+.app-name {
+  display: inline;
+  transition-duration: 0.5s;
+  color: @color-complement-2;
 
+  &:hover {
+    transform: rotate(360deg);
+  }
+
+}
 
 /*** Header / Toolbar ***/
 @toolbar-height: 99px;
+@toolbar-height-tablet: 61px;
+@toolbar-height-mobile: 117px;
 @layout-btn-background: @light-gray;
 
 .toolbar-container {
+  transition: all .2s ease-in-out;
   position: fixed;
   background: @white;
   top: 0;
   width: 100%;
   z-index: 1000;
   border-bottom: 2px solid @light-gray;
-
-  @media @mobile {
-    position: relative;
-  }
 
   header {
     .page-container(1000px);
@@ -109,8 +120,12 @@ h2 {
 .toolbar-offset {
   margin-top: @toolbar-height !important;
 
+  @media @tablet {
+    margin-top: @toolbar-height-tablet !important;
+  }
+
   @media @mobile {
-    margin-top: 0 !important;
+    margin-top: @toolbar-height-mobile !important;
   }
 }
 
@@ -119,11 +134,11 @@ h2 {
   padding: 10px 0;
   float: left;
 
-  @media @mobile {
+  @media @tablet {
     font-size: 11px;
   }
 
-  @media (max-width: 630px) {
+  @media @mobile {
     float: none;
     text-align: center;
   }
@@ -147,7 +162,7 @@ h2 {
 .toolbar-controls {
   float: right;
 
-  @media (max-width: 630px) {
+  @media @mobile {
     float: none;
   }
 }
@@ -191,18 +206,18 @@ h2 {
 }
 
 .layout-controls {
-  @media @mobile {
+  @media @tablet {
     display: none;
   }
 }
 
 .filter-by-controls {
-  @media @mobile {
+  @media @tablet {
     font-size: 12px;
     width: 270px;
   }
 
-  @media (max-width: 630px) {
+  @media @mobile {
     width: 100%;
     padding: 10px 0 20px;
     margin: 0;
@@ -212,7 +227,7 @@ h2 {
   }
 
   .control-label {
-    @media @mobile {
+    @media @tablet {
       display: inline-block;
       margin-right: 10px;
     }
@@ -296,16 +311,12 @@ h2 {
   background: @color-secondary-1;
   text-align: center;
   position: relative;
-  padding-bottom: 10px;
-
-  @media @mobile {
-    padding: 10px 0 15px;
-  }
+  padding: 10px 0;
 
   h2 {
     display: inline-block;
 
-    @media @mobile {
+    @media @tablet {
       font-size: 16px;
     }
   }
@@ -316,13 +327,18 @@ h2 {
 }
 
 .files-input {
-  display: inline-block;
+  display: block;
+  padding: 15px 20px;
+  margin: 10px auto 0;
+  box-sizing: border-box;
   font-size: 12px;
-  padding: 20px 10px;
   cursor: pointer;
+  background: lighten(@color-secondary-1, 20%);
+  border-radius: 2px;
+  max-width: 270px;
 
-  @media @mobile {
-    padding: 10px 10px;
+  &:hover {
+    background: lighten(@color-secondary-1, 30%);
   }
 }
 
@@ -339,9 +355,8 @@ h2 {
     display: inline-block;
     opacity: 1;
     position: absolute;
-    bottom: 5px;
-    left: 0;
-    right: 0;
+    margin-left: 10px;
+    margin-top: 5px;
   }
 }
 
@@ -350,7 +365,6 @@ h2 {
 .img-collection-container {
   .page-container;
   text-align: center;
-  background: lighten(@light-gray, 5%);
   margin-bottom: 20px;
   padding-bottom: 40px;
 }
@@ -368,7 +382,7 @@ h2 {
   padding: 20px;
   line-height: 1.5;
 
-  @media @mobile {
+  @media @tablet {
     font-size: 14px;
   }
 }
@@ -386,7 +400,7 @@ h2 {
     // padding-right: 0;
   }
 
-  @media @mobile {
+  @media @tablet {
     float: none;
     height: auto;
     text-align: center;
@@ -418,6 +432,10 @@ h2 {
   font-size: 25px;
   background: @white;
 
+  @media @tablet {
+    opacity: 0.8;
+  }
+
   &:hover {
     color: @color-primary-1;
     cursor: pointer;
@@ -431,7 +449,7 @@ img {
   max-height: 180px;
   max-width: 100%;
 
-  @media @mobile {
+  @media @tablet {
     max-height: none;
   }
 }
@@ -465,6 +483,7 @@ img {
     width: 100%;
     margin: 0 auto;
     overflow: hidden;
+    height: auto;
 
     .img-wrapper, .img-details {
       float: left;
