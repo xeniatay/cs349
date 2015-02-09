@@ -416,10 +416,23 @@ h2 {
 }
 
 .img-wrapper {
+  display: table;
+  margin: 0 auto;
   position: relative;
   background: @white;
   border: 1px solid @light-gray;
   padding: 10px;
+  height: 180px;
+  width: 92%;
+
+  @media @tablet {
+    height: auto;
+  }
+}
+
+.img-table-cell-wrapper {
+  display: table-cell;
+  vertical-align: middle;
 }
 
 .img-remove {
