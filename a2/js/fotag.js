@@ -30,10 +30,7 @@ window.addEventListener('load', function() {
     appContainer.appendChild(imageCollectionView.getElement());
 
     // Retrieve all images from Local Storage
-    var storedImageCollectionModel = modelModule.loadImageCollectionModel();
-    _.each(storedImageCollectionModel.getImageModels(), function(imageModel) {
-        imageCollectionModel.addImageModel(imageModel);
-    });
+    loadImagesFromLS();
 
     // Initialize all event listeners
     initImageListeners();
@@ -41,7 +38,8 @@ window.addEventListener('load', function() {
     initRatingFilter();
     initViewButtons();
     initFileChooser();
-
+    initRemoveAllImages();
+    initDemoImages();
 
     /*** Functions ***/
 
@@ -122,17 +120,17 @@ window.addEventListener('load', function() {
             selected = appContainer.querySelectorAll('.img-container[data-img-container-rating="' + rating + '"]'),
             noImagesMsg = appContainer.querySelector('.no-images-msg');
 
-        _.each(images, function(img) { img.classList.remove('hide'); });
+        _.each(images, function(img) {
+            var imgRating = img.getAttribute('data-img-container-rating');
 
-        if (rating != 0) {
-            _.each(notSelected, function(img) { img.classList.add('hide'); });
-        }
-
-        if (!selected.length && rating != 0) {
-            noImagesMsg.classList.remove('hide');
-        } else {
-            noImagesMsg.classList.add('hide');
-        }
+            if (rating === 0) {
+                img.classList.remove('hide');
+            } else if ( ((rating + 99) < imgRating) || (rating > imgRating) )  {
+                img.classList.add('hide');
+            } else {
+                img.classList.remove('hide');
+            }
+        });
     }
 
     function initViewButtons() {
@@ -160,6 +158,29 @@ window.addEventListener('load', function() {
             model = imageCollectionModel.getImageModel(id);
 
         imageCollectionModel.removeImageModel(model);
+    }
+
+    function initRemoveAllImages(e) {
+        var btn = appContainer.querySelector('.delete-all');
+
+        btn.addEventListener('click', function(e) {
+            imageCollectionModel.removeImageModels();
+        });
+    }
+
+    function initDemoImages() {
+        var btn = appContainer.querySelector('.demo-img');
+
+        btn.addEventListener('click', function(e) {
+            loadImagesFromLS('[{"path":"./images/GOPR0042-small.jpg","modificationDate":"2015-02-21T22:49:01.800Z","caption":"","rating":0},{"path":"./images/GOPR0044-small.jpg","modificationDate":"2015-02-21T22:49:01.801Z","caption":"","rating":0},{"path":"./images/GOPR0045-small.jpg","modificationDate":"2015-02-21T22:49:01.802Z","caption":"","rating":0},{"path":"./images/GOPR0051-small.jpg","modificationDate":"2015-02-21T22:49:01.802Z","caption":"","rating":0},{"path":"./images/GOPR0052-small.jpg","modificationDate":"2015-02-21T22:49:01.802Z","caption":"","rating":0},{"path":"./images/GOPR0069-small.jpg","modificationDate":"2015-02-21T22:49:01.802Z","caption":"","rating":0},{"path":"./images/GOPR0069-smallverylongname-look-this-name-is=very-super-long.jpg","modificationDate":"2015-02-21T22:49:01.803Z","caption":"","rating":0},{"path":"./images/GOPR0074-small.jpg","modificationDate":"2015-02-21T22:49:01.803Z","caption":"","rating":0},{"path":"./images/tall.jpg","modificationDate":"2015-02-21T22:49:01.803Z","caption":"","rating":0},{"path":"./images/verywide.jpg","modificationDate":"2015-02-21T22:49:01.803Z","caption":"","rating":0}]');
+        });
+    }
+
+    function loadImagesFromLS(hardcodedImages) {
+        var storedImageCollectionModel = modelModule.loadImageCollectionModel(hardcodedImages);
+        _.each(storedImageCollectionModel.getImageModels(), function(imageModel) {
+            imageCollectionModel.addImageModel(imageModel);
+        });
     }
 });
 

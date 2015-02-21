@@ -645,3 +645,6 @@ img {
   margin: 0 auto;
   padding: 0 20px;
 }
+.btn-option-container {
+  padding-top: 10px;
+}

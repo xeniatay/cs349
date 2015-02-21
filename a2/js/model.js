@@ -318,9 +318,9 @@ function createModelModule() {
     /**
      * Returns a new ImageCollectionModel object with contents loaded from localStorage.
      */
-    function loadImageCollectionModel() {
+    function loadImageCollectionModel(modelsJSON) {
         var imageCollectionModel = new ImageCollectionModel(),
-            modelsJSON = localStorage.getItem('imageCollectionModel');
+            modelsJSON = modelsJSON || localStorage.getItem('imageCollectionModel');
 
         if (!modelsJSON) { return imageCollectionModel; }
 

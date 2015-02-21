@@ -53,10 +53,14 @@
 <!-- A template for a file chooser, to select multiple files. See FileChooser in view.js. -->
 <template id="file-chooser">
     <div class="file-chooser-wrapper">
-        <h2>Photo Upload</h2>
+        <h2>Photo Upload (from ./images folder)</h2>
         <span class="file-chooser-msg">Success!</span>
         <input type="file" class="files-input" name="file_results[]" multiple />
         <output id="list"></output>
+        <div class="btn-option-container">
+            <div class="btn delete-all btn-option">Remove All Images</div>
+            <div class="btn demo-img btn-option">Use Demo Images</div>
+        </div>
     </div>
 </template>
 
