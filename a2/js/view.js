@@ -56,12 +56,18 @@ function createViewModule() {
                 name = this.imageDiv.querySelector('.img-name'),
                 caption = this.imageDiv.querySelector('.img-caption'),
                 dateModified = this.imageDiv.querySelector('.img-date-modified'),
-                rating = this.imageDiv.querySelector('.img-rating');
+                year = this.imageDiv.querySelector('.img-year'),
+                rating = this.imageDiv.querySelector('.img-rating'),
+                path = this.model.getPath();
 
             this.imageDiv.setAttribute('data-id', this.model.getId());
             this.imageDiv.setAttribute('data-img-container-rating', this.model.getRating());
 
-            img.src = name.innerHTML = this.model.getPath();
+            img.src = path;
+            name.innerHTML = path.substr(9, this.model.getPath().length - 18);
+
+            year.innerHTML = this.model.year;
+
             caption.innerHTML = this.model.getCaption();
             dateModified.innerHTML = this.model.getModificationDate().toLocaleString();
             rating.setAttribute( 'data-persist-rating', this.model.getRating() );
@@ -173,7 +179,8 @@ function createViewModule() {
                 } else if (event === 'IMAGE_ADDED_TO_COLLECTION_EVENT') {
                     var image = this.imageRendererFactory.createImageRenderer(imageModel);
                     image.render();
-                    this.getElement().insertBefore(image.getElement(), this.getElement().firstChild);
+                    // this.getElement().insertBefore(image.getElement(), this.getElement().firstChild);
+                    this.getElement().appendChild(image.getElement());
 
                 } else if (event === 'IMAGE_REMOVED_FROM_COLLECTION_EVENT') {
                     var image = this.imageRendererFactory.getImageRenderer(imageModel);
@@ -215,6 +222,10 @@ function createViewModule() {
                     this.model.addImageModel(image.model);
                 }, this);
             }
+        },
+
+        getRandomImageRenderer: function() {
+            return this.imageRendererFactory.renderers[ _.random(0, this.imageRendererFactory.renderers.length - 1) ];
         },
 
         /**

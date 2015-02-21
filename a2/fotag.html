@@ -19,8 +19,8 @@
 <template id="toolbar">
     <header class="clearfix">
         <div class="fotag-heading">
-            <h1 class="app-name">Fotag!</h1>
-            <h2>Import, organize, and rate your photos!</h2>
+            <h1 class="app-name">Study for FINE 282!</h1>
+            <h2>Memorize the names, images and year of creation!</h2>
         </div>
 
         <div class="toolbar-controls clearfix">
@@ -35,14 +35,14 @@
             </div>
 
             <div class="toolbar-control-wrapper filter-by-controls">
-                <div class="control-label">Filter By Rating:</div>
+                <div class="control-label">Filter By Date:</div>
 
                 <div class="rating filter-rating">
-                    <div class="rating-star" data-filter-rating data-rating="5">☆</div>
-                    <div class="rating-star" data-filter-rating data-rating="4">☆</div>
-                    <div class="rating-star" data-filter-rating data-rating="3">☆</div>
-                    <div class="rating-star" data-filter-rating data-rating="2">☆</div>
-                    <div class="rating-star" data-filter-rating data-rating="1">☆</div>
+                    <div class="rating-star" data-filter-rating data-rating="1600">1600</div>
+                    <div class="rating-star" data-filter-rating data-rating="1700">1700</div>
+                    <div class="rating-star" data-filter-rating data-rating="1800">1800</div>
+                    <div class="rating-star" data-filter-rating data-rating="1900">1900</div>
+                    <!-- <div class="rating-star" data-filter-rating data-rating="2000">☆</div> -->
                     <div class="icon-close" data-filter-rating data-rating="0"></div>
                 </div>
             </div>
@@ -52,11 +52,15 @@
 
 <!-- A template for a file chooser, to select multiple files. See FileChooser in view.js. -->
 <template id="file-chooser">
-    <div class="file-chooser-wrapper">
+    <div class="file-chooser-wrapper clearfix">
         <h2>Photo Upload</h2>
         <span class="file-chooser-msg">Success!</span>
         <input type="file" class="files-input" name="file_results[]" multiple />
         <output id="list"></output>
+        <div class="btn-option-container">
+            <div class="btn delete-all btn-option">Remove All Images</div>
+            <div class="btn random-img btn-option">Random Image</div>
+        </div>
     </div>
 </template>
 
@@ -70,20 +74,23 @@
     </div>
     <div class="img-details">
         <span class="img-name"></span>
-        <span class="img-date-modified"></span>
-        <div class="rating img-rating">
+        <span class="img-year"></span>
+        <span class="img-date-modified hide"></span>
+        <div class="rating hide img-rating">
             <div class="rating-star" data-rating="5">☆</div>
             <div class="rating-star" data-rating="4">☆</div>
             <div class="rating-star" data-rating="3">☆</div>
             <div class="rating-star" data-rating="2">☆</div>
             <div class="rating-star" data-rating="1">☆</div>
         </div>
-        <span class="img-caption"></span>
+        <span class="img-caption hide"></span>
     </div>
 </template>
 
 <template id="img-collection">
     <p class="no-images-msg msg hide">No images found! Please try another filter or <span class="clear-filters" data-filter-rating data-rating="0">clear all filters</span>.</p>
+    <div class="img-random">
+    </div>
 </template>
 
 <!-- Keep this here so TAs can run your unit tests -->

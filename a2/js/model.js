@@ -27,7 +27,7 @@ function createModelModule() {
         if ( !(_.isString(pathToFile)
                 && _.isString(caption)
                 && (modificationDate instanceof Date)
-                && (_.isNumber(rating) && rating >= 0 && rating <= 5) )) {
+                && (_.isNumber(rating)) )) {
             throw new Error("Invalid arguments supplied to ImageModel: " + JSON.stringify(arguments));
         }
 
@@ -35,9 +35,12 @@ function createModelModule() {
         this.path = pathToFile;
         this.modificationDate = modificationDate;
 
+        var yearNum = Number(this.path.slice(this.path.length - 9, this.path.length - 4));
+        this.year = Math.ceil( yearNum / 5 ) * 5;
+
         this.init();
         this.setCaption(caption);
-        this.setRating(rating);
+        this.setRating(this.year);
     };
 
     _.extend(ImageModel.prototype, {
@@ -202,6 +205,9 @@ function createModelModule() {
          */
         addImageModel: function(imageModel) {
             this.imageModels.push(imageModel);
+            this.imageModels = _.sortBy(this.imageModels, function(imageModel) {
+                return imageModel.year;
+            })
 
             var newListener = _.bind(this.onMetaDataChange, this),
                 id = imageModel.id,

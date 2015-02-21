@@ -273,14 +273,13 @@ h2 {
 }
 
 /* Persistent ratings for rated images */
-.set-rating(@i) when (@i > 0) {
-  .set-rating(@i - 1);
+.set-rating(@i) when (@i > 1599) {
+  .set-rating(@i - 100);
   .rating[data-persist-rating="@{i}"] {
-    > .rating-star[data-rating="@{i}"]:before,
-    > .rating-star[data-rating="@{i}"] ~ .rating-star:before {
+    > .rating-star[data-rating="@{i}"] {
       color: @color-secondary-1;
-      content: "\2605";
-      position: absolute;
+      // content: "\2605";
+      // position: absolute;
     }
 
     // &:hover {
@@ -294,15 +293,19 @@ h2 {
 }
 
 #app-container {
-  .set-rating(5);
+  .set-rating(1900);
 }
 
-.rating > .rating-star:hover:before,
-.rating > .rating-star:hover ~ .rating-star:before {
-  color: @color-primary-1 !important;
-  content: "\2605";
-  position: absolute;
+.rating > .rating-star:hover {
+  color: red;
 }
+
+// .rating > .rating-star:hover:before,
+// .rating > .rating-star:hover ~ .rating-star:before {
+//   color: @color-primary-1 !important;
+//   content: "\2605";
+//   position: absolute;
+// }
 
 /*** File Chooser ***/
 
@@ -389,8 +392,8 @@ h2 {
 
 .img-container {
   float: left;
-  height: 310px;
-  width: 33.3%;
+  height: @img-grid-height + 100px;
+  width: 25%;
   padding: 20px 20px 20px 0;
   font-size: 14px;
   text-align: left;
@@ -415,6 +418,9 @@ h2 {
   }
 }
 
+@img-height: 500px;
+@img-grid-height: 200px;
+
 .img-wrapper {
   display: table;
   margin: 0 auto;
@@ -422,7 +428,7 @@ h2 {
   background: @white;
   border: 1px solid @light-gray;
   padding: 10px;
-  height: 180px;
+  height: @img-grid-height;
   width: 92%;
 
   @media @tablet {
@@ -459,7 +465,7 @@ h2 {
 img {
   display: block;
   margin: 0 auto;
-  max-height: 180px;
+  max-height: @img-grid-height;
   max-width: 100%;
 
   @media @tablet {
@@ -468,16 +474,25 @@ img {
 }
 
 .img-details {
-  display: block;
+  display: none;
   padding-top: 10px;
   line-height: 1.5;
 }
+
+.img-wrapper:hover ~ .img-details {
+  display: block;
+}
+
 
 .img-name,
 .img-date-modified,
 .img-rating,
 .img-caption {
   display: block;
+}
+
+.img-year {
+  font-size: 16px;
 }
 
 @media @desktop {
@@ -503,12 +518,12 @@ img {
     }
 
     .img-wrapper {
-      width: 50%;
+      width: 100%;
       box-sizing: border-box;
     }
 
     img {
-      max-height: 240px;
+      max-height: @img-height;
       max-width: 100%;
     }
 
@@ -516,7 +531,7 @@ img {
       padding: 20px 20px 20px 40px;
       box-sizing: border-box;
       font-size: 16px;
-      width: 50%;
+      width: 30%;
     }
 
     .img-name {
@@ -531,4 +546,21 @@ img {
 
 #unit-tests {
   .page-container;
+}
+
+.btn-option-container {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+}
+
+.img-random {
+  .img-container {
+    height: @img-height + 100px;
+    width: 100%;
+  }
+
+  img {
+    max-height: @img-height;
+  }
 }
