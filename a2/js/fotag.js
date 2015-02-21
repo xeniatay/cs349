@@ -120,17 +120,17 @@ window.addEventListener('load', function() {
             selected = appContainer.querySelectorAll('.img-container[data-img-container-rating="' + rating + '"]'),
             noImagesMsg = appContainer.querySelector('.no-images-msg');
 
-        _.each(images, function(img) {
-            var imgRating = img.getAttribute('data-img-container-rating');
+        _.each(images, function(img) { img.classList.remove('hide'); });
 
-            if (rating === 0) {
-                img.classList.remove('hide');
-            } else if ( ((rating + 99) < imgRating) || (rating > imgRating) )  {
-                img.classList.add('hide');
-            } else {
-                img.classList.remove('hide');
-            }
-        });
+        if (rating != 0) {
+            _.each(notSelected, function(img) { img.classList.add('hide'); });
+        }
+
+        if (!selected.length && rating != 0) {
+            noImagesMsg.classList.remove('hide');
+        } else {
+            noImagesMsg.classList.add('hide');
+        }
     }
 
     function initViewButtons() {
