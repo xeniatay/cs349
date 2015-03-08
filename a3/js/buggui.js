@@ -2,9 +2,13 @@
 
 // This should be your main point of entry for your app
 
-window.addEventListener('load', function() {
-    var sceneGraphModule = createSceneGraphModule();
-    var appContainer = document.getElementById('app-container');
+var sceneGraphModule;
 
+window.addEventListener('load', function() {
+
+    sceneGraphModule = createSceneGraphModule();
+
+    var appContainer = document.getElementById('app-container');
+    var buggyCanvas = new BuggyCanvas();
 
 });

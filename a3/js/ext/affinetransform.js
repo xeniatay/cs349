@@ -48,6 +48,14 @@
  * @param {number=} opt_m11 The m11 coordinate of the transform.
  * @param {number=} opt_m02 The m02 coordinate of the transform.
  * @param {number=} opt_m12 The m12 coordinate of the transform.
+
+ * scaling factor in the x-direction (m00)
+ * scaling factor in the y-direction (m11)
+ * translation in the x-direction (m02)
+ * translation in the y-direction (m12)
+ * shear factor in the x-direction (m01)
+ * shear factor in the y-direction (m10)
+
  * @constructor
  * @final
  */

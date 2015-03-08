@@ -21,15 +21,16 @@
 <body>
 
 <!-- This header can be replaced -->
-<h1>Biggui!</h1>
+<h1>Buggui!</h1>
 Drive in style!
 
 <div id="app-container">
-    <!--
-         An attachment point to place all of your dynamically created content. Do not remove or
-         rename this div.
-    -->
 </div>
+
+<template id="buggy-canvas-template">
+    <canvas id="buggui-canvas" class="canvas" width="800" height="600">
+    </canvas>
+</template>
 
 <!-- Ensure this is in your document so TAs can run unit tests -->
 <div id="unit-tests">
@@ -44,6 +45,7 @@ Drive in style!
 <script src="js/ext/underscore.js"></script>
 <script src="js/ext/affinetransform.js"></script>
 <script src="js/scene_graph.js"></script>
+<script src="js/buggycanvas.js"></script>
 <script src="js/buggui.js"></script>
 <script src="js/markers_code.js"></script>
 </body>

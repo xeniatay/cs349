@@ -45,6 +45,24 @@ function createSceneGraphModule() {
             // Add any other properties you need, here
         },
 
+        applyTransform: function(matrix) {
+
+            if (!this.context) {
+                console.error('Error: no canvas context');
+                return;
+            }
+
+            this.context.transform(
+                matrix.getScaleX(),
+                matrix.getShearX(),
+                matrix.getShearY(),
+                matrix.getScaleY(),
+                matrix.getTranslateX(),
+                matrix.getTranslateY()
+            );
+
+        },
+
         addChild: function(graphNode) {
             this.children[graphNode.nodeName] = graphNode;
         },
@@ -78,6 +96,14 @@ function createSceneGraphModule() {
          */
         render: function(context) {
             // TODO: Should be overridden by subclass
+            this.context = context;
+
+            context.fillStyle = 'blue';
+            context.fillRect(0, 0, 5, 5);
+
+            _.each(this.children, function(node) {
+                node.render(context);
+            });
         },
 
         /**
@@ -97,7 +123,17 @@ function createSceneGraphModule() {
     _.extend(CarNode.prototype, GraphNode.prototype, {
         // Overrides parent method
         render: function(context) {
-            // TODO
+            this.context = context;
+            this.applyTransform(this.startPositionTransform);
+
+            var settings = this.context.settings.carNode;
+
+            context.fillStyle = 'red';
+            context.fillRect(0, 0, settings.width, settings.height);
+
+            _.each(this.children, function(node) {
+                node.render(context);
+            });
         },
 
         // Overrides parent method
@@ -118,7 +154,16 @@ function createSceneGraphModule() {
     _.extend(AxleNode.prototype, GraphNode.prototype, {
         // Overrides parent method
         render: function(context) {
-            // TODO
+            this.context = context;
+
+            var settings = this.context.settings.axleNode;
+
+            context.fillStyle = 'black';
+            context.fillRect(0, 0, settings.width, settings.height);
+
+            _.each(this.children, function(node) {
+                node.render(context);
+            });
         },
 
         // Overrides parent method
@@ -140,7 +185,16 @@ function createSceneGraphModule() {
     _.extend(TireNode.prototype, GraphNode.prototype, {
         // Overrides parent method
         render: function(context) {
-            // TODO
+            this.context = context;
+
+            var settings = this.context.settings.tireNode;
+
+            context.fillStyle = 'gray';
+            context.fillRect(0, 0, settings.width, settings.height);
+
+            _.each(this.children, function(node) {
+                node.render(context);
+            });
         },
 
         // Overrides parent method
