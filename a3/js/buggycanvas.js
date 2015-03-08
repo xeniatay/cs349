@@ -59,6 +59,10 @@ _.extend(BuggyCanvas.prototype, Canvas.prototype, {
             settings.height = settings.maxHeight;
         });
 
+        this.carSettings = this.context.settings.carNode;
+        this.axleSettings = this.context.settings.axleNode;
+        this.tireSettings = this.context.settings.tireNode;
+
         this.drawGrid(20);
         this.initBuggy();
     },
@@ -113,18 +117,48 @@ _.extend(BuggyCanvas.prototype, Canvas.prototype, {
      * Do transformations for buggy
      **/
     initTransforms: function() {
-        var settings = this.context.settings.carNode,
-            posX = (this.canvas.width - settings.width) / 2,
-            posY = (this.canvas.height - settings.height) / 2,
+        this.initCarTransform();
+        this.initAxleTransforms();
+        this.initTireTransforms();
+    },
+
+    initCarTransform: function() {
+        var posX = (this.canvas.width - this.carSettings.width) / 2,
+            posY = (this.canvas.height - this.carSettings.height) / 2,
             scaleX = 1,
             scaleY = 1,
-            carTransform = new AffineTransform(scaleX, 0, 0, scaleY, posX, posY);
+            transform = new AffineTransform(scaleX, 0, 0, scaleY, posX, posY);
 
-        this.carNode.initGraphNode(carTransform, 'carNode');
+        this.carNode.initGraphNode(transform, 'carNode');
+    },
 
-        _.each(this.axleNodes, function(nodes) {
-            nodes.initGraphNode(carTransform, 'axleNode');
-        });
+    initAxleTransforms: function() {
+        var scaleX = 1,
+            scaleY = 1,
+            transformFR = new AffineTransform(scaleX, 0, 0, scaleY, -this.axleSettings.width, this.tireSettings.height),
+            transformFL = new AffineTransform(scaleX, 0, 0, scaleY, this.carSettings.width, this.tireSettings.height);
+            transformBR = new AffineTransform(scaleX, 0, 0, scaleY, -this.axleSettings.width, this.tireSettings.height * 4);
+            transformBL = new AffineTransform(scaleX, 0, 0, scaleY, this.carSettings.width, this.tireSettings.height * 4);
+
+        this.axleNodes.FR.initGraphNode(transformFR, 'FR');
+        this.axleNodes.FL.initGraphNode(transformFL, 'FL');
+        this.axleNodes.BR.initGraphNode(transformBR, 'BR');
+        this.axleNodes.BL.initGraphNode(transformBL, 'BL');
+    },
+
+    initTireTransforms: function() {
+        var scaleX = 1,
+            scaleY = 1,
+            RXPos = - this.tireSettings.width / 2,
+            LXPos = this.axleSettings.width - (this.tireSettings.width / 2),
+            YPos = -(this.tireSettings.height - this.axleSettings.height) / 2,
+            transformR = new AffineTransform(scaleX, 0, 0, scaleY, RXPos, YPos),
+            transformL = new AffineTransform(scaleX, 0, 0, scaleY, LXPos, YPos);
+
+        this.tireNodes.FR.initGraphNode(transformR, 'FR');
+        this.tireNodes.FL.initGraphNode(transformL, 'FL');
+        this.tireNodes.BR.initGraphNode(transformR, 'BR');
+        this.tireNodes.BL.initGraphNode(transformL, 'BL');
     },
 
     /**

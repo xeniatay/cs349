@@ -97,6 +97,7 @@ function createSceneGraphModule() {
         render: function(context) {
             // TODO: Should be overridden by subclass
             this.context = context;
+            this.context.save();
 
             context.fillStyle = 'blue';
             context.fillRect(0, 0, 5, 5);
@@ -104,6 +105,8 @@ function createSceneGraphModule() {
             _.each(this.children, function(node) {
                 node.render(context);
             });
+
+            this.context.restore();
         },
 
         /**
@@ -124,6 +127,8 @@ function createSceneGraphModule() {
         // Overrides parent method
         render: function(context) {
             this.context = context;
+            this.context.save();
+
             this.applyTransform(this.startPositionTransform);
 
             var settings = this.context.settings.carNode;
@@ -134,6 +139,8 @@ function createSceneGraphModule() {
             _.each(this.children, function(node) {
                 node.render(context);
             });
+
+            this.context.restore();
         },
 
         // Overrides parent method
@@ -155,6 +162,8 @@ function createSceneGraphModule() {
         // Overrides parent method
         render: function(context) {
             this.context = context;
+            this.context.save();
+            this.applyTransform(this.startPositionTransform);
 
             var settings = this.context.settings.axleNode;
 
@@ -164,6 +173,8 @@ function createSceneGraphModule() {
             _.each(this.children, function(node) {
                 node.render(context);
             });
+
+            this.context.restore();
         },
 
         // Overrides parent method
@@ -186,6 +197,9 @@ function createSceneGraphModule() {
         // Overrides parent method
         render: function(context) {
             this.context = context;
+            this.context.save();
+
+            this.applyTransform(this.startPositionTransform);
 
             var settings = this.context.settings.tireNode;
 
@@ -195,6 +209,8 @@ function createSceneGraphModule() {
             _.each(this.children, function(node) {
                 node.render(context);
             });
+
+            this.context.restore();
         },
 
         // Overrides parent method
