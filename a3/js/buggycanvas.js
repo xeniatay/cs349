@@ -39,29 +39,40 @@ _.extend(BuggyCanvas.prototype, Canvas.prototype, {
                 'minWidth': 25,
                 'maxHeight': 200,
                 'minHeight': 50
-            },
+            }
+        };
+
+        this.carS = this.context.settings.carNode;
+        this.carS.width = this.carS.maxWidth;
+        this.carS.height= this.carS.maxHeight;
+
+        _.extend(this.context.settings, {
             'axleNode': {
-                'minWidth': 5,
+                // Axel width is defined as the distance from the side of the car to the center of a tire
+                'minWidth': 10,
                 'maxWidth': 75,
                 'minHeight': 10,
-                'maxHeight': 10
-            },
+                'maxHeight': 20,
+                'distFromBumper': 25
+            }
+        });
+
+        this.axleS = this.context.settings.axleNode;
+        this.axleS.width = (this.axleS.maxWidth * 2) + this.carS.width;
+        this.axleS.height = this.axleS.maxHeight;
+
+        _.extend(this.context.settings, {
             'tireNode': {
                 'minWidth': 5,
                 'maxWidth': 30,
                 'minHeight': 10,
                 'maxHeight': 40,
             }
-        };
-
-        _.each(this.context.settings, function(settings) {
-            settings.width = settings.maxWidth;
-            settings.height = settings.maxHeight;
         });
 
-        this.carSettings = this.context.settings.carNode;
-        this.axleSettings = this.context.settings.axleNode;
-        this.tireSettings = this.context.settings.tireNode;
+        this.tireS = this.context.settings.tireNode;
+        this.tireS.width = this.tireS.maxWidth;
+        this.tireS.height = this.tireS.maxHeight;
 
         this.drawGrid(20);
         this.initBuggy();
@@ -82,14 +93,13 @@ _.extend(BuggyCanvas.prototype, Canvas.prototype, {
     },
 
     initBuggy: function() {
-        this.carNode = new sceneGraphModule.CarNode();
+        this.rootNode = new sceneGraphModule.GraphNode('root');
+        this.carNode = new sceneGraphModule.CarNode('car');
 
         this.axleNodes = {
-            FL: new sceneGraphModule.AxleNode('FL'),
-            FR: new sceneGraphModule.AxleNode('FR'),
-            BL: new sceneGraphModule.AxleNode('BL'),
-            BR: new sceneGraphModule.AxleNode('BR'),
-        };
+            F: new sceneGraphModule.AxleNode('F'),
+            B: new sceneGraphModule.AxleNode('B')
+        }
 
         this.tireNodes = {
             FL: new sceneGraphModule.TireNode('FL'),
@@ -105,11 +115,17 @@ _.extend(BuggyCanvas.prototype, Canvas.prototype, {
 
     initNodeHierachy: function() {
 
+        this.rootNode.addChild(this.carNode);
+
         // Build node hierachy
-        _.each(this.axleNodes, function(node, key) {
+        _.each(this.axleNodes, function(node) {
             this.carNode.addChild(node);
-            node.addChild( this.tireNodes[key] );
         }, this);
+
+        this.axleNodes.F.addChild(this.tireNodes.FL);
+        this.axleNodes.F.addChild(this.tireNodes.FR);
+        this.axleNodes.B.addChild(this.tireNodes.BL);
+        this.axleNodes.B.addChild(this.tireNodes.BR);
 
     },
 
@@ -117,43 +133,47 @@ _.extend(BuggyCanvas.prototype, Canvas.prototype, {
      * Do transformations for buggy
      **/
     initTransforms: function() {
-        this.initCarTransform();
+        this.initRootTransforms();
+        this.initCarTransforms();
         this.initAxleTransforms();
         this.initTireTransforms();
     },
 
-    initCarTransform: function() {
-        var posX = (this.canvas.width - this.carSettings.width) / 2,
-            posY = (this.canvas.height - this.carSettings.height) / 2,
+    initRootTransforms: function() {
+        this.rootNode.initGraphNode(new AffineTransform(1, 0, 0, 1, 0, 0), 'root');
+    },
+
+    initCarTransforms: function() {
+        var posX = (this.canvas.width - this.carS.width) / 2,
+            posY = (this.canvas.height - this.carS.height) / 2,
             scaleX = 1,
             scaleY = 1,
             transform = new AffineTransform(scaleX, 0, 0, scaleY, posX, posY);
 
-        this.carNode.initGraphNode(transform, 'carNode');
+        this.carNode.initGraphNode(transform, 'car');
     },
 
     initAxleTransforms: function() {
         var scaleX = 1,
             scaleY = 1,
-            transformFR = new AffineTransform(scaleX, 0, 0, scaleY, -this.axleSettings.width, this.tireSettings.height),
-            transformFL = new AffineTransform(scaleX, 0, 0, scaleY, this.carSettings.width, this.tireSettings.height);
-            transformBR = new AffineTransform(scaleX, 0, 0, scaleY, -this.axleSettings.width, this.tireSettings.height * 4);
-            transformBL = new AffineTransform(scaleX, 0, 0, scaleY, this.carSettings.width, this.tireSettings.height * 4);
+            PosX = - (this.axleS.width - this.carS.width) / 2,
+            PosFY = this.axleS.distFromBumper,
+            PosBY = this.carS.height - this.axleS.distFromBumper - this.axleS.height,
+            transformF = new AffineTransform(scaleX, 0, 0, scaleY, PosX, PosFY),
+            transformB = new AffineTransform(scaleX, 0, 0, scaleY, PosX, PosBY);
 
-        this.axleNodes.FR.initGraphNode(transformFR, 'FR');
-        this.axleNodes.FL.initGraphNode(transformFL, 'FL');
-        this.axleNodes.BR.initGraphNode(transformBR, 'BR');
-        this.axleNodes.BL.initGraphNode(transformBL, 'BL');
+        this.axleNodes.F.initGraphNode(transformF, 'F');
+        this.axleNodes.B.initGraphNode(transformB, 'B');
     },
 
     initTireTransforms: function() {
         var scaleX = 1,
             scaleY = 1,
-            RXPos = - this.tireSettings.width / 2,
-            LXPos = this.axleSettings.width - (this.tireSettings.width / 2),
-            YPos = -(this.tireSettings.height - this.axleSettings.height) / 2,
-            transformR = new AffineTransform(scaleX, 0, 0, scaleY, RXPos, YPos),
-            transformL = new AffineTransform(scaleX, 0, 0, scaleY, LXPos, YPos);
+            PosRX = - this.tireS.width / 2,
+            PosLX = this.axleS.width - (this.tireS.width / 2),
+            PosY = -(this.tireS.height - this.axleS.height) / 2,
+            transformR = new AffineTransform(scaleX, 0, 0, scaleY, PosRX, PosY),
+            transformL = new AffineTransform(scaleX, 0, 0, scaleY, PosLX, PosY);
 
         this.tireNodes.FR.initGraphNode(transformR, 'FR');
         this.tireNodes.FL.initGraphNode(transformL, 'FL');
