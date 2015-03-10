@@ -100,6 +100,7 @@ window.addEventListener('load', function() {
             buggyCanvas.carS.mode = buggyCanvas.carNode.getCarMode(point);
             buggyCanvas.carS.fillStyle = CAR_COLOURS[buggyCanvas.carS.mode];
         } else {
+            buggyCanvas.carS.mode = 'NONE';
             buggyCanvas.carS.fillStyle = CAR_COLOURS['NONE'];
         }
     }

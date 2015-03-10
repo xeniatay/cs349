@@ -45,7 +45,8 @@ _.extend(BuggyCanvas.prototype, Canvas.prototype, {
                 'maxHeight': 200,
                 'minHeight': 50,
                 'bufferFactor': 10,
-                'fillStyle': 'purple'
+                'fillStyle': 'purple',
+                'mode': 'NONE'
             }
         };
 
@@ -117,7 +118,6 @@ _.extend(BuggyCanvas.prototype, Canvas.prototype, {
         };
 
         this.initNodes()
-        this.initNodeHierachy();
         this.drawBuggy();
     },
 
@@ -145,6 +145,8 @@ _.extend(BuggyCanvas.prototype, Canvas.prototype, {
         this.initCarNodes();
         this.initAxleNodes();
         this.initTireNodes();
+
+        this.initNodeHierachy();
     },
 
     initRootNodes: function() {
@@ -169,6 +171,9 @@ _.extend(BuggyCanvas.prototype, Canvas.prototype, {
             PosBY = this.carS.height - this.axleS.distFromBumper - this.axleS.height,
             transformF = new AffineTransform(scaleX, 0, 0, scaleY, PosX, PosFY),
             transformB = new AffineTransform(scaleX, 0, 0, scaleY, PosX, PosBY);
+
+        // Recalculate axle width
+        this.axleS.width = (this.axleS.maxWidth * 2) + this.carS.width;
 
         this.axleNodes.F.initGraphNode(transformF, 'axleNodeF');
         this.axleNodes.B.initGraphNode(transformB, 'axleNodeB');
@@ -197,13 +202,16 @@ _.extend(BuggyCanvas.prototype, Canvas.prototype, {
     },
 
     scaleContext: function(offset, node) {
-        var scaleX = 1 + ( offset.x / this.canvas.width),
-            // scaleY = 1 + ( (offset.y * 2) / this.canvas.height);
+        var scaleX = 1 + ( (offset.x * 2) / this.canvas.width ),
             scaleY = 1;
 
-            console.debug(scaleX, scaleY);
+        node.settings.width = node.settings.width * scaleX;
+        node.settings.height = node.settings.height * scaleY;
 
-        this.objectTransform = node.objectTransform.scale(scaleX, scaleY);
+        this.initNodes();
+
+
+        // this.objectTransform = node.objectTransform.scale(scaleX, scaleY);
     },
 
     clearCanvas: function() {

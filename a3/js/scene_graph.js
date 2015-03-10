@@ -137,10 +137,9 @@ function createSceneGraphModule() {
             var PIO = false;
             var invPoint = this.getPointInverse(point);
 
-            if ( (0 <= invPoint.x) && (invPoint.x <= this.settings.width)
-                && (0 <= invPoint.y) && (invPoint.y <= this.settings.height) )  {
+            if ( (0 < invPoint.x) && (invPoint.x <= this.settings.width)
+                && (0 < invPoint.y) && (invPoint.y <= this.settings.height) )  {
                 PIO = true;
-                console.log(this.nodeName, 'hit?', PIO);
             }
 
             // _.each(this.children, function(node) {
@@ -164,16 +163,18 @@ function createSceneGraphModule() {
 
             this.context.save();
 
-            this.applyTransform(this.startPositionTransform);
+            var matrix = this.startPositionTransform.clone();
 
-            this.context.save();
-
-            this.applyTransform(this.objectTransform);
+            this.applyTransform(matrix.preConcatenate(this.objectTransform));
 
             context.fillStyle = this.settings.fillStyle;
             context.fillRect(0, 0, this.settings.width, this.settings.height);
 
             this.context.restore();
+
+            this.context.save();
+
+            this.applyTransform(this.startPositionTransform);
 
             _.each(this.children, function(node) {
                 node.render(context);
