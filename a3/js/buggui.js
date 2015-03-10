@@ -39,6 +39,8 @@ window.addEventListener('load', function() {
 
         cursor.isMouseDown = true;
         cursor.origCoord = curCoord;
+
+        buggy.classList.add('mousedown');
     });
 
     buggy.addEventListener('mousemove', function(e) {
@@ -98,6 +100,8 @@ window.addEventListener('load', function() {
             'transformMode': 'NONE'
         }
 
+        buggy.classList.remove('mousedown');
+
         buggyCanvas.carS.fillStyle = CAR_COLOURS['NONE'];
         buggyCanvas.drawBuggy();
     }
@@ -112,6 +116,8 @@ window.addEventListener('load', function() {
             buggyCanvas.carS.mode = 'NONE';
             buggyCanvas.carS.fillStyle = CAR_COLOURS['NONE'];
         }
+
+        buggy.setAttribute('data-mode', buggyCanvas.carS.mode);
     }
 });
 

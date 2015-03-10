@@ -206,3 +206,18 @@ h2 {
 #app-container {
   border: 1px solid #2f2f2f;
 }
+[data-mode^='SCALE_X'] {
+  cursor: ew-resize;
+}
+[data-mode^='SCALE_Y'] {
+  cursor: ns-resize;
+}
+[data-mode^='TRANSLATE'] {
+  cursor: move;
+}
+[data-mode^='ROTATE'] {
+  cursor: -webkit-grab;
+}
+.mousedown[data-mode^='ROTAT'] {
+  cursor: -webkit-grabbing;
+}
