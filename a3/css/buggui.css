@@ -203,6 +203,6 @@ h2 {
   line-height: 1.2em;
 }
 /*** Buggui Stuff ***/
-.canvas {
+#app-container {
   border: 1px solid #2f2f2f;
 }

@@ -16,8 +16,10 @@ var sceneGraphModule,
         'NONE': 'purple',
         'TRANSLATE': 'yellow',
         'ROTATE': 'red',
-        'SCALE_Y': 'blue',
-        'SCALE_X': 'green'
+        'SCALE_Y_POS': 'blue', // downwards
+        'SCALE_Y_NEG': 'blue', // upwards
+        'SCALE_X_POS': 'green', // right
+        'SCALE_X_NEG': 'green' // left
     };
 
 window.addEventListener('load', function() {
@@ -52,10 +54,17 @@ window.addEventListener('load', function() {
 
             if (cursor.isMouseDown) {
                 switch (buggyCanvas.carS.mode) {
-                    case 'SCALE_X':
-                        buggyCanvas.scaleContext(pointOffset, buggyCanvas.carNode);
+                    case 'SCALE_X_POS':
+                        buggyCanvas.scaleContextX(pointOffset, '-1', buggyCanvas.carNode);
                         break;
-                    case 'SCALE_Y':
+                    case 'SCALE_X_NEG':
+                        buggyCanvas.scaleContextX(pointOffset, '1', buggyCanvas.carNode);
+                        break;
+                    case 'SCALE_Y_POS':
+                        buggyCanvas.scaleContextY(pointOffset, '-1', buggyCanvas.carNode);
+                        break;
+                    case 'SCALE_Y_NEG':
+                        buggyCanvas.scaleContextY(pointOffset, '+1', buggyCanvas.carNode);
                         break;
                     case 'ROTATE':
                         break;
@@ -63,7 +72,7 @@ window.addEventListener('load', function() {
                         buggyCanvas.translateContext(pointOffset, buggyCanvas.carNode);
                         break;
                     default:
-                        console.error('Error: invalid car transform mode');
+                        console.debug('Warning: invalid car transform mode');
                         break;
                 }
 

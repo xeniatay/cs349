@@ -59,8 +59,8 @@ _.extend(BuggyCanvas.prototype, Canvas.prototype, {
                 // Axel width is defined as the distance from the side of the car to the center of a tire
                 'minWidth': 10,
                 'maxWidth': 75,
-                'minHeight': 10,
-                'maxHeight': 20,
+                'minHeight': 5,
+                'maxHeight': 10,
                 'distFromBumper': this.carS.height / this.carS.bufferFactor
             }
         });
@@ -154,13 +154,15 @@ _.extend(BuggyCanvas.prototype, Canvas.prototype, {
     },
 
     initCarNodes: function() {
-        var posX = (this.canvas.width - this.carS.width) / 2,
-            posY = (this.canvas.height - this.carS.height) / 2,
+        var PosX = (this.canvas.width - this.carS.width) / 2,
+            PosY = (this.canvas.height - this.carS.height) / 2,
             scaleX = 1,
             scaleY = 1,
-            transform = new AffineTransform(scaleX, 0, 0, scaleY, posX, posY);
+            transform = new AffineTransform(scaleX, 0, 0, scaleY, PosX, PosY),
+            objectTransform = this.carNode.objectTransform.clone();
 
         this.carNode.initGraphNode(transform, 'carNode');
+        this.carNode.objectTransform.copyFrom(objectTransform);
     },
 
     initAxleNodes: function() {
@@ -185,33 +187,43 @@ _.extend(BuggyCanvas.prototype, Canvas.prototype, {
             PosRX = - this.tireS.width / 2,
             PosLX = this.axleS.width - (this.tireS.width / 2),
             PosY = -(this.tireS.height - this.axleS.height) / 2,
-            transformR = new AffineTransform(scaleX, 0, 0, scaleY, PosRX, PosY),
-            transformL = new AffineTransform(scaleX, 0, 0, scaleY, PosLX, PosY);
+            transformFR = new AffineTransform(scaleX, 0, 0, scaleY, PosRX, PosY),
+            transformFL = new AffineTransform(scaleX, 0, 0, scaleY, PosLX, PosY);
 
-        this.tireNodes.FR.initGraphNode(transformR, 'tireNodeFR');
-        this.tireNodes.FL.initGraphNode(transformL, 'tireNodeFL');
-        this.tireNodes.BR.initGraphNode(transformR, 'tireNodeBR');
-        this.tireNodes.BL.initGraphNode(transformL, 'tireNodeBL');
+        this.tireNodes.FR.initGraphNode(transformFR, 'tireNodeFR');
+        this.tireNodes.FL.initGraphNode(transformFL, 'tireNodeFL');
+        this.tireNodes.BR.initGraphNode(transformFR, 'tireNodeBR');
+        this.tireNodes.BL.initGraphNode(transformFL, 'tireNodeBL');
     },
 
     /*
      * Offsets the node's starting context by the coordinates provided
      */
     translateContext: function(offset, node) {
-        node.startPositionTransform.translate(offset.x, offset.y);
+        node.objectTransform.translate(offset.x, offset.y);
     },
 
-    scaleContext: function(offset, node) {
-        var scaleX = 1 + ( (offset.x * 2) / this.canvas.width ),
+    scaleContextX: function(offset, dir, node) {
+        var scaleX = 1 + ( dir * offset.x * 2 / node.settings.width ),
             scaleY = 1;
 
         node.settings.width = node.settings.width * scaleX;
-        node.settings.height = node.settings.height * scaleY;
+
+        node.settings.width = Math.max(node.settings.minWidth, node.settings.width);
+        node.settings.width = Math.min(node.settings.maxWidth, node.settings.width);
 
         this.initNodes();
+    },
 
+    scaleContextY: function(offset, dir, node) {
+        var scaleY = 1 + ( dir * offset.y / node.settings.width );
 
-        // this.objectTransform = node.objectTransform.scale(scaleX, scaleY);
+        node.settings.height = node.settings.height * scaleY;
+
+        node.settings.height = Math.max(node.settings.minHeight, node.settings.height);
+        node.settings.height = Math.min(node.settings.maxHeight, node.settings.height);
+
+        this.initNodes();
     },
 
     clearCanvas: function() {

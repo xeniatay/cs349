@@ -74,7 +74,9 @@ function createSceneGraphModule() {
         },
 
         getPointInverse: function(point) {
-            var inverse = this.startPositionTransform.createInverse();
+            var matrix = this.startPositionTransform.clone().concatenate(this.objectTransform),
+                inverse = matrix.createInverse();
+
             return inverse.transformPoint(point);
         },
 
@@ -165,16 +167,16 @@ function createSceneGraphModule() {
 
             var matrix = this.startPositionTransform.clone();
 
-            this.applyTransform(matrix.preConcatenate(this.objectTransform));
+            this.applyTransform(matrix.concatenate(this.objectTransform));
 
             context.fillStyle = this.settings.fillStyle;
             context.fillRect(0, 0, this.settings.width, this.settings.height);
 
-            this.context.restore();
+            // this.context.restore();
 
-            this.context.save();
+            // this.context.save();
 
-            this.applyTransform(this.startPositionTransform);
+            // this.applyTransform(this.startPositionTransform);
 
             _.each(this.children, function(node) {
                 node.render(context);
@@ -191,12 +193,14 @@ function createSceneGraphModule() {
                 yBuffer = this.settings.height / this.settings.bufferFactor,
                 xBuffer = this.settings.width / this.settings.bufferFactor;
 
-            if ( (invPoint.y < yBuffer) ||
-                 (invPoint.y > (this.settings.height - yBuffer) ) ) {
-                return 'SCALE_Y';
-            } else if ( (invPoint.x < xBuffer) ||
-                        (invPoint.x > this.settings.width - xBuffer) ) {
-                return 'SCALE_X';
+            if (invPoint.y < yBuffer) {
+                return 'SCALE_Y_POS';
+            } else if (invPoint.y > (this.settings.height - yBuffer) ) {
+                return 'SCALE_Y_NEG';
+            } else if (invPoint.x < xBuffer) {
+                return 'SCALE_X_POS';
+            } else if (invPoint.x > this.settings.width - xBuffer) {
+                return 'SCALE_X_NEG';
             } else if ( (invPoint.y < this.settings.height / 4) ||
                         (invPoint.y > this.settings.height * 3/4) ) {
                 return 'ROTATE';
