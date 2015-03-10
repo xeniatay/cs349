@@ -43,13 +43,15 @@ _.extend(BuggyCanvas.prototype, Canvas.prototype, {
                 'maxWidth': 150,
                 'minWidth': 25,
                 'maxHeight': 200,
-                'minHeight': 50
+                'minHeight': 50,
+                'bufferFactor': 10,
+                'fillStyle': 'purple'
             }
         };
 
         this.carS = this.context.settings.carNode;
         this.carS.width = this.carS.maxWidth;
-        this.carS.height= this.carS.maxHeight;
+        this.carS.height = this.carS.maxHeight;
 
         _.extend(this.context.settings, {
             'axleNode': {
@@ -58,7 +60,7 @@ _.extend(BuggyCanvas.prototype, Canvas.prototype, {
                 'maxWidth': 75,
                 'minHeight': 10,
                 'maxHeight': 20,
-                'distFromBumper': 25
+                'distFromBumper': this.carS.height / this.carS.bufferFactor
             }
         });
 
@@ -190,9 +192,18 @@ _.extend(BuggyCanvas.prototype, Canvas.prototype, {
     /*
      * Offsets the node's starting context by the coordinates provided
      */
-    translateOrigin: function(offset, node) {
+    translateContext: function(offset, node) {
         node.startPositionTransform.translate(offset.x, offset.y);
-        this.drawBuggy();
+    },
+
+    scaleContext: function(offset, node) {
+        var scaleX = 1 + ( offset.x / this.canvas.width),
+            // scaleY = 1 + ( (offset.y * 2) / this.canvas.height);
+            scaleY = 1;
+
+            console.debug(scaleX, scaleY);
+
+        this.objectTransform = node.objectTransform.scale(scaleX, scaleY);
     },
 
     clearCanvas: function() {

@@ -14,7 +14,17 @@ function createSceneGraphModule() {
     var BACK_LEFT_TIRE_PART = 'BACK_LEFT_TIRE_PART';
     var BACK_RIGHT_TIRE_PART = 'BACK_RIGHT_TIRE_PART';
 
+    // Car sub parts
+    var FRONT_BUMPER = 'FRONT_BUMPER';
+    var SIDE_BUMPER = 'SIDE_BUMPER';
+    var CAR_LEFT = 'CAR_LEFT';
+    var CAR_RIGHT = 'CAR_RIGHT';
+    var CAR_FRONT = 'CAR_FRONT';
+    var CAR_BACK = 'CAR_BACK';
+
     var GraphNode = function() {
+        this.pio = false;
+        this.pioLabels = [];
     };
 
     _.extend(GraphNode.prototype, {
@@ -61,6 +71,11 @@ function createSceneGraphModule() {
                 matrix.getTranslateY()
             );
 
+        },
+
+        getPointInverse: function(point) {
+            var inverse = this.startPositionTransform.createInverse();
+            return inverse.transformPoint(point);
         },
 
         addChild: function(graphNode) {
@@ -114,15 +129,13 @@ function createSceneGraphModule() {
          * transformed correctly prior to performing the hit test.
          */
         pointInObject: function(point) {
-            var PIO = false;
-
             if ( !this.startPositionTransform.isInvertible() ) {
                 console.error('Error: transform matrix is not invertible', this.nodeName)
                 return;
             }
 
-            var inverse = this.startPositionTransform.createInverse();
-            var invPoint = inverse.transformPoint(point);
+            var PIO = false;
+            var invPoint = this.getPointInverse(point);
 
             if ( (0 <= invPoint.x) && (invPoint.x <= this.settings.width)
                 && (0 <= invPoint.y) && (invPoint.y <= this.settings.height) )  {
@@ -130,9 +143,9 @@ function createSceneGraphModule() {
                 console.log(this.nodeName, 'hit?', PIO);
             }
 
-            _.each(this.children, function(node) {
-                PIO = node.pointInObject(invPoint);
-            });
+            // _.each(this.children, function(node) {
+            //     PIO = PIO || node.pointInObject(invPoint);
+            // });
 
             return PIO;
         }
@@ -147,14 +160,20 @@ function createSceneGraphModule() {
         // Overrides parent method
         render: function(context) {
             this.context = context;
+            this.settings = this.context.settings.carNode;
+
             this.context.save();
 
             this.applyTransform(this.startPositionTransform);
 
-            this.settings = this.context.settings.carNode;
+            this.context.save();
 
-            context.fillStyle = 'red';
+            this.applyTransform(this.objectTransform);
+
+            context.fillStyle = this.settings.fillStyle;
             context.fillRect(0, 0, this.settings.width, this.settings.height);
+
+            this.context.restore();
 
             _.each(this.children, function(node) {
                 node.render(context);
@@ -163,9 +182,29 @@ function createSceneGraphModule() {
             this.context.restore();
         },
 
-        // Overrides parent method
-        // pointInObject: function(point) {
-        // }
+        /*
+         * Based on coordinates of point, return the car sub part currently selected
+         */
+        getCarMode: function(point) {
+            var invPoint = this.getPointInverse(point),
+                yBuffer = this.settings.height / this.settings.bufferFactor,
+                xBuffer = this.settings.width / this.settings.bufferFactor;
+
+            if ( (invPoint.y < yBuffer) ||
+                 (invPoint.y > (this.settings.height - yBuffer) ) ) {
+                return 'SCALE_Y';
+            } else if ( (invPoint.x < xBuffer) ||
+                        (invPoint.x > this.settings.width - xBuffer) ) {
+                return 'SCALE_X';
+            } else if ( (invPoint.y < this.settings.height / 4) ||
+                        (invPoint.y > this.settings.height * 3/4) ) {
+                return 'ROTATE';
+            } else {
+                return 'TRANSLATE';
+            }
+        }
+
+
     });
 
     /**
