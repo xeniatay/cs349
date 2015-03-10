@@ -426,6 +426,17 @@ AffineTransform.prototype.transform = function(src, srcOff, dst,
     }
 };
 
+/**
+ * Transform one point by this transform and returns the result
+ *
+ * @param The points as x, y value pair.
+ */
+AffineTransform.prototype.transformPoint = function(point) {
+    return {
+        'x': point.x * this.m00_ + point.y * this.m01_ + this.m02_,
+        'y': point.x * this.m10_ + point.y * this.m11_ + this.m12_
+    };
+};
 
 /**
  * @return {number} The determinant of this transform.

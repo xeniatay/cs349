@@ -114,7 +114,27 @@ function createSceneGraphModule() {
          * transformed correctly prior to performing the hit test.
          */
         pointInObject: function(point) {
-            // TODO: There are ways to handle this query here, but you may find it easier to handle in subclasses
+            var PIO = false;
+
+            if ( !this.startPositionTransform.isInvertible() ) {
+                console.error('Error: transform matrix is not invertible', this.nodeName)
+                return;
+            }
+
+            var inverse = this.startPositionTransform.createInverse();
+            var invPoint = inverse.transformPoint(point);
+
+            if ( (0 <= invPoint.x) && (invPoint.x <= this.settings.width)
+                && (0 <= invPoint.y) && (invPoint.y <= this.settings.height) )  {
+                PIO = true;
+                console.log(this.nodeName, 'hit?', PIO);
+            }
+
+            _.each(this.children, function(node) {
+                PIO = node.pointInObject(invPoint);
+            });
+
+            return PIO;
         }
 
     });
@@ -131,10 +151,10 @@ function createSceneGraphModule() {
 
             this.applyTransform(this.startPositionTransform);
 
-            var settings = this.context.settings.carNode;
+            this.settings = this.context.settings.carNode;
 
             context.fillStyle = 'red';
-            context.fillRect(0, 0, settings.width, settings.height);
+            context.fillRect(0, 0, this.settings.width, this.settings.height);
 
             _.each(this.children, function(node) {
                 node.render(context);
@@ -144,9 +164,8 @@ function createSceneGraphModule() {
         },
 
         // Overrides parent method
-        pointInObject: function(point) {
-            // TODO
-        }
+        // pointInObject: function(point) {
+        // }
     });
 
     /**
@@ -165,10 +184,10 @@ function createSceneGraphModule() {
             this.context.save();
             this.applyTransform(this.startPositionTransform);
 
-            var settings = this.context.settings.axleNode;
+            this.settings = this.context.settings.axleNode;
 
             context.fillStyle = 'black';
-            context.fillRect(0, 0, settings.width, settings.height);
+            context.fillRect(0, 0, this.settings.width, this.settings.height);
 
             _.each(this.children, function(node) {
                 node.render(context);
@@ -177,11 +196,11 @@ function createSceneGraphModule() {
             this.context.restore();
         },
 
-        // Overrides parent method
-        pointInObject: function(point) {
-            // User can't select axles
-            return false;
-        }
+        // // Overrides parent method
+        // pointInObject: function(point) {
+        //     // User can't select axles
+        //     return false;
+        // }
     });
 
     /**
@@ -201,10 +220,10 @@ function createSceneGraphModule() {
 
             this.applyTransform(this.startPositionTransform);
 
-            var settings = this.context.settings.tireNode;
+            this.settings = this.context.settings.tireNode;
 
             context.fillStyle = 'gray';
-            context.fillRect(0, 0, settings.width, settings.height);
+            context.fillRect(0, 0, this.settings.width, this.settings.height);
 
             _.each(this.children, function(node) {
                 node.render(context);
@@ -213,10 +232,10 @@ function createSceneGraphModule() {
             this.context.restore();
         },
 
-        // Overrides parent method
-        pointInObject: function(point) {
-            // TODO
-        }
+        // // Overrides parent method
+        // pointInObject: function(point) {
+        //     // TODO
+        // }
     });
 
     // Return an object containing all of our classes and constants

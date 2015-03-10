@@ -1,5 +1,10 @@
 /*** Generic Canvas Template ***/
 
+var Point = function(x, y) {
+    this.x = x;
+    this.y = y;
+}
+
 var Canvas = function () {
 };
 
@@ -74,7 +79,8 @@ _.extend(BuggyCanvas.prototype, Canvas.prototype, {
         this.tireS.width = this.tireS.maxWidth;
         this.tireS.height = this.tireS.maxHeight;
 
-        this.drawGrid(20);
+        this.context.save();
+
         this.initBuggy();
     },
 
@@ -93,22 +99,22 @@ _.extend(BuggyCanvas.prototype, Canvas.prototype, {
     },
 
     initBuggy: function() {
-        this.rootNode = new sceneGraphModule.GraphNode('root');
-        this.carNode = new sceneGraphModule.CarNode('car');
+        this.rootNode = new sceneGraphModule.GraphNode();
+        this.carNode = new sceneGraphModule.CarNode();
 
         this.axleNodes = {
-            F: new sceneGraphModule.AxleNode('F'),
-            B: new sceneGraphModule.AxleNode('B')
+            F: new sceneGraphModule.AxleNode(),
+            B: new sceneGraphModule.AxleNode()
         }
 
         this.tireNodes = {
-            FL: new sceneGraphModule.TireNode('FL'),
-            FR: new sceneGraphModule.TireNode('FR'),
-            BL: new sceneGraphModule.TireNode('BL'),
-            BR: new sceneGraphModule.TireNode('BR')
+            FL: new sceneGraphModule.TireNode(),
+            FR: new sceneGraphModule.TireNode(),
+            BL: new sceneGraphModule.TireNode(),
+            BR: new sceneGraphModule.TireNode()
         };
 
-        this.initTransforms()
+        this.initNodes()
         this.initNodeHierachy();
         this.drawBuggy();
     },
@@ -132,28 +138,28 @@ _.extend(BuggyCanvas.prototype, Canvas.prototype, {
     /**
      * Do transformations for buggy
      **/
-    initTransforms: function() {
-        this.initRootTransforms();
-        this.initCarTransforms();
-        this.initAxleTransforms();
-        this.initTireTransforms();
+    initNodes: function() {
+        this.initRootNodes();
+        this.initCarNodes();
+        this.initAxleNodes();
+        this.initTireNodes();
     },
 
-    initRootTransforms: function() {
-        this.rootNode.initGraphNode(new AffineTransform(1, 0, 0, 1, 0, 0), 'root');
+    initRootNodes: function() {
+        this.rootNode.initGraphNode(new AffineTransform(1, 0, 0, 1, 0, 0), 'rootNode');
     },
 
-    initCarTransforms: function() {
+    initCarNodes: function() {
         var posX = (this.canvas.width - this.carS.width) / 2,
             posY = (this.canvas.height - this.carS.height) / 2,
             scaleX = 1,
             scaleY = 1,
             transform = new AffineTransform(scaleX, 0, 0, scaleY, posX, posY);
 
-        this.carNode.initGraphNode(transform, 'car');
+        this.carNode.initGraphNode(transform, 'carNode');
     },
 
-    initAxleTransforms: function() {
+    initAxleNodes: function() {
         var scaleX = 1,
             scaleY = 1,
             PosX = - (this.axleS.width - this.carS.width) / 2,
@@ -162,11 +168,11 @@ _.extend(BuggyCanvas.prototype, Canvas.prototype, {
             transformF = new AffineTransform(scaleX, 0, 0, scaleY, PosX, PosFY),
             transformB = new AffineTransform(scaleX, 0, 0, scaleY, PosX, PosBY);
 
-        this.axleNodes.F.initGraphNode(transformF, 'F');
-        this.axleNodes.B.initGraphNode(transformB, 'B');
+        this.axleNodes.F.initGraphNode(transformF, 'axleNodeF');
+        this.axleNodes.B.initGraphNode(transformB, 'axleNodeB');
     },
 
-    initTireTransforms: function() {
+    initTireNodes: function() {
         var scaleX = 1,
             scaleY = 1,
             PosRX = - this.tireS.width / 2,
@@ -175,16 +181,39 @@ _.extend(BuggyCanvas.prototype, Canvas.prototype, {
             transformR = new AffineTransform(scaleX, 0, 0, scaleY, PosRX, PosY),
             transformL = new AffineTransform(scaleX, 0, 0, scaleY, PosLX, PosY);
 
-        this.tireNodes.FR.initGraphNode(transformR, 'FR');
-        this.tireNodes.FL.initGraphNode(transformL, 'FL');
-        this.tireNodes.BR.initGraphNode(transformR, 'BR');
-        this.tireNodes.BL.initGraphNode(transformL, 'BL');
+        this.tireNodes.FR.initGraphNode(transformR, 'tireNodeFR');
+        this.tireNodes.FL.initGraphNode(transformL, 'tireNodeFL');
+        this.tireNodes.BR.initGraphNode(transformR, 'tireNodeBR');
+        this.tireNodes.BL.initGraphNode(transformL, 'tireNodeBL');
+    },
+
+    /*
+     * Offsets the node's starting context by the coordinates provided
+     */
+    translateOrigin: function(offset, node) {
+        node.startPositionTransform.translate(offset.x, offset.y);
+        this.drawBuggy();
+    },
+
+    clearCanvas: function() {
+        // Store the current transformation matrix
+        this.context.save();
+
+        // Use the identity matrix while clearing the canvas
+        this.context.setTransform(1, 0, 0, 1, 0, 0);
+        this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
+
+        // Restore the transform
+        this.context.restore();
     },
 
     /**
      * Draw buggy aka car
      */
     drawBuggy: function() {
+        this.clearCanvas();
+
+        this.drawGrid(20);
         this.carNode.render(this.context);
     },
 
