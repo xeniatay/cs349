@@ -34,17 +34,25 @@ window.addEventListener('load', function() {
         var curCoord = { x: e.offsetX, y: e.offsetY },
             pointOffset = new Point(curCoord.x - cursor.origCoord.x, curCoord.y - cursor.origCoord.y);
 
-        setPIOActiveNode(curCoord);
-            console.debug(cursor.activeNode);
-
         if (cursor.isMouseDown) {
             if (cursor.activeNode === sceneGraphModule.CAR_PART) {
                 transformCar(curCoord, pointOffset, buggyCanvas.carNode);
-            } else if (cursor.activeNode === sceneGraphModule.FRONT_LEFT_TIRE_PART) {
-                console.debug('hello front left tire');
-            } else if (cursor.activeNode === sceneGraphModule.FRONT_RIGHT_TIRE_PART) {
-            } else if (cursor.activeNode === sceneGraphModule.BACK_LEFT_TIRE_PART) {
-            } else if (cursor.activeNode === sceneGraphModule.BACK_RIGHT_TIRE_PART) {
+            } else if (cursor.activeNode.match(/TIRE_PART/)) {
+                console.debug(buggyCanvas.tireS.mode);
+                switch (buggyCanvas.tireS.mode) {
+                    case 'SCALE_X_AXLE':
+                        buggyCanvas.scaleAxles(pointOffset);
+                        break;
+                    case 'ROTATE':
+                        break;
+                    default:
+                        break;
+                }
+            // } else if (cursor.activeNode === sceneGraphModule.FRONT_LEFT_TIRE_PART) {
+
+            // } else if (cursor.activeNode === sceneGraphModule.FRONT_RIGHT_TIRE_PART) {
+            // } else if (cursor.activeNode === sceneGraphModule.BACK_LEFT_TIRE_PART) {
+            // } else if (cursor.activeNode === sceneGraphModule.BACK_RIGHT_TIRE_PART) {
             }
 
             cursor.origCoord = curCoord;
@@ -90,7 +98,8 @@ window.addEventListener('load', function() {
                 buggyCanvas.carS.fillStyle = buggyCanvas.carS.colours['NONE'];
             }
 
-            if (cursor.activeNode === sceneGraphModule.TIRE_PART) {
+            if ( cursor.activeNode.match(/TIRE_PART/) ) {
+                buggyCanvas.tireS.mode = buggyCanvas.tireNodes.FR.getTireMode(point);
             }
 
         } else {

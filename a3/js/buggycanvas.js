@@ -14,6 +14,7 @@ _.extend(Canvas.prototype, {
             containerElem = document.getElementById(containerId);
 
         this.hostElement = document.createElement('div');
+        this.hostElement.classList.add('canvas-host');
         this.hostElement.innerHTML = template.innerHTML;
         containerElem.appendChild(this.hostElement);
     }
@@ -164,6 +165,17 @@ _.extend(BuggyCanvas.prototype, Canvas.prototype, {
         this.initNodeHierachy();
     },
 
+    initGenericNode: function(transform, nodeName, node) {
+        var objectTransform = node.objectTransform.clone(),
+            cumulativeTransform = node.cumulativeTransform.clone();
+
+        node.initGraphNode(transform, nodeName);
+
+        // Preserve these transforms
+        node.objectTransform.copyFrom(objectTransform);
+        // node.cumulativeTransform.copyFrom(cumulativeTransform);
+    },
+
     initRootNodes: function() {
         this.rootNode.initGraphNode(new AffineTransform(1, 0, 0, 1, 0, 0), 'rootNode');
     },
@@ -173,11 +185,9 @@ _.extend(BuggyCanvas.prototype, Canvas.prototype, {
             PosY = (this.canvas.height - this.carS.height) / 2,
             scaleX = 1,
             scaleY = 1,
-            transform = new AffineTransform(scaleX, 0, 0, scaleY, PosX, PosY),
-            objectTransform = this.carNode.objectTransform.clone();
+            transform = new AffineTransform(scaleX, 0, 0, scaleY, PosX, PosY);
 
-        this.carNode.initGraphNode(transform, sceneGraphModule.CAR_PART);
-        this.carNode.objectTransform.copyFrom(objectTransform);
+        this.initGenericNode(transform, sceneGraphModule.CAR_PART, this.carNode);
     },
 
     initAxleNodes: function() {
@@ -192,8 +202,8 @@ _.extend(BuggyCanvas.prototype, Canvas.prototype, {
         // Recalculate axle width
         this.axleS.width = (this.axleS.maxWidth * 2) + this.carS.width;
 
-        this.axleNodes.F.initGraphNode(transformF, sceneGraphModule.FRONT_AXLE_PART);
-        this.axleNodes.B.initGraphNode(transformB, sceneGraphModule.BACK_AXLE_PART);
+        this.initGenericNode(transformF, sceneGraphModule.FRONT_AXLE_PART, this.axleNodes.F);
+        this.initGenericNode(transformB, sceneGraphModule.BACK_AXLE_PART, this.axleNodes.B);
     },
 
     initTireNodes: function() {
@@ -202,13 +212,13 @@ _.extend(BuggyCanvas.prototype, Canvas.prototype, {
             PosRX = - this.tireS.width / 2,
             PosLX = this.axleS.width - (this.tireS.width / 2),
             PosY = -(this.tireS.height - this.axleS.height) / 2,
-            transformFR = new AffineTransform(scaleX, 0, 0, scaleY, PosRX, PosY),
-            transformFL = new AffineTransform(scaleX, 0, 0, scaleY, PosLX, PosY);
+            transformFL = new AffineTransform(scaleX, 0, 0, scaleY, PosRX, PosY),
+            transformFR = new AffineTransform(scaleX, 0, 0, scaleY, PosLX, PosY);
 
-        this.tireNodes.FR.initGraphNode(transformFR, sceneGraphModule.FRONT_RIGHT_TIRE_PART);
-        this.tireNodes.FL.initGraphNode(transformFL, sceneGraphModule.FRONT_LEFT_TIRE_PART);
-        this.tireNodes.BR.initGraphNode(transformFR, sceneGraphModule.BACK_RIGHT_TIRE_PART);
-        this.tireNodes.BL.initGraphNode(transformFL, sceneGraphModule.BACK_LEFT_TIRE_PART);
+        this.initGenericNode(transformFL, sceneGraphModule.FRONT_LEFT_TIRE_PART, this.tireNodes.FL);
+        this.initGenericNode(transformFR, sceneGraphModule.FRONT_RIGHT_TIRE_PART, this.tireNodes.FR);
+        this.initGenericNode(transformFL, sceneGraphModule.BACK_LEFT_TIRE_PART, this.tireNodes.BL);
+        this.initGenericNode(transformFR, sceneGraphModule.BACK_RIGHT_TIRE_PART, this.tireNodes.BR);
     },
 
     /*

@@ -203,9 +203,6 @@ h2 {
   line-height: 1.2em;
 }
 /*** Buggui Stuff ***/
-#app-container {
-  border: 1px solid #2f2f2f;
-}
 [data-mode^='SCALE_X'] {
   cursor: ew-resize;
 }
@@ -220,4 +217,9 @@ h2 {
 }
 .mousedown[data-mode^='ROTAT'] {
   cursor: -webkit-grabbing;
+}
+.canvas-host {
+  border: 1px solid #2f2f2f;
+  width: 800px;
+  height: 600px;
 }

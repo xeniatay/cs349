@@ -49,6 +49,9 @@ function createSceneGraphModule() {
             // has been applied
             this.objectTransform = new AffineTransform();
 
+            // Cumulative transforms from parentNode
+            this.cumulativeTransform = new AffineTransform();
+
             // Any child nodes of this node
             this.children = {};
 
@@ -78,17 +81,32 @@ function createSceneGraphModule() {
                 console.error('Error: transform matrix is not invertible', this.nodeName)
             }
 
-            var matrix = this.startPositionTransform.clone(),
-                matrix = matrix.translate(this.settings.width / 2, this.settings.height/ 2),
-                matrix = matrix.concatenate(this.objectTransform),
-                matrix = matrix.translate(- this.settings.width / 2, - this.settings.height/ 2),
+            var matrix = this.getContextTransform(),
                 inverse = matrix.createInverse();
 
             return inverse.transformPoint(point);
         },
 
+        getContextTransform: function() {
+            var matrix = new AffineTransform(),
+                rotate = new AffineTransform().rotate(0.17, 0, 0);
+
+            matrix.concatenate(this.startPositionTransform);
+
+            if (this.context && this.settings) {
+                // matrix.translate(this.settings.width / 2, this.settings.height/ 2);
+                matrix.concatenate(this.objectTransform);
+                // matrix.translate(- this.settings.width / 2, - this.settings.height/ 2);
+            }
+
+            return matrix;
+        },
+
         addChild: function(graphNode) {
             this.children[graphNode.nodeName] = graphNode;
+
+            var matrix = this.getContextTransform();
+            graphNode.cumulativeTransform.concatenate(matrix);
         },
 
         /**
@@ -175,7 +193,7 @@ function createSceneGraphModule() {
 
             _.each(this.children, function(node) {
                 if ( node.pointInObject( node.getPointInverse(invPoint) ) ) {
-                    nodeName = node.getPIONodeName( invPoint );
+                    nodeName = node.getPIONodeName( invPoint ); // UGH WTF
                 }
             });
 
@@ -196,15 +214,15 @@ function createSceneGraphModule() {
 
             this.context.save();
 
-            var matrix = this.startPositionTransform.clone();
+            var matrix = this.getContextTransform();
+            this.applyTransform(matrix);
 
-            // this.applyTransform(matrix.concatenate(this.objectTransform));
-            this.applyTransform(this.startPositionTransform);
+            // this.applyTransform( this.startPositionTransform.clone() );
 
-            // objectTransform needs to be applied at the center of node's rendered element
-            this.context.translate(this.settings.width / 2, this.settings.height / 2);
-            this.applyTransform(this.objectTransform);
-            this.context.translate( - this.settings.width / 2, - this.settings.height / 2 );
+            // // objectTransform needs to be applied at the center of node's rendered element
+            // this.context.translate(this.settings.width / 2, this.settings.height / 2);
+            // this.applyTransform(this.objectTransform);
+            // this.context.translate( - this.settings.width / 2, - this.settings.height / 2 );
 
             context.fillStyle = this.settings.fillStyle;
             context.fillRect(0, 0, this.settings.width, this.settings.height);
