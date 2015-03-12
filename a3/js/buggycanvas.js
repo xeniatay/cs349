@@ -226,6 +226,23 @@ _.extend(BuggyCanvas.prototype, Canvas.prototype, {
         this.initNodes();
     },
 
+    /**
+     * Rotate context
+     * ONLY Clockwise for now
+     **/
+    rotateContext: function(origCoord, curCoord, offset, node) {
+        var invOrig = node.getPointInverse(origCoord),
+            invCur = node.getPointInverse(curCoord),
+            origin = new Point(node.settings.width / 2, node.settings.height / 2);
+            thetaOrig = Math.atan( (invOrig.y - origin.y) / (invOrig.x - origin.x) ),
+            thetaCur = Math.atan( (invCur.y - origin.y) / (invCur.x - origin.x) ),
+            theta = -1 * Math.abs( thetaOrig - thetaCur );
+
+        // console.debug('Angle:', theta * 180 / Math.PI, ' Radian: ', theta);
+
+        node.objectTransform.rotate(theta, 0, 0);
+    },
+
     clearCanvas: function() {
         // Store the current transformation matrix
         this.context.save();

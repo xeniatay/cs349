@@ -13,9 +13,9 @@ var sceneGraphModule,
         'transformMode': 'NONE'
     },
     CAR_COLOURS = {
-        'NONE': 'purple',
+        'NONE': 'red',
         'TRANSLATE': 'yellow',
-        'ROTATE': 'red',
+        'ROTATE': 'purple',
         'SCALE_Y_POS': 'blue', // downwards
         'SCALE_Y_NEG': 'blue', // upwards
         'SCALE_X_POS': 'green', // right
@@ -45,15 +45,14 @@ window.addEventListener('load', function() {
 
     buggy.addEventListener('mousemove', function(e) {
         var curCoord = { x: e.offsetX, y: e.offsetY },
-            pointOffset;
+            pointOffset,
+            pointInCar = buggyCanvas.carNode.isInversePointInObject(curCoord);
 
         if ( (cursor.origCoord.x !== curCoord.x) || (cursor.origCoord.y !== curCoord.y) ) {
             pointOffset = new Point(curCoord.x - cursor.origCoord.x, curCoord.y - cursor.origCoord.y);
         }
 
         if (pointOffset) {
-            var carPIO = buggyCanvas.carNode.pointInObject(curCoord);
-
             if (cursor.isMouseDown) {
                 switch (buggyCanvas.carS.mode) {
                     case 'SCALE_X_POS':
@@ -69,6 +68,7 @@ window.addEventListener('load', function() {
                         buggyCanvas.scaleContextY(pointOffset, '+1', buggyCanvas.carNode);
                         break;
                     case 'ROTATE':
+                        buggyCanvas.rotateContext(cursor.origCoord, curCoord, pointOffset, buggyCanvas.carNode);
                         break;
                     case 'TRANSLATE':
                         buggyCanvas.translateContext(pointOffset, buggyCanvas.carNode);
@@ -85,7 +85,9 @@ window.addEventListener('load', function() {
             }
         }
 
-        buggyCanvas.drawBuggy();
+        if (pointInCar) {
+        }
+            buggyCanvas.drawBuggy();
     });
 
     buggy.addEventListener('mouseup', function(e) {
@@ -107,10 +109,11 @@ window.addEventListener('load', function() {
     }
 
     function detectCarMode(point) {
-        var pointInCar = buggyCanvas.carNode.pointInObject(point);
+        var pointInCar = buggyCanvas.carNode.isInversePointInObject(point);
 
         if (pointInCar) {
             buggyCanvas.carS.mode = buggyCanvas.carNode.getCarMode(point);
+            buggyCanvas.carS.fillStyle = CAR_COLOURS['NONE'];
             buggyCanvas.carS.fillStyle = CAR_COLOURS[buggyCanvas.carS.mode];
         } else {
             buggyCanvas.carS.mode = 'NONE';

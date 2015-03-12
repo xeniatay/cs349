@@ -74,7 +74,14 @@ function createSceneGraphModule() {
         },
 
         getPointInverse: function(point) {
-            var matrix = this.startPositionTransform.clone().concatenate(this.objectTransform),
+            if ( !this.startPositionTransform.isInvertible() ) {
+                console.error('Error: transform matrix is not invertible', this.nodeName)
+            }
+
+            var matrix = this.startPositionTransform.clone(),
+                matrix = matrix.translate(this.settings.width / 2, this.settings.height/ 2),
+                matrix = matrix.concatenate(this.objectTransform),
+                matrix = matrix.translate(- this.settings.width / 2, - this.settings.height/ 2),
                 inverse = matrix.createInverse();
 
             return inverse.transformPoint(point);
@@ -127,25 +134,28 @@ function createSceneGraphModule() {
         },
 
         /**
-         * Determines whether a point lies within this object. Be sure the point is
-         * transformed correctly prior to performing the hit test.
+         * Convert point to inverse and return results of hit test.
+         * Worst method name ever. But pointInObject() can't be changed _and_
+         * needs to take in an inversed point. ಠ_ಠ
+         */
+        isInversePointInObject: function(point) {
+            return this.pointInObject( this.getPointInverse(point) );
+        },
+
+        /**
+         * Determines whether a point lies within this object.
+         * The point must be transformed correctly prior to this method.
          */
         pointInObject: function(point) {
-            if ( !this.startPositionTransform.isInvertible() ) {
-                console.error('Error: transform matrix is not invertible', this.nodeName)
-                return;
-            }
-
             var PIO = false;
-            var invPoint = this.getPointInverse(point);
 
-            if ( (0 < invPoint.x) && (invPoint.x <= this.settings.width)
-                && (0 < invPoint.y) && (invPoint.y <= this.settings.height) )  {
+            if ( (0 < point.x) && (point.x <= this.settings.width)
+                && (0 < point.y) && (point.y <= this.settings.height) )  {
                 PIO = true;
             }
 
             // _.each(this.children, function(node) {
-            //     PIO = PIO || node.pointInObject(invPoint);
+            //     PIO = PIO || node.pointInObject(point);
             // });
 
             return PIO;
@@ -167,16 +177,15 @@ function createSceneGraphModule() {
 
             var matrix = this.startPositionTransform.clone();
 
-            this.applyTransform(matrix.concatenate(this.objectTransform));
+            this.applyTransform(this.startPositionTransform);
+            // this.applyTransform(matrix.concatenate(this.objectTransform));
+
+            this.context.translate(this.settings.width / 2, this.settings.height/ 2);
+            this.applyTransform(this.objectTransform);
+            this.context.translate(- this.settings.width / 2, - this.settings.height/ 2);
 
             context.fillStyle = this.settings.fillStyle;
             context.fillRect(0, 0, this.settings.width, this.settings.height);
-
-            // this.context.restore();
-
-            // this.context.save();
-
-            // this.applyTransform(this.startPositionTransform);
 
             _.each(this.children, function(node) {
                 node.render(context);
