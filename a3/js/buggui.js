@@ -4,38 +4,24 @@
 
 var sceneGraphModule,
     buggyCanvas,
-
-    // cursor defaults
-    cursor = {
-        'isMouseDown': false,
-        'origCoord': new Point(0, 0),
-        'selectedNode': 'NONE',
-        'transformMode': 'NONE'
-    },
-    CAR_COLOURS = {
-        'NONE': 'red',
-        'TRANSLATE': 'yellow',
-        'ROTATE': 'purple',
-        'SCALE_Y_POS': 'blue', // downwards
-        'SCALE_Y_NEG': 'blue', // upwards
-        'SCALE_X_POS': 'green', // right
-        'SCALE_X_NEG': 'green' // left
-    };
+    cursor;
 
 window.addEventListener('load', function() {
 
-    var appContainer = document.getElementById('app-container');
+    var appContainer = document.getElementById('app-container'),
+        buggy;
 
     sceneGraphModule = createSceneGraphModule();
     buggyCanvas = new BuggyCanvas();
+    buggy = buggyCanvas.hostElement;
 
-    var buggy = buggyCanvas.hostElement;
+    resetCursor();
 
+    /*** On mouse down ***/
     buggy.addEventListener('mousedown', function(e) {
-
         var curCoord = { x: e.offsetX, y: e.offsetY };
 
-        detectCarMode(curCoord);
+        setPIOActiveNode(curCoord);
 
         cursor.isMouseDown = true;
         cursor.origCoord = curCoord;
@@ -43,51 +29,30 @@ window.addEventListener('load', function() {
         buggy.classList.add('mousedown');
     });
 
+    /*** On mouse move ***/
     buggy.addEventListener('mousemove', function(e) {
         var curCoord = { x: e.offsetX, y: e.offsetY },
-            pointOffset,
-            pointInCar = buggyCanvas.carNode.isInversePointInObject(curCoord);
-
-        if ( (cursor.origCoord.x !== curCoord.x) || (cursor.origCoord.y !== curCoord.y) ) {
             pointOffset = new Point(curCoord.x - cursor.origCoord.x, curCoord.y - cursor.origCoord.y);
-        }
 
-        if (pointOffset) {
-            if (cursor.isMouseDown) {
-                switch (buggyCanvas.carS.mode) {
-                    case 'SCALE_X_POS':
-                        buggyCanvas.scaleContextX(pointOffset, '-1', buggyCanvas.carNode);
-                        break;
-                    case 'SCALE_X_NEG':
-                        buggyCanvas.scaleContextX(pointOffset, '1', buggyCanvas.carNode);
-                        break;
-                    case 'SCALE_Y_POS':
-                        buggyCanvas.scaleContextY(pointOffset, '-1', buggyCanvas.carNode);
-                        break;
-                    case 'SCALE_Y_NEG':
-                        buggyCanvas.scaleContextY(pointOffset, '+1', buggyCanvas.carNode);
-                        break;
-                    case 'ROTATE':
-                        buggyCanvas.rotateContext(cursor.origCoord, curCoord, pointOffset, buggyCanvas.carNode);
-                        break;
-                    case 'TRANSLATE':
-                        buggyCanvas.translateContext(pointOffset, buggyCanvas.carNode);
-                        break;
-                    default:
-                        console.debug('Warning: invalid car transform mode');
-                        break;
-                }
+        setPIOActiveNode(curCoord);
+            console.debug(cursor.activeNode);
 
-                cursor.origCoord = curCoord;
-
-            } else {
-                detectCarMode(curCoord);
+        if (cursor.isMouseDown) {
+            if (cursor.activeNode === sceneGraphModule.CAR_PART) {
+                transformCar(curCoord, pointOffset, buggyCanvas.carNode);
+            } else if (cursor.activeNode === sceneGraphModule.FRONT_LEFT_TIRE_PART) {
+                console.debug('hello front left tire');
+            } else if (cursor.activeNode === sceneGraphModule.FRONT_RIGHT_TIRE_PART) {
+            } else if (cursor.activeNode === sceneGraphModule.BACK_LEFT_TIRE_PART) {
+            } else if (cursor.activeNode === sceneGraphModule.BACK_RIGHT_TIRE_PART) {
             }
+
+            cursor.origCoord = curCoord;
+        } else {
+            setPIOActiveNode(curCoord);
         }
 
-        if (pointInCar) {
-        }
-            buggyCanvas.drawBuggy();
+        buggyCanvas.drawBuggy();
     });
 
     buggy.addEventListener('mouseup', function(e) {
@@ -99,29 +64,66 @@ window.addEventListener('load', function() {
             'isMouseDown': false,
             'origCoord': new Point(0, 0),
             'selectedNode': 'NONE',
-            'transformMode': 'NONE'
+            'transformMode': 'NONE',
+            'activeNode': 'NONE',
+            'pointInCar': false
         }
 
         buggy.classList.remove('mousedown');
 
-        buggyCanvas.carS.fillStyle = CAR_COLOURS['NONE'];
+        buggyCanvas.carS.fillStyle = buggyCanvas.carS.colours['NONE'];
         buggyCanvas.drawBuggy();
     }
 
-    function detectCarMode(point) {
-        var pointInCar = buggyCanvas.carNode.isInversePointInObject(point);
+    function setPIOActiveNode(point) {
+        cursor.pointInCar = buggyCanvas.carNode.isInversePointInObject(point);
 
-        if (pointInCar) {
-            buggyCanvas.carS.mode = buggyCanvas.carNode.getCarMode(point);
-            buggyCanvas.carS.fillStyle = CAR_COLOURS['NONE'];
-            buggyCanvas.carS.fillStyle = CAR_COLOURS[buggyCanvas.carS.mode];
+        if (cursor.pointInCar) {
+            cursor.activeNode = buggyCanvas.carNode.getPIONodeName(point);
+
+            if (cursor.activeNode === sceneGraphModule.CAR_PART) {
+                buggyCanvas.carS.mode = buggyCanvas.carNode.getCarMode(point);
+                buggyCanvas.carS.fillStyle = buggyCanvas.carS.colours['NONE'];
+                buggyCanvas.carS.fillStyle = buggyCanvas.carS.colours[buggyCanvas.carS.mode];
+            } else {
+                buggyCanvas.carS.mode = 'NONE';
+                buggyCanvas.carS.fillStyle = buggyCanvas.carS.colours['NONE'];
+            }
+
+            if (cursor.activeNode === sceneGraphModule.TIRE_PART) {
+            }
+
         } else {
-            buggyCanvas.carS.mode = 'NONE';
-            buggyCanvas.carS.fillStyle = CAR_COLOURS['NONE'];
         }
 
         // TODO cursors look weird when rotated :(
         buggy.setAttribute('data-mode', buggyCanvas.carS.mode);
+    }
+
+    function transformCar(curCoord, offset, node) {
+        switch (buggyCanvas.carS.mode) {
+            case 'SCALE_X_POS':
+                buggyCanvas.scaleContextX(offset, '-1', node);
+                break;
+            case 'SCALE_X_NEG':
+                buggyCanvas.scaleContextX(offset, '1', node);
+                break;
+            case 'SCALE_Y_POS':
+                buggyCanvas.scaleContextY(offset, '-1', node);
+                break;
+            case 'SCALE_Y_NEG':
+                buggyCanvas.scaleContextY(offset, '+1', node);
+                break;
+            case 'ROTATE':
+                buggyCanvas.rotateContext(cursor.origCoord, curCoord, offset, node);
+                break;
+            case 'TRANSLATE':
+                buggyCanvas.translateContext(offset, node);
+                break;
+            default:
+                console.debug('Warning: invalid car transform mode');
+                break;
+        }
     }
 });
 

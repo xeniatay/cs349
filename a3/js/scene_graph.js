@@ -154,11 +154,32 @@ function createSceneGraphModule() {
                 PIO = true;
             }
 
-            // _.each(this.children, function(node) {
-            //     PIO = PIO || node.pointInObject(point);
-            // });
+            _.each(this.children, function(node) {
+                PIO = PIO || node.pointInObject( node.getPointInverse(point) );
+            });
 
             return PIO;
+        },
+
+        /**
+         * Returns NodeName of deepest node that returns true for hit detection
+         */
+        getPIONodeName: function(point) {
+            var nodeName = 'NONE',
+                invPoint = this.getPointInverse(point);
+
+            if ( (0 < invPoint.x) && (invPoint.x <= this.settings.width)
+                && (0 < invPoint.y) && (invPoint.y <= this.settings.height) )  {
+                nodeName = this.nodeName;
+            }
+
+            _.each(this.children, function(node) {
+                if ( node.pointInObject( node.getPointInverse(invPoint) ) ) {
+                    nodeName = node.getPIONodeName( invPoint );
+                }
+            });
+
+            return nodeName;
         }
 
     });
@@ -270,11 +291,16 @@ function createSceneGraphModule() {
         // Overrides parent method
         render: function(context) {
             this.context = context;
+            this.settings = this.context.settings.tireNode;
+
             this.context.save();
 
             this.applyTransform(this.startPositionTransform);
 
-            this.settings = this.context.settings.tireNode;
+            // objectTransform needs to be applied at the center of node's rendered element
+            this.context.translate(this.settings.width / 2, this.settings.height / 2);
+            this.applyTransform(this.objectTransform);
+            this.context.translate( - this.settings.width / 2, - this.settings.height / 2 );
 
             context.fillStyle = 'gray';
             context.fillRect(0, 0, this.settings.width, this.settings.height);
@@ -285,6 +311,19 @@ function createSceneGraphModule() {
 
             this.context.restore();
         },
+
+        getTireMode: function(point) {
+            var invPoint = this.getPointInverse(point),
+                yBuffer = this.settings.height / this.settings.bufferFactor;
+
+            if (invPoint.y < yBuffer) {
+                return 'ROTATE';
+            } else if (invPoint.y > (this.settings.height - yBuffer) ) {
+                return 'ROTATE';
+            } else {
+                return 'SCALE_X_AXLE';
+            }
+        }
 
         // // Overrides parent method
         // pointInObject: function(point) {

@@ -46,7 +46,16 @@ _.extend(BuggyCanvas.prototype, Canvas.prototype, {
                 'minHeight': 50,
                 'bufferFactor': 10,
                 'fillStyle': 'purple',
-                'mode': 'NONE'
+                'mode': 'NONE',
+                'colours': {
+                    'NONE': 'red',
+                    'TRANSLATE': 'yellow',
+                    'ROTATE': 'purple',
+                    'SCALE_Y_POS': 'blue', // downwards
+                    'SCALE_Y_NEG': 'blue', // upwards
+                    'SCALE_X_POS': 'green', // right
+                    'SCALE_X_NEG': 'green' // left
+                }
             }
         };
 
@@ -75,6 +84,12 @@ _.extend(BuggyCanvas.prototype, Canvas.prototype, {
                 'maxWidth': 30,
                 'minHeight': 10,
                 'maxHeight': 40,
+                'bufferFactor': 5,
+                'mode': 'NONE',
+                'colours': {
+                    'SCALE_X_AXLE': 'blue',
+                    'ROTATE': 'purple'
+                }
             }
         });
 
@@ -161,7 +176,7 @@ _.extend(BuggyCanvas.prototype, Canvas.prototype, {
             transform = new AffineTransform(scaleX, 0, 0, scaleY, PosX, PosY),
             objectTransform = this.carNode.objectTransform.clone();
 
-        this.carNode.initGraphNode(transform, 'carNode');
+        this.carNode.initGraphNode(transform, sceneGraphModule.CAR_PART);
         this.carNode.objectTransform.copyFrom(objectTransform);
     },
 
@@ -177,8 +192,8 @@ _.extend(BuggyCanvas.prototype, Canvas.prototype, {
         // Recalculate axle width
         this.axleS.width = (this.axleS.maxWidth * 2) + this.carS.width;
 
-        this.axleNodes.F.initGraphNode(transformF, 'axleNodeF');
-        this.axleNodes.B.initGraphNode(transformB, 'axleNodeB');
+        this.axleNodes.F.initGraphNode(transformF, sceneGraphModule.FRONT_AXLE_PART);
+        this.axleNodes.B.initGraphNode(transformB, sceneGraphModule.BACK_AXLE_PART);
     },
 
     initTireNodes: function() {
@@ -190,16 +205,17 @@ _.extend(BuggyCanvas.prototype, Canvas.prototype, {
             transformFR = new AffineTransform(scaleX, 0, 0, scaleY, PosRX, PosY),
             transformFL = new AffineTransform(scaleX, 0, 0, scaleY, PosLX, PosY);
 
-        this.tireNodes.FR.initGraphNode(transformFR, 'tireNodeFR');
-        this.tireNodes.FL.initGraphNode(transformFL, 'tireNodeFL');
-        this.tireNodes.BR.initGraphNode(transformFR, 'tireNodeBR');
-        this.tireNodes.BL.initGraphNode(transformFL, 'tireNodeBL');
+        this.tireNodes.FR.initGraphNode(transformFR, sceneGraphModule.FRONT_RIGHT_TIRE_PART);
+        this.tireNodes.FL.initGraphNode(transformFL, sceneGraphModule.FRONT_LEFT_TIRE_PART);
+        this.tireNodes.BR.initGraphNode(transformFR, sceneGraphModule.BACK_RIGHT_TIRE_PART);
+        this.tireNodes.BL.initGraphNode(transformFL, sceneGraphModule.BACK_LEFT_TIRE_PART);
     },
 
     /*
      * Offsets the node's starting context by the coordinates provided
      */
     translateContext: function(offset, node) {
+        // Set translate on objectTransform, because initGraphNode resets startPositionTransform
         node.objectTransform.preTranslate(offset.x, offset.y);
     },
 
