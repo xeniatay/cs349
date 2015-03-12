@@ -200,7 +200,7 @@ _.extend(BuggyCanvas.prototype, Canvas.prototype, {
      * Offsets the node's starting context by the coordinates provided
      */
     translateContext: function(offset, node) {
-        node.objectTransform.translate(offset.x, offset.y);
+        node.objectTransform.preTranslate(offset.x, offset.y);
     },
 
     scaleContextX: function(offset, dir, node) {

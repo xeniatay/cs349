@@ -177,12 +177,13 @@ function createSceneGraphModule() {
 
             var matrix = this.startPositionTransform.clone();
 
-            this.applyTransform(this.startPositionTransform);
             // this.applyTransform(matrix.concatenate(this.objectTransform));
+            this.applyTransform(this.startPositionTransform);
 
-            this.context.translate(this.settings.width / 2, this.settings.height/ 2);
+            // objectTransform needs to be applied at the center of node's rendered element
+            this.context.translate(this.settings.width / 2, this.settings.height / 2);
             this.applyTransform(this.objectTransform);
-            this.context.translate(- this.settings.width / 2, - this.settings.height/ 2);
+            this.context.translate( - this.settings.width / 2, - this.settings.height / 2 );
 
             context.fillStyle = this.settings.fillStyle;
             context.fillRect(0, 0, this.settings.width, this.settings.height);

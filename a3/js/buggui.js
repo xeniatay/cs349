@@ -120,6 +120,7 @@ window.addEventListener('load', function() {
             buggyCanvas.carS.fillStyle = CAR_COLOURS['NONE'];
         }
 
+        // TODO cursors look weird when rotated :(
         buggy.setAttribute('data-mode', buggyCanvas.carS.mode);
     }
 });
