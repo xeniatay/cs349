@@ -38,7 +38,6 @@ window.addEventListener('load', function() {
             if (cursor.activeNode === sceneGraphModule.CAR_PART) {
                 transformCar(curCoord, pointOffset, buggyCanvas.carNode);
             } else if (cursor.activeNode.match(/TIRE_PART/)) {
-                console.debug(buggyCanvas.tireS.mode);
                 switch (buggyCanvas.tireS.mode) {
                     case 'SCALE_X_AXLE':
                         buggyCanvas.scaleAxles(pointOffset);
@@ -93,6 +92,9 @@ window.addEventListener('load', function() {
                 buggyCanvas.carS.mode = buggyCanvas.carNode.getCarMode(point);
                 buggyCanvas.carS.fillStyle = buggyCanvas.carS.colours['NONE'];
                 buggyCanvas.carS.fillStyle = buggyCanvas.carS.colours[buggyCanvas.carS.mode];
+
+                // TODO cursors look weird when rotated :(
+                buggy.setAttribute('data-mode', buggyCanvas.carS.mode);
             } else {
                 buggyCanvas.carS.mode = 'NONE';
                 buggyCanvas.carS.fillStyle = buggyCanvas.carS.colours['NONE'];
@@ -100,13 +102,13 @@ window.addEventListener('load', function() {
 
             if ( cursor.activeNode.match(/TIRE_PART/) ) {
                 buggyCanvas.tireS.mode = buggyCanvas.tireNodes.FR.getTireMode(point);
+                buggy.setAttribute('data-mode', buggyCanvas.tireS.mode);
             }
 
         } else {
+            buggy.setAttribute('data-mode', 'NONE');
         }
 
-        // TODO cursors look weird when rotated :(
-        buggy.setAttribute('data-mode', buggyCanvas.carS.mode);
     }
 
     function transformCar(curCoord, offset, node) {

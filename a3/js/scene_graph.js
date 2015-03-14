@@ -73,12 +73,30 @@ function createSceneGraphModule() {
 
         },
 
-        getPointInverse: function(point) {
-            if ( !this.startPositionTransform.isInvertible() ) {
-                console.error('Error: transform matrix is not invertible', this.nodeName)
+        getCumulativeContext: function(nodeName) {
+            if (nodeName === this.nodeName) {
+                return this.startPositionTransform.clone().concatenate(this.objectTransform);
             }
 
+            // else, loop through children
+            // if children return identity then nopeee
+
             var matrix = this.startPositionTransform.clone().concatenate(this.objectTransform),
+                inverse;
+
+            _.each(this.children, function(node) {
+                if ( !node.getPointInverse().isIdentity() ) {
+                    console.debug('concatenated child');
+                    matrix.concatenate( node.getPointInverse );
+                }
+            });
+
+            return matrix;
+        },
+
+        getPointInverse: function(point, nodeName) {
+            nodeName = nodeName ? nodeName : this.nodeName;
+            var matrix = this.getCumulativeContext(nodeName),
                 inverse = matrix.createInverse();
 
             return inverse.transformPoint(point);
@@ -274,7 +292,7 @@ function createSceneGraphModule() {
             this.settings = this.context.settings.axleNode;
 
             context.fillStyle = 'black';
-            context.fillRect(0, 0, this.settings.width, this.settings.height);
+            context.fillRect(0, 0, this.settings.totalWidth, this.settings.height);
 
             _.each(this.children, function(node) {
                 node.render(context);

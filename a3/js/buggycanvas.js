@@ -76,7 +76,8 @@ _.extend(BuggyCanvas.prototype, Canvas.prototype, {
         });
 
         this.axleS = this.context.settings.axleNode;
-        this.axleS.width = (this.axleS.maxWidth * 2) + this.carS.width;
+        this.axleS.width = this.axleS.maxWidth;
+        this.axleS.totalWidth = (this.axleS.width * 2) + this.carS.width;
         this.axleS.height = this.axleS.maxHeight;
 
         _.extend(this.context.settings, {
@@ -189,16 +190,16 @@ _.extend(BuggyCanvas.prototype, Canvas.prototype, {
     },
 
     initAxleNodes: function() {
+        // Recalculate axle width
+        this.axleS.totalWidth = (this.axleS.width * 2) + this.carS.width;
+
         var scaleX = 1,
             scaleY = 1,
-            PosX = - (this.axleS.width - this.carS.width) / 2,
+            PosX = - ( (this.axleS.totalWidth - this.carS.width) / 2 ),
             PosFY = this.axleS.distFromBumper,
             PosBY = this.carS.height - this.axleS.distFromBumper - this.axleS.height,
             transformF = new AffineTransform(scaleX, 0, 0, scaleY, PosX, PosFY),
             transformB = new AffineTransform(scaleX, 0, 0, scaleY, PosX, PosBY);
-
-        // Recalculate axle width
-        this.axleS.width = (this.axleS.maxWidth * 2) + this.carS.width;
 
         this.initGenericNode(transformF, sceneGraphModule.FRONT_AXLE_PART, this.axleNodes.F);
         this.initGenericNode(transformB, sceneGraphModule.BACK_AXLE_PART, this.axleNodes.B);
@@ -208,7 +209,7 @@ _.extend(BuggyCanvas.prototype, Canvas.prototype, {
         var scaleX = 1,
             scaleY = 1,
             PosRX = - this.tireS.width / 2,
-            PosLX = this.axleS.width - (this.tireS.width / 2),
+            PosLX = this.axleS.totalWidth - (this.tireS.width / 2),
             PosY = -(this.tireS.height - this.axleS.height) / 2,
             transformFL = new AffineTransform(scaleX, 0, 0, scaleY, PosRX, PosY),
             transformFR = new AffineTransform(scaleX, 0, 0, scaleY, PosLX, PosY);
@@ -228,8 +229,10 @@ _.extend(BuggyCanvas.prototype, Canvas.prototype, {
     },
 
     scaleContextX: function(offset, dir, node) {
-        var scaleX = 1 + ( dir * offset.x * 2 / node.settings.width ),
+        var scaleX = 1 + ( (dir * offset.x * 2) / node.settings.width ),
             scaleY = 1;
+
+        console.debug(dir, offset.x);
 
         node.settings.width = node.settings.width * scaleX;
 
@@ -265,6 +268,10 @@ _.extend(BuggyCanvas.prototype, Canvas.prototype, {
         // console.debug('Angle:', theta * 180 / Math.PI, ' Radian: ', theta);
 
         node.objectTransform.rotate(theta, 0, 0);
+    },
+
+    scaleAxles: function(offset, dir) {
+        this.scaleContextX(offset, -1, this.axleNodes.F);
     },
 
     clearCanvas: function() {
