@@ -166,14 +166,12 @@ _.extend(BuggyCanvas.prototype, Canvas.prototype, {
     },
 
     initGenericNode: function(transform, nodeName, node) {
-        var objectTransform = node.objectTransform.clone(),
-            cumulativeTransform = node.cumulativeTransform.clone();
+        var objectTransform = node.objectTransform.clone();
 
         node.initGraphNode(transform, nodeName);
 
         // Preserve these transforms
         node.objectTransform.copyFrom(objectTransform);
-        // node.cumulativeTransform.copyFrom(cumulativeTransform);
     },
 
     initRootNodes: function() {

@@ -49,9 +49,6 @@ function createSceneGraphModule() {
             // has been applied
             this.objectTransform = new AffineTransform();
 
-            // Cumulative transforms from parentNode
-            this.cumulativeTransform = new AffineTransform();
-
             // Any child nodes of this node
             this.children = {};
 
@@ -81,7 +78,7 @@ function createSceneGraphModule() {
                 console.error('Error: transform matrix is not invertible', this.nodeName)
             }
 
-            var matrix = this.getContextTransform(),
+            var matrix = this.startPositionTransform.clone().concatenate(this.objectTransform),
                 inverse = matrix.createInverse();
 
             return inverse.transformPoint(point);
@@ -104,9 +101,6 @@ function createSceneGraphModule() {
 
         addChild: function(graphNode) {
             this.children[graphNode.nodeName] = graphNode;
-
-            var matrix = this.getContextTransform();
-            graphNode.cumulativeTransform.concatenate(matrix);
         },
 
         /**
@@ -214,15 +208,15 @@ function createSceneGraphModule() {
 
             this.context.save();
 
-            var matrix = this.getContextTransform();
-            this.applyTransform(matrix);
+            // var matrix = this.getContextTransform();
+            // this.applyTransform(matrix);
 
-            // this.applyTransform( this.startPositionTransform.clone() );
+            this.applyTransform( this.startPositionTransform.clone() );
 
-            // // objectTransform needs to be applied at the center of node's rendered element
-            // this.context.translate(this.settings.width / 2, this.settings.height / 2);
-            // this.applyTransform(this.objectTransform);
-            // this.context.translate( - this.settings.width / 2, - this.settings.height / 2 );
+            // objectTransform needs to be applied at the center of node's rendered element
+            this.context.translate(this.settings.width / 2, this.settings.height / 2);
+            this.applyTransform(this.objectTransform);
+            this.context.translate( - this.settings.width / 2, - this.settings.height / 2 );
 
             context.fillStyle = this.settings.fillStyle;
             context.fillRect(0, 0, this.settings.width, this.settings.height);
@@ -334,9 +328,9 @@ function createSceneGraphModule() {
             var invPoint = this.getPointInverse(point),
                 yBuffer = this.settings.height / this.settings.bufferFactor;
 
-            if (invPoint.y < yBuffer) {
+            if ( (0 < invPoint.y) && (invPoint.y < yBuffer) ) {
                 return 'ROTATE';
-            } else if (invPoint.y > (this.settings.height - yBuffer) ) {
+            } else if ( (invPoint.y > (this.settings.height - yBuffer) ) && (invPoint.y <= this.settings.height) ) {
                 return 'ROTATE';
             } else {
                 return 'SCALE_X_AXLE';
