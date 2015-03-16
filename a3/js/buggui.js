@@ -98,7 +98,6 @@ window.addEventListener('load', function() {
 
             if (cursor.activeNode === sceneGraphModule.CAR_PART) {
                 buggyCanvas.carS.fillStyle = buggyCanvas.carS.colours[buggyCanvas.carS.mode];
-
                 // TODO cursors look weird when rotated :(
                 buggy.setAttribute('data-mode', buggyCanvas.carS.mode);
             } else if ( cursor.activeNode.match(/TIRE_PART/) ) {
@@ -106,11 +105,14 @@ window.addEventListener('load', function() {
                 buggy.setAttribute('data-mode', buggyCanvas.carS.mode);
             } else {
                 buggyCanvas.carS.fillStyle = buggyCanvas.carS.colours['NONE'];
-                buggyCanvas.tireS.fillStyle = buggyCanvas.carS.colours['NONE'];
+                buggyCanvas.tireS.fillStyle = buggyCanvas.carS.colours['NONE_TIRES'];
                 buggyCanvas.carS.mode = 'NONE';
             }
 
         } else {
+            buggyCanvas.carS.fillStyle = buggyCanvas.carS.colours['NONE'];
+            buggyCanvas.tireS.fillStyle = buggyCanvas.carS.colours['NONE_TIRES'];
+            buggyCanvas.carS.mode = 'NONE';
             buggy.setAttribute('data-mode', 'NONE');
         }
 

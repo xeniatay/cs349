@@ -45,11 +45,16 @@ _.extend(BuggyCanvas.prototype, Canvas.prototype, {
                 'minWidth': 25,
                 'maxHeight': 200,
                 'minHeight': 50,
-                'bufferFactor': 10,
+                'minWindowOffsetX': 3,
+                'minWindowOffsetY': 10,
+                'minWindowWidth': 10,
+                'minWindowHeight': 12,
+                'bufferFactor': 8,
                 'fillStyle': 'purple',
                 'mode': 'NONE',
                 'colours': {
                     'NONE': 'red',
+                    'NONE_TIRES': 'black',
                     'TRANSLATE': 'yellow',
                     'ROTATE': 'purple',
                     'SCALE_Y_POS': 'blue', // downwards
@@ -88,9 +93,11 @@ _.extend(BuggyCanvas.prototype, Canvas.prototype, {
                 'maxWidth': 30,
                 'minHeight': 10,
                 'maxHeight': 40,
+                'minAngle': - 45 * (Math.PI / 180),
+                'maxAngle': 45 * (Math.PI / 180),
                 'bufferFactor': 5,
                 'mode': 'NONE',
-                'fillStyle': 'gray'
+                'fillStyle': 'black'
             }
         });
 
@@ -166,12 +173,14 @@ _.extend(BuggyCanvas.prototype, Canvas.prototype, {
     },
 
     initGenericNode: function(transform, nodeName, node) {
-        var objectTransform = node.objectTransform.clone();
+        var objectTransform = node.objectTransform.clone(),
+            objectTransformForHitDetection = node.objectTransformForHitDetection.clone();
 
         node.initGraphNode(transform, nodeName);
 
         // Preserve these transforms
         node.objectTransform.copyFrom(objectTransform);
+        node.objectTransformForHitDetection.copyFrom(objectTransformForHitDetection);
     },
 
     initRootNodes: function() {
@@ -225,6 +234,7 @@ _.extend(BuggyCanvas.prototype, Canvas.prototype, {
     translateContext: function(offset, node) {
         // Set translate on objectTransform, because initGraphNode resets startPositionTransform
         node.objectTransform.preTranslate(offset.x, offset.y);
+        node.objectTransformForHitDetection.preTranslate(offset.x, offset.y);
     },
 
     scaleContextX: function(offset, dir, node) {
@@ -269,7 +279,7 @@ _.extend(BuggyCanvas.prototype, Canvas.prototype, {
      **/
     rotateContext: function(origCoord, curCoord, offset, node) {
         var theta = this.getRotationAngle(origCoord, curCoord, offset, node);
-        node.objectTransform.rotate(theta, 0, 0);
+        this.rotateContextByAngle(theta, node);
     },
 
     /**
@@ -277,7 +287,21 @@ _.extend(BuggyCanvas.prototype, Canvas.prototype, {
      * ONLY Clockwise for now
      **/
     rotateContextByAngle: function(theta, node) {
-        node.objectTransform.rotate(theta, 0, 0);
+        var newAngle = node.rotationAngle + theta;
+        console.debug('newAngle', newAngle * (180 / Math.PI));
+
+        if ( (newAngle <= node.settings.minAngle) || (newAngle >= node.settings.maxAngle) ) {
+            return;
+        } else {
+            node.rotationAngle = newAngle;
+
+            node.objectTransform.rotate(theta, 0, 0);
+
+            node.objectTransformForHitDetection.translate(node.settings.width / 2, node.settings.height / 2);
+            node.objectTransformForHitDetection.rotate(-theta, 0, 0);
+            node.objectTransformForHitDetection.translate(-node.settings.width / 2, -node.settings.height / 2);
+        }
+
     },
 
     scaleAxles: function(offset, dir) {
@@ -306,8 +330,8 @@ _.extend(BuggyCanvas.prototype, Canvas.prototype, {
     drawBuggy: function() {
         this.clearCanvas();
 
-        this.drawGrid(20);
         this.CAR_PART.render(this.context);
+        // this.drawGrid(20);
     },
 
     /**

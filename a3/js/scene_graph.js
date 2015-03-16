@@ -48,6 +48,9 @@ function createSceneGraphModule() {
             // Any additional transforms of this object after the previous transform
             // has been applied
             this.objectTransform = new AffineTransform();
+            this.objectTransformForHitDetection = new AffineTransform();
+
+            this.rotationAngle = 0;
 
             // Any child nodes of this node
             this.children = {};
@@ -75,7 +78,7 @@ function createSceneGraphModule() {
 
         getPointInverse: function(point, nodeName) {
             nodeName = nodeName ? nodeName : this.nodeName;
-            var matrix = this.startPositionTransform.clone().concatenate(this.objectTransform),
+            var matrix = this.startPositionTransform.clone().concatenate(this.objectTransformForHitDetection),
                 inverse = matrix.createInverse();
 
             return inverse.transformPoint(point);
@@ -243,6 +246,8 @@ function createSceneGraphModule() {
     _.extend(CarNode.prototype, GraphNode.prototype, {
         // Overrides parent method
         render: function(context) {
+            var windowOffsetX, windowOffsetY, windowHeight, windowWidth;
+
             this.context = context;
             this.settings = this.context.settings.carNode;
 
@@ -257,6 +262,30 @@ function createSceneGraphModule() {
 
             context.fillStyle = this.settings.fillStyle;
             context.fillRect(0, 0, this.settings.width, this.settings.height);
+
+            windowOffsetX = (this.settings.width / this.settings.bufferFactor);
+            windowOffsetY = (this.settings.height / this.settings.bufferFactor);
+            windowWidth = this.settings.width - (windowOffsetX * 2);
+            windowHeight = ( this.settings.height - (windowOffsetY * 4) ) / 2;
+
+            windowWidth = Math.max(this.settings.minWindowWidth, windowWidth);
+            windowHeight = Math.max(this.settings.minWindowHeight, windowHeight);
+            windowOffsetX = Math.max(this.settings.minWindowOffsetX, windowOffsetX);
+            windowOffsetY = Math.max(this.settings.minWindowOffsetY, windowOffsetY);
+
+            context.fillStyle = 'black';
+            context.fillRect( windowOffsetX, windowOffsetY, windowWidth, windowHeight );
+
+            context.fillStyle = 'white';
+            context.fillRect(
+                windowOffsetX + (windowWidth / 10),
+                windowOffsetY + (windowHeight / 8),
+                windowWidth - (windowWidth / 5),
+                windowHeight - (windowHeight / 4)
+            );
+
+            context.fillStyle = 'white';
+            context.fillRect( windowOffsetX, this.settings.height - windowOffsetY - windowHeight, windowWidth, windowHeight );
 
             _.each(this.children, function(node) {
                 node.render(context);
@@ -291,7 +320,8 @@ function createSceneGraphModule() {
             this.applyTransform(this.objectTransform);
             this.context.translate( - this.settings.width / 2, - this.settings.height / 2 );
 
-            context.fillStyle = 'black';
+            context.globalCompositeOperation = 'destination-over';
+            context.fillStyle = 'gray';
             context.fillRect(0, 0, this.settings.totalWidth, this.settings.height);
 
             _.each(this.children, function(node) {
@@ -332,6 +362,7 @@ function createSceneGraphModule() {
             this.applyTransform(this.objectTransform);
             this.context.translate( - this.settings.width / 2, - this.settings.height / 2 );
 
+            context.globalCompositeOperation = 'source-over';
             context.fillStyle = this.settings.fillStyle;
             context.fillRect(0, 0, this.settings.width, this.settings.height);
 
