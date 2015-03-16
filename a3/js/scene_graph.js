@@ -246,8 +246,6 @@ function createSceneGraphModule() {
     _.extend(CarNode.prototype, GraphNode.prototype, {
         // Overrides parent method
         render: function(context) {
-            var windowOffsetX, windowOffsetY, windowHeight, windowWidth;
-
             this.context = context;
             this.settings = this.context.settings.carNode;
 
@@ -263,35 +261,65 @@ function createSceneGraphModule() {
             context.fillStyle = this.settings.fillStyle;
             context.fillRect(0, 0, this.settings.width, this.settings.height);
 
-            windowOffsetX = (this.settings.width / this.settings.bufferFactor);
-            windowOffsetY = (this.settings.height / this.settings.bufferFactor);
-            windowWidth = this.settings.width - (windowOffsetX * 2);
-            windowHeight = ( this.settings.height - (windowOffsetY * 4) ) / 2;
-
-            windowWidth = Math.max(this.settings.minWindowWidth, windowWidth);
-            windowHeight = Math.max(this.settings.minWindowHeight, windowHeight);
-            windowOffsetX = Math.max(this.settings.minWindowOffsetX, windowOffsetX);
-            windowOffsetY = Math.max(this.settings.minWindowOffsetY, windowOffsetY);
-
-            context.fillStyle = 'black';
-            context.fillRect( windowOffsetX, windowOffsetY, windowWidth, windowHeight );
-
-            context.fillStyle = 'white';
-            context.fillRect(
-                windowOffsetX + (windowWidth / 10),
-                windowOffsetY + (windowHeight / 8),
-                windowWidth - (windowWidth / 5),
-                windowHeight - (windowHeight / 4)
-            );
-
-            context.fillStyle = 'white';
-            context.fillRect( windowOffsetX, this.settings.height - windowOffsetY - windowHeight, windowWidth, windowHeight );
+            this.renderCarBodyParts();
 
             _.each(this.children, function(node) {
                 node.render(context);
             });
 
             this.context.restore();
+        },
+
+        renderCarBodyParts: function() {
+            // Windows
+            var windowOffsetX, windowOffsetY, windowHeight, windowWidth,
+                headLightOffsetX, headLightOffsetY, headLightRadius;
+
+            windowOffsetX = (this.settings.width / this.settings.bufferFactor);
+            windowOffsetY = (this.settings.height / this.settings.bufferFactor);
+            windowOffsetX = Math.max(this.settings.minWindowOffsetX, windowOffsetX);
+            windowOffsetY = Math.max(this.settings.minWindowOffsetY, windowOffsetY);
+
+            windowWidth = this.settings.width - (windowOffsetX * 2);
+            windowHeight = ( this.settings.height - (windowOffsetY * 4) ) / 2;
+
+            console.debug('windowWidth', windowWidth);
+            this.context.beginPath();
+            this.context.fillStyle = 'white';
+            this.context.strokeStyle = 'black';
+            this.context.lineWidth = 5;
+            this.context.rect( windowOffsetX, windowOffsetY, windowWidth, windowHeight );
+            this.context.fill();
+            this.context.stroke();
+            this.context.closePath();
+
+            this.context.fillStyle = 'white';
+            this.context.fillRect( windowOffsetX, this.settings.height - windowOffsetY - windowHeight, windowWidth, windowHeight );
+
+            // Headlights
+            headLightRadius = (this.settings.width / this.settings.bufferFactor) / 2;
+            headLightOffsetX = windowOffsetX;
+            headLightOffsetY = windowOffsetY / 2;
+
+            headLightRadius = Math.max(this.settings.minHeadLightRadius, headLightRadius);
+
+            this.context.beginPath();
+            this.context.arc(headLightOffsetX, headLightOffsetY, headLightRadius, 0, 2 * Math.PI, false);
+            this.context.fillStyle = 'yellow';
+            this.context.fill();
+            this.context.lineWidth = 2;
+            this.context.strokeStyle = 'black';
+            this.context.stroke();
+            this.context.closePath();
+
+            this.context.beginPath();
+            this.context.arc(this.settings.width - headLightOffsetX, headLightOffsetY, headLightRadius, 0, 2 * Math.PI, false);
+            this.context.fillStyle = 'yellow';
+            this.context.fill();
+            this.context.lineWidth = 2;
+            this.context.strokeStyle = 'black';
+            this.context.stroke();
+            this.context.closePath();
         }
 
 
