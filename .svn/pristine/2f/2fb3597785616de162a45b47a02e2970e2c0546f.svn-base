@@ -259,10 +259,9 @@ h2 {
   box-shadow: inset 0 3px 5px rgba(0, 0, 0, 0.125);
 }
 .cursor-mode {
+  margin-top: 25px;
   line-height: 2;
-  border: 2px solid #ff9b14;
-  padding: 10px;
-  width: 400px;
+  text-align: right;
 }
 .instructions {
   margin: 20px 20px 40px 20px;
@@ -274,7 +273,4 @@ h2 {
 }
 .instructions h2 {
   font-size: 1.8em;
-}
-small {
-  font-size: 0.8em;
 }

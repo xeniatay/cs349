@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Fotag!</title>
+
+    <!--
+    All of your CSS must go in css/fotag.css. Do not add styles to individual elements.
+    All of your CSS must be your own -- you may not use third-party CSS, like Bootstrap.
+    -->
+    <link rel="stylesheet" href="css/fotag.css"/>
+</head>
+<body>
+
+<div id="app-container">
+</div>
+
+<template id="toolbar">
+    <header class="clearfix">
+        <div class="fotag-heading">
+            <h1 class="app-name">Fotag!</h1>
+            <h2>Import, organize, and rate your photos!</h2>
+        </div>
+
+        <div class="toolbar-controls clearfix">
+            <div class="toolbar-control-wrapper layout-controls">
+                <span class="control-label">Layout:</span>
+                <div class="layout-btn" data-viewtype="GRID_VIEW" label="Grid">
+                    <i class="icon icon-grid"></i>
+                </div>
+                <div class="layout-btn" data-viewtype="LIST_VIEW" label="List">
+                    <i class="icon icon-list"></i>
+                </div>
+            </div>
+
+            <div class="toolbar-control-wrapper filter-by-controls">
+                <div class="control-label">Filter By Rating:</div>
+
+                <div class="rating filter-rating">
+                    <div class="rating-star" data-filter-rating data-rating="5">☆</div>
+                    <div class="rating-star" data-filter-rating data-rating="4">☆</div>
+                    <div class="rating-star" data-filter-rating data-rating="3">☆</div>
+                    <div class="rating-star" data-filter-rating data-rating="2">☆</div>
+                    <div class="rating-star" data-filter-rating data-rating="1">☆</div>
+                    <div class="icon-close" data-filter-rating data-rating="0"></div>
+                </div>
+            </div>
+        </div>
+    </header>
+</template>
+
+<!-- A template for a file chooser, to select multiple files. See FileChooser in view.js. -->
+<template id="file-chooser">
+    <div class="file-chooser-wrapper">
+        <h2>Photo Upload (from ./images folder)</h2>
+        <span class="file-chooser-msg">Success!</span>
+        <input type="file" class="files-input" name="file_results[]" multiple />
+        <output id="list"></output>
+        <div class="btn-option-container">
+            <div class="btn delete-all btn-option">Remove All Images</div>
+            <div class="btn demo-img btn-option">Use Demo Images</div>
+        </div>
+    </div>
+</template>
+
+<!-- Template for a single image -->
+<template id="single-img">
+    <div class="img-wrapper">
+        <div class="img-table-cell-wrapper">
+            <span class="img-remove">&times;</span>
+            <img class="img-src">
+        </div>
+    </div>
+    <div class="img-details">
+        <span class="img-name"></span>
+        <span class="img-date-modified"></span>
+        <div class="rating img-rating">
+            <div class="rating-star" data-rating="5">☆</div>
+            <div class="rating-star" data-rating="4">☆</div>
+            <div class="rating-star" data-rating="3">☆</div>
+            <div class="rating-star" data-rating="2">☆</div>
+            <div class="rating-star" data-rating="1">☆</div>
+        </div>
+        <span class="img-caption"></span>
+    </div>
+</template>
+
+<template id="img-collection">
+    <p class="no-images-msg msg hide">No images found! Please try another filter or <span class="clear-filters" data-filter-rating data-rating="0">clear all filters</span>.</p>
+</template>
+
+<!-- Keep this here so TAs can run your unit tests -->
+<div id="unit-tests">
+
+    <!-- This button is for marking purposes to test your architecture. Do not remove it-->
+    <button class="marking-button btn pull-right">Mark Me!</button>
+    <a href="unit_tests.html" class="btn">Run Unit Tests</a>
+</div>
+
+<script src="js/ext/underscore.js"></script>
+<script src="js/model.js"></script>
+<script src="js/view.js"></script>
+<script src="js/fotag.js"></script>
+<script src="js/markers_code.js"></script>
+</body>
+</html>

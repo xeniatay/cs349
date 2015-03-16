@@ -211,14 +211,10 @@ function createSceneGraphModule() {
                     }
                 } else if ( cursor.activeNode.match(/TIRE_PART/) ) {
                     if ( (0 < invPoint.y) && (invPoint.y < yBuffer) ) {
-                        if (cursor.activeNode.match(/FRONT/)) {
-                            carMode = 'ROTATE_TIRE';
-                        }
+                        carMode = 'ROTATE_TIRE';
                     } else if ( (invPoint.y > (this.settings.height - yBuffer) )
                            && (invPoint.y <= this.settings.height) ) {
-                        if (cursor.activeNode.match(/FRONT/)) {
-                            carMode = 'ROTATE_TIRE';
-                        }
+                        carMode = 'ROTATE_TIRE';
                     } else if ( (0 <= invPoint.y) && (invPoint.y <= this.settings.height)
                            && (0 <= invPoint.x) && (invPoint.x <= this.settings.width) ) {
                         carMode = 'SCALE_X_AXLE';
@@ -262,72 +258,10 @@ function createSceneGraphModule() {
             this.applyTransform(this.objectTransform);
             this.context.translate( - this.settings.width / 2, - this.settings.height / 2 );
 
-            context.beginPath();
-            context.fillStyle = 'red';
-            context.lineWidth = 5;
-            context.strokeStyle = 'black';
-            context.rect(0, 0, this.settings.width, this.settings.height);
-            context.fill();
-            context.closePath();
-            context.stroke();
+            context.fillStyle = this.settings.fillStyle;
+            context.fillRect(0, 0, this.settings.width, this.settings.height);
 
             this.renderCarBodyParts();
-
-            var xBuffer = this.settings.width / this.settings.bufferFactor,
-                yBuffer = this.settings.height / this.settings.bufferFactor;
-
-            // last ditch effort for good UI
-            context.globalCompositeOperation = "multiply";
-            context.fillStyle = 'brown';
-            switch (context.settings.carNode.mode) {
-                case 'SCALE_X_POS':
-                case 'SCALE_X_NEG':
-                    context.beginPath();
-                    context.fillRect(0, 0, xBuffer, this.settings.height);
-
-                    context.beginPath();
-                    context.fillRect(this.settings.width - xBuffer, 0, xBuffer, this.settings.height);
-                    break;
-                case 'SCALE_Y_POS':
-                case 'SCALE_Y_NEG':
-                    context.beginPath();
-                    context.fillRect(0, 0, this.settings.width, yBuffer);
-
-                    context.beginPath();
-                    context.fillRect(0, this.settings.height - yBuffer, this.settings.width, yBuffer);
-                    break;
-                case 'ROTATE':
-                    context.beginPath();
-                    context.fillRect(
-                        0,
-                        yBuffer,
-                        this.settings.width,
-                        (this.settings.height / 4) - yBuffer
-                    );
-
-                    context.beginPath();
-                    context.fillRect(
-                        0,
-                        this.settings.height * 3/4,
-                        this.settings.width,
-                        (this.settings.height / 4) - yBuffer
-                    );
-                    break;
-                case 'TRANSLATE':
-                    context.fillRect(
-                        0,
-                        (this.settings.height / 4),
-                        this.settings.width,
-                        (this.settings.height * 3/4) - (this.settings.height / 4)
-                    );
-                    break;
-                case 'SCALE_X_AXLE':
-                    break;
-                case 'ROTATE_TIRE':
-                    break;
-                default:
-                    break;
-            }
 
             _.each(this.children, function(node) {
                 node.render(context);
@@ -457,44 +391,8 @@ function createSceneGraphModule() {
             this.context.translate( - this.settings.width / 2, - this.settings.height / 2 );
 
             context.globalCompositeOperation = 'source-over';
-            context.fillStyle = 'black';
+            context.fillStyle = this.settings.fillStyle;
             context.fillRect(0, 0, this.settings.width, this.settings.height);
-
-
-            var xBuffer = this.settings.width / this.settings.bufferFactor,
-                yBuffer = this.settings.height / this.settings.bufferFactor;
-
-            // last ditch effort for good UI
-            context.globalCompositeOperation = "lighter";
-            context.fillStyle = 'green';
-            // context.fillStyle = this.settings.fillStyle;
-            switch (context.settings.carNode.mode) {
-                case 'SCALE_X_AXLE':
-                    context.fillRect( 0, yBuffer, this.settings.width, this.settings.height - (yBuffer * 2) );
-                    break;
-                case 'ROTATE_TIRE':
-                    if ( this.nodeName.match(/FRONT/) ) {
-                        context.beginPath();
-                        context.fillRect( 0, 0, this.settings.width, yBuffer );
-
-                        context.beginPath();
-                        context.fillRect( 0, this.settings.height - yBuffer, this.settings.width, yBuffer );
-                    }
-                    break;
-                default:
-                    break;
-            }
-                   //             if ( (0 < invPoint.y) && (invPoint.y < yBuffer) ) {
-                    //     carMode = 'ROTATE_TIRE';
-                    // } else if ( (invPoint.y > (this.settings.height - yBuffer) )
-                    //        && (invPoint.y <= this.settings.height) ) {
-                    //     carMode = 'ROTATE_TIRE';
-                    // } else if ( (0 <= invPoint.y) && (invPoint.y <= this.settings.height)
-                    //        && (0 <= invPoint.x) && (invPoint.x <= this.settings.width) ) {
-                    //     carMode = 'SCALE_X_AXLE';
-                    // } else {
-                    //     carMode = 'NONE';
-                    // }
 
             _.each(this.children, function(node) {
                 node.render(context);

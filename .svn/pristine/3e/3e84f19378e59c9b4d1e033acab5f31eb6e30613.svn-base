@@ -28,7 +28,7 @@
         </div>
         <div class="pull-right cursor-mode">
             <p>Cursor mode: </p>
-            <h2 class="car-mode">None <small>(Hover over buggy to start!)</small></p></h2>
+            <h2 class="car-mode">None</p></h2>
         </div>
     </header>
     <div class="canvas-host">

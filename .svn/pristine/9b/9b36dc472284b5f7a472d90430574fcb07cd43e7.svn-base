@@ -235,20 +235,8 @@ _.extend(BuggyCanvas.prototype, Canvas.prototype, {
      */
     translateContext: function(offset, node) {
         // Set translate on objectTransform, because initGraphNode resets startPositionTransform
-        var x = node.objectTransform.getTranslateX() + offset.x,
-            y = node.objectTransform.getTranslateY() + offset.y;
-
-        // Restrict car to be within canvas
-
-        if ( !(x < -400 || x > 400) ) {
-            node.objectTransform.preTranslate(offset.x, 0);
-            node.objectTransformForHitDetection.preTranslate(offset.x, 0);
-        }
-
-        if ( !(y < -300 || y > 300) ) {
-            node.objectTransform.preTranslate(0, offset.y);
-            node.objectTransformForHitDetection.preTranslate(0, offset.y);
-        }
+        node.objectTransform.preTranslate(offset.x, offset.y);
+        node.objectTransformForHitDetection.preTranslate(offset.x, offset.y);
     },
 
     scaleContextX: function(offset, dir, node) {
@@ -274,13 +262,13 @@ _.extend(BuggyCanvas.prototype, Canvas.prototype, {
         this.initNodes();
     },
 
-    getRotationAngle: function(origCoord, curCoord, offset, node, dir) {
+    getRotationAngle: function(origCoord, curCoord, offset, node) {
         var invOrig = node.getPointInverse(origCoord),
             invCur = node.getPointInverse(curCoord),
             origin = new Point(node.settings.width / 2, node.settings.height / 2);
             thetaOrig = Math.atan( (invOrig.y - origin.y) / (invOrig.x - origin.x) ),
             thetaCur = Math.atan( (invCur.y - origin.y) / (invCur.x - origin.x) ),
-            theta = dir * (thetaOrig - thetaCur);
+            theta = -1 * Math.abs( thetaOrig - thetaCur );
 
         return theta;
 
@@ -291,8 +279,8 @@ _.extend(BuggyCanvas.prototype, Canvas.prototype, {
      * Rotate context
      * ONLY Clockwise for now
      **/
-    rotateContext: function(origCoord, curCoord, offset, node, dir) {
-        var theta = this.getRotationAngle(origCoord, curCoord, offset, node, dir);
+    rotateContext: function(origCoord, curCoord, offset, node) {
+        var theta = this.getRotationAngle(origCoord, curCoord, offset, node);
         this.rotateContextByAngle(theta, node);
     },
 

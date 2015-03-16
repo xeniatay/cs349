@@ -49,8 +49,7 @@ window.addEventListener('load', function() {
                             cursor.origCoord,
                             curCoord,
                             pointOffset,
-                            buggyCanvas.tireNodes[cursor.activeNode],
-                            -1
+                            buggyCanvas.tireNodes[cursor.activeNode]
                         );
 
                         theta = theta * 9;
@@ -137,7 +136,7 @@ window.addEventListener('load', function() {
                 buggyCanvas.scaleContextY(offset, '+1', node);
                 break;
             case 'ROTATE':
-                buggyCanvas.rotateContext(cursor.origCoord, curCoord, offset, node, 1);
+                buggyCanvas.rotateContext(cursor.origCoord, curCoord, offset, node);
                 break;
             case 'TRANSLATE':
                 buggyCanvas.translateContext(offset, node);
@@ -150,12 +149,10 @@ window.addEventListener('load', function() {
 
     function setCarModeText() {
         switch (buggyCanvas.carS.mode) {
-            case 'SCALE_X_POS':
-            case 'SCALE_X_NEG':
+           case ('SCALE_X_POS' || 'SCALE_X_NEG'):
                 carModeText.innerHTML = 'Scale Car Body Horizontally';
                 break;
-            case 'SCALE_Y_POS':
-            case 'SCALE_Y_NEG':
+            case ('SCALE_Y_POS' || 'SCALE_Y_NEG'):
                 carModeText.innerHTML = 'Scale Car Body Vertically';
                 break;
             case 'ROTATE':
@@ -165,13 +162,13 @@ window.addEventListener('load', function() {
                 carModeText.innerHTML = 'Translate Car Body';
                 break;
             case 'SCALE_X_AXLE':
-                carModeText.innerHTML = 'Scale All Axles';
+                carModeText.innerHTML = 'Scale Axles';
                 break;
             case 'ROTATE_TIRE':
-                carModeText.innerHTML = 'Rotate Front Tires';
+                carModeText.innerHTML = 'Rotate Tires';
                 break;
             default:
-                carModeText.innerHTML = 'None <small>(Hover over buggy to start!)</small>';
+                carModeText.innerHTML = 'None';
                 break;
         }
     }
