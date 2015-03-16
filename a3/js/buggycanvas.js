@@ -10,13 +10,14 @@ var Canvas = function () {
 
 _.extend(Canvas.prototype, {
     _instantiateInterface: function (templateId, containerId) {
-        var template = document.getElementById(templateId),
-            containerElem = document.getElementById(containerId);
+        // var template = document.getElementById(templateId),
+        //     containerElem = document.getElementById(containerId);
 
-        this.hostElement = document.createElement('div');
-        this.hostElement.classList.add('canvas-host');
-        this.hostElement.innerHTML = template.innerHTML;
-        containerElem.appendChild(this.hostElement);
+        // this.hostElement = document.createElement('div');
+        // this.hostElement.classList.add('canvas-host');
+        // this.hostElement.innerHTML = template.innerHTML;
+        // containerElem.appendChild(this.hostElement);
+        this.hostElement = document.querySelector('.canvas-host');
     }
 });
 

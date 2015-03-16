@@ -9,6 +9,7 @@ var sceneGraphModule,
 window.addEventListener('load', function() {
 
     var appContainer = document.getElementById('app-container'),
+        carModeText = document.querySelector('.car-mode'),
         buggy;
 
     sceneGraphModule = createSceneGraphModule();
@@ -95,12 +96,13 @@ window.addEventListener('load', function() {
         if (cursor.pointInCar) {
             cursor.activeNode = buggyCanvas.CAR_PART.getPIONodeName(point);
             buggyCanvas.carS.mode = buggyCanvas.CAR_PART.getCarMode(point);
-
             if (cursor.activeNode === sceneGraphModule.CAR_PART) {
                 buggyCanvas.carS.fillStyle = buggyCanvas.carS.colours[buggyCanvas.carS.mode];
+                buggyCanvas.tireS.fillStyle = buggyCanvas.carS.colours['NONE_TIRES'];
                 // TODO cursors look weird when rotated :(
                 buggy.setAttribute('data-mode', buggyCanvas.carS.mode);
             } else if ( cursor.activeNode.match(/TIRE_PART/) ) {
+                buggyCanvas.carS.fillStyle = buggyCanvas.carS.colours['NONE'];
                 buggyCanvas.tireS.fillStyle = buggyCanvas.carS.colours[buggyCanvas.carS.mode];
                 buggy.setAttribute('data-mode', buggyCanvas.carS.mode);
             } else {
@@ -116,6 +118,7 @@ window.addEventListener('load', function() {
             buggy.setAttribute('data-mode', 'NONE');
         }
 
+        setCarModeText();
     }
 
     function transformCar(curCoord, offset, node) {
@@ -140,6 +143,32 @@ window.addEventListener('load', function() {
                 break;
             default:
                 console.debug('Warning: invalid car transform mode');
+                break;
+        }
+    }
+
+    function setCarModeText() {
+        switch (buggyCanvas.carS.mode) {
+           case ('SCALE_X_POS' || 'SCALE_X_NEG'):
+                carModeText.innerHTML = 'Scale Car Body Horizontally';
+                break;
+            case ('SCALE_Y_POS' || 'SCALE_Y_NEG'):
+                carModeText.innerHTML = 'Scale Car Body Vertically';
+                break;
+            case 'ROTATE':
+                carModeText.innerHTML = 'Rotate Car Body';
+                break;
+            case 'TRANSLATE':
+                carModeText.innerHTML = 'Translate Car Body';
+                break;
+            case 'SCALE_X_AXLE':
+                carModeText.innerHTML = 'Scale Axles';
+                break;
+            case 'ROTATE_TIRE':
+                carModeText.innerHTML = 'Rotate Tires';
+                break;
+            default:
+                carModeText.innerHTML = 'None';
                 break;
         }
     }
