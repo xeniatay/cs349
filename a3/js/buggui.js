@@ -41,7 +41,7 @@ window.addEventListener('load', function() {
             } else if (cursor.activeNode.match(/TIRE_PART/)) {
                 switch (buggyCanvas.carS.mode) {
                     case 'SCALE_X_AXLE':
-                        buggyCanvas.scaleAxles(pointOffset);
+                        buggyCanvas.scaleAxles(pointOffset, cursor.activeNode);
                         break;
                     case 'ROTATE_TIRE':
                         var theta = buggyCanvas.getRotationAngle(

@@ -84,7 +84,7 @@ _.extend(BuggyCanvas.prototype, Canvas.prototype, {
         });
 
         this.axleS = this.context.settings.axleNode;
-        this.axleS.width = this.axleS.maxWidth;
+        this.axleS.width = this.axleS.minWidth;
         this.axleS.totalWidth = (this.axleS.width * 2) + this.carS.width;
         this.axleS.height = this.axleS.maxHeight;
 
@@ -305,8 +305,12 @@ _.extend(BuggyCanvas.prototype, Canvas.prototype, {
 
     },
 
-    scaleAxles: function(offset, dir) {
-        this.scaleContextX(offset, -1, this.axleNodes.FRONT_AXLE_PART);
+    scaleAxles: function(offset, node) {
+        if (node.match(/LEFT/)) {
+            this.scaleContextX(offset, -1, this.axleNodes.FRONT_AXLE_PART);
+        } else {
+            this.scaleContextX(offset, 1, this.axleNodes.FRONT_AXLE_PART);
+        }
     },
 
     // rotateAxles: function(origCoord, curCoord, offset, node) {
