@@ -210,6 +210,64 @@ function createSceneGraphModule() {
             });
 
             return nodeName;
+        },
+
+        /*
+         * Based on coordinates of point, return the car sub part currently selected
+         */
+        getCarMode: function(point) {
+            var invPoint = this.getPointInverse(point),
+                yBuffer = this.settings.height / this.settings.bufferFactor,
+                xBuffer = this.settings.width / this.settings.bufferFactor,
+                carMode = 'NONE',
+                newMode;
+
+            // Major haxxxx ewwwwwwwwwww
+            if (this.nodeName === cursor.activeNode) {
+                if (cursor.activeNode === CAR_PART) {
+                    if (invPoint.y < yBuffer) {
+                        carMode = 'SCALE_Y_POS';
+                    } else if (invPoint.y > (this.settings.height - yBuffer) ) {
+                        carMode = 'SCALE_Y_NEG';
+                    } else if (invPoint.x < xBuffer) {
+                        carMode = 'SCALE_X_POS';
+                    } else if (invPoint.x > this.settings.width - xBuffer) {
+                        carMode = 'SCALE_X_NEG';
+                    } else if ( (invPoint.y < this.settings.height / 4) ||
+                                (invPoint.y > this.settings.height * 3/4) ) {
+                        carMode = 'ROTATE';
+                    } else if ( (0 <= invPoint.y) && (invPoint.y <= this.settings.height)
+                        && (0 <= invPoint.x) && (invPoint.x <= this.settings.width) ) {
+                        carMode = 'TRANSLATE';
+                    } else {
+                        carMode = 'NONE';
+                    }
+                } else if ( cursor.activeNode.match(/TIRE_PART/) ) {
+                    if ( (0 < invPoint.y) && (invPoint.y < yBuffer) ) {
+                        carMode = 'ROTATE';
+                    } else if ( (invPoint.y > (this.settings.height - yBuffer) )
+                           && (invPoint.y <= this.settings.height) ) {
+                        carMode = 'ROTATE';
+                    } else if ( (0 <= invPoint.y) && (invPoint.y <= this.settings.height)
+                           && (0 <= invPoint.x) && (invPoint.x <= this.settings.width) ) {
+                        carMode = 'SCALE_X_AXLE';
+                    } else {
+                        carMode = 'NONE';
+                    }
+
+                    return carMode;
+                }
+            }
+
+            _.each(this.children, function(node) {
+                newMode = node.getCarMode(invPoint);
+
+                if ( !(newMode === 'NONE') ) {
+                    carMode = newMode;
+                }
+            });
+
+            return carMode;
         }
 
     });
@@ -244,30 +302,6 @@ function createSceneGraphModule() {
             });
 
             this.context.restore();
-        },
-
-        /*
-         * Based on coordinates of point, return the car sub part currently selected
-         */
-        getCarMode: function(point) {
-            var invPoint = this.getPointInverse(point),
-                yBuffer = this.settings.height / this.settings.bufferFactor,
-                xBuffer = this.settings.width / this.settings.bufferFactor;
-
-            if (invPoint.y < yBuffer) {
-                return 'SCALE_Y_POS';
-            } else if (invPoint.y > (this.settings.height - yBuffer) ) {
-                return 'SCALE_Y_NEG';
-            } else if (invPoint.x < xBuffer) {
-                return 'SCALE_X_POS';
-            } else if (invPoint.x > this.settings.width - xBuffer) {
-                return 'SCALE_X_NEG';
-            } else if ( (invPoint.y < this.settings.height / 4) ||
-                        (invPoint.y > this.settings.height * 3/4) ) {
-                return 'ROTATE';
-            } else {
-                return 'TRANSLATE';
-            }
         }
 
 
@@ -340,19 +374,6 @@ function createSceneGraphModule() {
             });
 
             this.context.restore();
-        },
-
-        getTireMode: function(point) {
-            var invPoint = this.getPointInverse(point),
-                yBuffer = this.settings.height / this.settings.bufferFactor;
-
-            if ( (0 < invPoint.y) && (invPoint.y < yBuffer) ) {
-                return 'ROTATE';
-            } else if ( (invPoint.y > (this.settings.height - yBuffer) ) && (invPoint.y <= this.settings.height) ) {
-                return 'ROTATE';
-            } else {
-                return 'SCALE_X_AXLE';
-            }
         }
 
         // // Overrides parent method

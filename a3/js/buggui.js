@@ -34,15 +34,18 @@ window.addEventListener('load', function() {
         var curCoord = { x: e.offsetX, y: e.offsetY },
             pointOffset = new Point(curCoord.x - cursor.origCoord.x, curCoord.y - cursor.origCoord.y);
 
+
         if (cursor.isMouseDown) {
             if (cursor.activeNode === sceneGraphModule.CAR_PART) {
-                transformCar(curCoord, pointOffset, buggyCanvas.carNode);
+                transformCar(curCoord, pointOffset, buggyCanvas.CAR_PART);
             } else if (cursor.activeNode.match(/TIRE_PART/)) {
-                switch (buggyCanvas.tireS.mode) {
+                switch (buggyCanvas.carS.mode) {
                     case 'SCALE_X_AXLE':
                         buggyCanvas.scaleAxles(pointOffset);
                         break;
                     case 'ROTATE':
+                    debugger;
+                        buggyCanvas.rotateContext(cursor.origCoord, curCoord, pointOffset, buggyCanvas[cursor.activeNod]);
                         break;
                     default:
                         break;
@@ -83,26 +86,24 @@ window.addEventListener('load', function() {
     }
 
     function setPIOActiveNode(point) {
-        cursor.pointInCar = buggyCanvas.carNode.isInversePointInObject(point);
+        cursor.pointInCar = buggyCanvas.CAR_PART.isInversePointInObject(point);
 
         if (cursor.pointInCar) {
-            cursor.activeNode = buggyCanvas.carNode.getPIONodeName(point);
+            cursor.activeNode = buggyCanvas.CAR_PART.getPIONodeName(point);
+            buggyCanvas.carS.mode = buggyCanvas.CAR_PART.getCarMode(point);
+            console.debug(buggyCanvas.carS.mode);
 
             if (cursor.activeNode === sceneGraphModule.CAR_PART) {
-                buggyCanvas.carS.mode = buggyCanvas.carNode.getCarMode(point);
                 buggyCanvas.carS.fillStyle = buggyCanvas.carS.colours['NONE'];
                 buggyCanvas.carS.fillStyle = buggyCanvas.carS.colours[buggyCanvas.carS.mode];
 
                 // TODO cursors look weird when rotated :(
                 buggy.setAttribute('data-mode', buggyCanvas.carS.mode);
+            } else if ( cursor.activeNode.match(/TIRE_PART/) ) {
+                buggy.setAttribute('data-mode', buggyCanvas.carS.mode);
             } else {
                 buggyCanvas.carS.mode = 'NONE';
                 buggyCanvas.carS.fillStyle = buggyCanvas.carS.colours['NONE'];
-            }
-
-            if ( cursor.activeNode.match(/TIRE_PART/) ) {
-                buggyCanvas.tireS.mode = buggyCanvas.tireNodes.FR.getTireMode(point);
-                buggy.setAttribute('data-mode', buggyCanvas.tireS.mode);
             }
 
         } else {

@@ -120,18 +120,18 @@ _.extend(BuggyCanvas.prototype, Canvas.prototype, {
 
     initBuggy: function() {
         this.rootNode = new sceneGraphModule.GraphNode();
-        this.carNode = new sceneGraphModule.CarNode();
+        this['CAR_PART'] = new sceneGraphModule.CarNode();
 
         this.axleNodes = {
-            F: new sceneGraphModule.AxleNode(),
-            B: new sceneGraphModule.AxleNode()
+            'FRONT_AXLE_PART': new sceneGraphModule.AxleNode(),
+            'BACK_AXLE_PART': new sceneGraphModule.AxleNode()
         }
 
         this.tireNodes = {
-            FL: new sceneGraphModule.TireNode(),
-            FR: new sceneGraphModule.TireNode(),
-            BL: new sceneGraphModule.TireNode(),
-            BR: new sceneGraphModule.TireNode()
+            'FRONT_LEFT_TIRE_PART': new sceneGraphModule.TireNode(),
+            'FRONT_RIGHT_TIRE_PART': new sceneGraphModule.TireNode(),
+            'BACK_LEFT_TIRE_PART': new sceneGraphModule.TireNode(),
+            'BACK_RIGHT_TIRE_PART': new sceneGraphModule.TireNode()
         };
 
         this.initNodes()
@@ -140,17 +140,17 @@ _.extend(BuggyCanvas.prototype, Canvas.prototype, {
 
     initNodeHierachy: function() {
 
-        this.rootNode.addChild(this.carNode);
+        this.rootNode.addChild(this.CAR_PART);
 
         // Build node hierachy
         _.each(this.axleNodes, function(node) {
-            this.carNode.addChild(node);
+            this.CAR_PART.addChild(node);
         }, this);
 
-        this.axleNodes.F.addChild(this.tireNodes.FL);
-        this.axleNodes.F.addChild(this.tireNodes.FR);
-        this.axleNodes.B.addChild(this.tireNodes.BL);
-        this.axleNodes.B.addChild(this.tireNodes.BR);
+        this.axleNodes.FRONT_AXLE_PART.addChild(this.tireNodes.FRONT_LEFT_TIRE_PART);
+        this.axleNodes.FRONT_AXLE_PART.addChild(this.tireNodes.FRONT_RIGHT_TIRE_PART);
+        this.axleNodes.BACK_AXLE_PART.addChild(this.tireNodes.BACK_LEFT_TIRE_PART);
+        this.axleNodes.BACK_AXLE_PART.addChild(this.tireNodes.BACK_RIGHT_TIRE_PART);
 
     },
 
@@ -186,7 +186,7 @@ _.extend(BuggyCanvas.prototype, Canvas.prototype, {
             scaleY = 1,
             transform = new AffineTransform(scaleX, 0, 0, scaleY, PosX, PosY);
 
-        this.initGenericNode(transform, sceneGraphModule.CAR_PART, this.carNode);
+        this.initGenericNode(transform, sceneGraphModule.CAR_PART, this.CAR_PART);
     },
 
     initAxleNodes: function() {
@@ -201,8 +201,8 @@ _.extend(BuggyCanvas.prototype, Canvas.prototype, {
             transformF = new AffineTransform(scaleX, 0, 0, scaleY, PosX, PosFY),
             transformB = new AffineTransform(scaleX, 0, 0, scaleY, PosX, PosBY);
 
-        this.initGenericNode(transformF, sceneGraphModule.FRONT_AXLE_PART, this.axleNodes.F);
-        this.initGenericNode(transformB, sceneGraphModule.BACK_AXLE_PART, this.axleNodes.B);
+        this.initGenericNode(transformF, sceneGraphModule.FRONT_AXLE_PART, this.axleNodes.FRONT_AXLE_PART);
+        this.initGenericNode(transformB, sceneGraphModule.BACK_AXLE_PART, this.axleNodes.BACK_AXLE_PART);
     },
 
     initTireNodes: function() {
@@ -214,10 +214,10 @@ _.extend(BuggyCanvas.prototype, Canvas.prototype, {
             transformFL = new AffineTransform(scaleX, 0, 0, scaleY, PosRX, PosY),
             transformFR = new AffineTransform(scaleX, 0, 0, scaleY, PosLX, PosY);
 
-        this.initGenericNode(transformFL, sceneGraphModule.FRONT_LEFT_TIRE_PART, this.tireNodes.FL);
-        this.initGenericNode(transformFR, sceneGraphModule.FRONT_RIGHT_TIRE_PART, this.tireNodes.FR);
-        this.initGenericNode(transformFL, sceneGraphModule.BACK_LEFT_TIRE_PART, this.tireNodes.BL);
-        this.initGenericNode(transformFR, sceneGraphModule.BACK_RIGHT_TIRE_PART, this.tireNodes.BR);
+        this.initGenericNode(transformFL, sceneGraphModule.FRONT_LEFT_TIRE_PART, this.tireNodes.FRONT_LEFT_TIRE_PART);
+        this.initGenericNode(transformFR, sceneGraphModule.FRONT_RIGHT_TIRE_PART, this.tireNodes.FRONT_RIGHT_TIRE_PART);
+        this.initGenericNode(transformFL, sceneGraphModule.BACK_LEFT_TIRE_PART, this.tireNodes.BACK_LEFT_TIRE_PART);
+        this.initGenericNode(transformFR, sceneGraphModule.BACK_RIGHT_TIRE_PART, this.tireNodes.BACK_RIGHT_TIRE_PART);
     },
 
     /*
@@ -271,8 +271,12 @@ _.extend(BuggyCanvas.prototype, Canvas.prototype, {
     },
 
     scaleAxles: function(offset, dir) {
-        this.scaleContextX(offset, -1, this.axleNodes.F);
+        this.scaleContextX(offset, -1, this.axleNodes.FRONT_AXLE_PART);
     },
+
+    // rotateAxles: function(origCoord, curCoord, offset, node) {
+
+    // },
 
     clearCanvas: function() {
         // Store the current transformation matrix
@@ -293,7 +297,7 @@ _.extend(BuggyCanvas.prototype, Canvas.prototype, {
         this.clearCanvas();
 
         this.drawGrid(20);
-        this.carNode.render(this.context);
+        this.CAR_PART.render(this.context);
     },
 
     /**
