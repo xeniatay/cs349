@@ -43,18 +43,22 @@ window.addEventListener('load', function() {
                     case 'SCALE_X_AXLE':
                         buggyCanvas.scaleAxles(pointOffset);
                         break;
-                    case 'ROTATE':
-                    debugger;
-                        buggyCanvas.rotateContext(cursor.origCoord, curCoord, pointOffset, buggyCanvas[cursor.activeNod]);
+                    case 'ROTATE_TIRE':
+                        var theta = buggyCanvas.getRotationAngle(
+                            cursor.origCoord,
+                            curCoord,
+                            pointOffset,
+                            buggyCanvas.tireNodes[cursor.activeNode]
+                        );
+
+                        theta = theta * 9;
+
+                        buggyCanvas.rotateContextByAngle(theta, buggyCanvas.tireNodes.FRONT_LEFT_TIRE_PART);
+                        buggyCanvas.rotateContextByAngle(theta, buggyCanvas.tireNodes.FRONT_RIGHT_TIRE_PART);
                         break;
                     default:
                         break;
                 }
-            // } else if (cursor.activeNode === sceneGraphModule.FRONT_LEFT_TIRE_PART) {
-
-            // } else if (cursor.activeNode === sceneGraphModule.FRONT_RIGHT_TIRE_PART) {
-            // } else if (cursor.activeNode === sceneGraphModule.BACK_LEFT_TIRE_PART) {
-            // } else if (cursor.activeNode === sceneGraphModule.BACK_RIGHT_TIRE_PART) {
             }
 
             cursor.origCoord = curCoord;
@@ -91,19 +95,19 @@ window.addEventListener('load', function() {
         if (cursor.pointInCar) {
             cursor.activeNode = buggyCanvas.CAR_PART.getPIONodeName(point);
             buggyCanvas.carS.mode = buggyCanvas.CAR_PART.getCarMode(point);
-            console.debug(buggyCanvas.carS.mode);
 
             if (cursor.activeNode === sceneGraphModule.CAR_PART) {
-                buggyCanvas.carS.fillStyle = buggyCanvas.carS.colours['NONE'];
                 buggyCanvas.carS.fillStyle = buggyCanvas.carS.colours[buggyCanvas.carS.mode];
 
                 // TODO cursors look weird when rotated :(
                 buggy.setAttribute('data-mode', buggyCanvas.carS.mode);
             } else if ( cursor.activeNode.match(/TIRE_PART/) ) {
+                buggyCanvas.tireS.fillStyle = buggyCanvas.carS.colours[buggyCanvas.carS.mode];
                 buggy.setAttribute('data-mode', buggyCanvas.carS.mode);
             } else {
-                buggyCanvas.carS.mode = 'NONE';
                 buggyCanvas.carS.fillStyle = buggyCanvas.carS.colours['NONE'];
+                buggyCanvas.tireS.fillStyle = buggyCanvas.carS.colours['NONE'];
+                buggyCanvas.carS.mode = 'NONE';
             }
 
         } else {

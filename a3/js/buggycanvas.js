@@ -55,7 +55,9 @@ _.extend(BuggyCanvas.prototype, Canvas.prototype, {
                     'SCALE_Y_POS': 'blue', // downwards
                     'SCALE_Y_NEG': 'blue', // upwards
                     'SCALE_X_POS': 'green', // right
-                    'SCALE_X_NEG': 'green' // left
+                    'SCALE_X_NEG': 'green',
+                    'SCALE_X_AXLE': 'green',
+                    'ROTATE_TIRE': 'purple' // left
                 }
             }
         };
@@ -88,10 +90,7 @@ _.extend(BuggyCanvas.prototype, Canvas.prototype, {
                 'maxHeight': 40,
                 'bufferFactor': 5,
                 'mode': 'NONE',
-                'colours': {
-                    'SCALE_X_AXLE': 'blue',
-                    'ROTATE': 'purple'
-                }
+                'fillStyle': 'gray'
             }
         });
 
@@ -232,8 +231,6 @@ _.extend(BuggyCanvas.prototype, Canvas.prototype, {
         var scaleX = 1 + ( (dir * offset.x * 2) / node.settings.width ),
             scaleY = 1;
 
-        console.debug(dir, offset.x);
-
         node.settings.width = node.settings.width * scaleX;
 
         node.settings.width = Math.max(node.settings.minWidth, node.settings.width);
@@ -253,11 +250,7 @@ _.extend(BuggyCanvas.prototype, Canvas.prototype, {
         this.initNodes();
     },
 
-    /**
-     * Rotate context
-     * ONLY Clockwise for now
-     **/
-    rotateContext: function(origCoord, curCoord, offset, node) {
+    getRotationAngle: function(origCoord, curCoord, offset, node) {
         var invOrig = node.getPointInverse(origCoord),
             invCur = node.getPointInverse(curCoord),
             origin = new Point(node.settings.width / 2, node.settings.height / 2);
@@ -265,8 +258,25 @@ _.extend(BuggyCanvas.prototype, Canvas.prototype, {
             thetaCur = Math.atan( (invCur.y - origin.y) / (invCur.x - origin.x) ),
             theta = -1 * Math.abs( thetaOrig - thetaCur );
 
-        // console.debug('Angle:', theta * 180 / Math.PI, ' Radian: ', theta);
+        return theta;
 
+        // console.debug('Angle:', theta * 180 / Math.PI, ' Radian: ', theta);
+    },
+
+    /**
+     * Rotate context
+     * ONLY Clockwise for now
+     **/
+    rotateContext: function(origCoord, curCoord, offset, node) {
+        var theta = this.getRotationAngle(origCoord, curCoord, offset, node);
+        node.objectTransform.rotate(theta, 0, 0);
+    },
+
+    /**
+     * Rotate context by given angle
+     * ONLY Clockwise for now
+     **/
+    rotateContextByAngle: function(theta, node) {
         node.objectTransform.rotate(theta, 0, 0);
     },
 

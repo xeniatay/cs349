@@ -73,48 +73,12 @@ function createSceneGraphModule() {
 
         },
 
-        getCumulativeContext: function(nodeName) {
-            if (nodeName === this.nodeName) {
-                return this.startPositionTransform.clone().concatenate(this.objectTransform);
-            }
-
-            // else, loop through children
-            // if children return identity then nopeee
-
-            var matrix = this.startPositionTransform.clone().concatenate(this.objectTransform),
-                inverse;
-
-            _.each(this.children, function(node) {
-                if ( !node.getPointInverse().isIdentity() ) {
-                    console.debug('concatenated child');
-                    matrix.concatenate( node.getPointInverse );
-                }
-            });
-
-            return matrix;
-        },
-
         getPointInverse: function(point, nodeName) {
             nodeName = nodeName ? nodeName : this.nodeName;
-            var matrix = this.getCumulativeContext(nodeName),
+            var matrix = this.startPositionTransform.clone().concatenate(this.objectTransform),
                 inverse = matrix.createInverse();
 
             return inverse.transformPoint(point);
-        },
-
-        getContextTransform: function() {
-            var matrix = new AffineTransform(),
-                rotate = new AffineTransform().rotate(0.17, 0, 0);
-
-            matrix.concatenate(this.startPositionTransform);
-
-            if (this.context && this.settings) {
-                // matrix.translate(this.settings.width / 2, this.settings.height/ 2);
-                matrix.concatenate(this.objectTransform);
-                // matrix.translate(- this.settings.width / 2, - this.settings.height/ 2);
-            }
-
-            return matrix;
         },
 
         addChild: function(graphNode) {
@@ -244,10 +208,10 @@ function createSceneGraphModule() {
                     }
                 } else if ( cursor.activeNode.match(/TIRE_PART/) ) {
                     if ( (0 < invPoint.y) && (invPoint.y < yBuffer) ) {
-                        carMode = 'ROTATE';
+                        carMode = 'ROTATE_TIRE';
                     } else if ( (invPoint.y > (this.settings.height - yBuffer) )
                            && (invPoint.y <= this.settings.height) ) {
-                        carMode = 'ROTATE';
+                        carMode = 'ROTATE_TIRE';
                     } else if ( (0 <= invPoint.y) && (invPoint.y <= this.settings.height)
                            && (0 <= invPoint.x) && (invPoint.x <= this.settings.width) ) {
                         carMode = 'SCALE_X_AXLE';
@@ -284,9 +248,6 @@ function createSceneGraphModule() {
 
             this.context.save();
 
-            // var matrix = this.getContextTransform();
-            // this.applyTransform(matrix);
-
             this.applyTransform( this.startPositionTransform.clone() );
 
             // objectTransform needs to be applied at the center of node's rendered element
@@ -321,9 +282,14 @@ function createSceneGraphModule() {
         render: function(context) {
             this.context = context;
             this.context.save();
+            this.settings = this.context.settings.axleNode;
+
             this.applyTransform(this.startPositionTransform);
 
-            this.settings = this.context.settings.axleNode;
+            // objectTransform needs to be applied at the center of node's rendered element
+            this.context.translate(this.settings.width / 2, this.settings.height / 2);
+            this.applyTransform(this.objectTransform);
+            this.context.translate( - this.settings.width / 2, - this.settings.height / 2 );
 
             context.fillStyle = 'black';
             context.fillRect(0, 0, this.settings.totalWidth, this.settings.height);
@@ -366,7 +332,7 @@ function createSceneGraphModule() {
             this.applyTransform(this.objectTransform);
             this.context.translate( - this.settings.width / 2, - this.settings.height / 2 );
 
-            context.fillStyle = 'gray';
+            context.fillStyle = this.settings.fillStyle;
             context.fillRect(0, 0, this.settings.width, this.settings.height);
 
             _.each(this.children, function(node) {
