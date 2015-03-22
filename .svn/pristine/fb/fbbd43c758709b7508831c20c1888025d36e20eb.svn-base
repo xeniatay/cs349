@@ -48,6 +48,9 @@
     </div>
 </div>
 
+<template id="buggy-canvas-template">
+</template>
+
 <!-- Ensure this is in your document so TAs can run unit tests -->
 <div id="unit-tests" class="footer">
     <button class="marking-button btn pull-right">Mark Me!</button>

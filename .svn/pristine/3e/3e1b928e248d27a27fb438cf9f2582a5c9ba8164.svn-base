@@ -1,0 +1,280 @@
+/*** RESET ***/
+/* http://meyerweb.com/eric/tools/css/reset/
+   v2.0 | 20110126
+   License: none (public domain)
+*/
+html,
+body,
+div,
+span,
+applet,
+object,
+iframe,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+p,
+blockquote,
+pre,
+a,
+abbr,
+acronym,
+address,
+big,
+cite,
+code,
+del,
+dfn,
+em,
+img,
+ins,
+kbd,
+q,
+s,
+samp,
+small,
+strike,
+strong,
+sub,
+sup,
+tt,
+var,
+b,
+u,
+i,
+center,
+dl,
+dt,
+dd,
+ol,
+ul,
+li,
+fieldset,
+form,
+label,
+legend,
+table,
+caption,
+tbody,
+tfoot,
+thead,
+tr,
+th,
+td,
+article,
+aside,
+canvas,
+details,
+embed,
+figure,
+figcaption,
+footer,
+header,
+hgroup,
+menu,
+nav,
+output,
+ruby,
+section,
+summary,
+time,
+mark,
+audio,
+video {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  font-size: 100%;
+  font: inherit;
+  vertical-align: baseline;
+}
+/* HTML5 display-role reset for older browsers */
+article,
+aside,
+details,
+figcaption,
+figure,
+footer,
+header,
+hgroup,
+menu,
+nav,
+section {
+  display: block;
+}
+body {
+  line-height: 1;
+}
+ol,
+ul {
+  list-style: none;
+}
+blockquote,
+q {
+  quotes: none;
+}
+blockquote:before,
+blockquote:after,
+q:before,
+q:after {
+  content: '';
+  content: none;
+}
+table {
+  border-collapse: collapse;
+  border-spacing: 0;
+}
+/*** Helper Classes ***/
+.clearfix:after {
+  visibility: hidden;
+  display: block;
+  font-size: 0;
+  content: " ";
+  clear: both;
+  height: 0;
+}
+.clearfix {
+  display: inline-block;
+}
+* html .clearfix {
+  height: 1%;
+}
+.clearfix {
+  display: block;
+}
+.pull-left {
+  float: left;
+}
+.pull-right {
+  float: right;
+}
+.hide {
+  display: none !important;
+}
+/*** Icons ***/
+i.icon {
+  display: block;
+  width: 15px;
+  height: 15px;
+}
+.icon-grid {
+  background: url('../images/icons/Grid.png');
+  background-size: contain;
+}
+.icon-list {
+  background: url('../images/icons/List1.png');
+  background-size: contain;
+}
+/* Palette color codes */
+/* Palette URL: http://paletton.com/#uid=71J0u0kllllaFw0g0qFqFg0w0aF */
+/* Main Primary color */
+/* Main Secondary color (1) */
+/* Main Secondary color (2) */
+/* Main Complement color */
+/*** VARIABLES ***/
+/*** STYLES ***/
+@font-face {
+  font-family: 'Montserrat';
+  src: url(../fonts/Montserrat/Montserrat-Regular.ttf);
+}
+html,
+body {
+  margin: 0 auto;
+  padding: 10px;
+  width: 800px;
+  font-family: 'Montserrat';
+  font-size: 16px;
+  color: #01345b;
+  background: #f4f4f4;
+}
+/*** Typography and Icons ***/
+h1 {
+  font-size: 2.5em;
+  line-height: 1.5em;
+}
+@media all and (max-width: 759px) {
+  h1 {
+    font-size: 1.5em;
+  }
+}
+h2 {
+  font-size: 1.2em;
+  line-height: 1.2em;
+}
+/*** Buggui Stuff ***/
+[data-mode^='SCALE_X'] {
+  cursor: ew-resize;
+}
+[data-mode^='SCALE_Y'] {
+  cursor: ns-resize;
+}
+[data-mode^='TRANSLATE'] {
+  cursor: move;
+}
+[data-mode^='ROTATE'] {
+  cursor: -webkit-grab;
+}
+.mousedown[data-mode^='ROTAT'] {
+  cursor: -webkit-grabbing;
+}
+.canvas-host {
+  background: #ffffff;
+  border: 3px solid #0675ca;
+  width: 800px;
+  height: 600px;
+  margin: 20px auto;
+}
+.btn {
+  display: inline-block;
+  padding: 10px 20px;
+  margin-bottom: 10px;
+  font-size: 14px;
+  font-weight: bold;
+  line-height: 1;
+  text-align: center;
+  vertical-align: middle;
+  cursor: pointer;
+  background: #efefef;
+  border: 1px solid #bcbcbc;
+  text-decoration: none;
+  border-radius: 3px;
+  color: #035696;
+}
+.btn:hover,
+.btn:focus,
+.btn.focus {
+  color: #01345b;
+  text-decoration: none;
+  background: #ffffff;
+  border: 1px solid #898989;
+}
+.btn:active,
+.btn.active {
+  background-image: none;
+  outline: 0;
+  -webkit-box-shadow: inset 0 3px 5px rgba(0, 0, 0, 0.125);
+  box-shadow: inset 0 3px 5px rgba(0, 0, 0, 0.125);
+}
+.cursor-mode {
+  line-height: 2;
+  border: 2px solid #ff9b14;
+  padding: 10px;
+  width: 400px;
+}
+.instructions {
+  margin: 20px 20px 40px 20px;
+  line-height: 1.8;
+}
+.instructions li {
+  list-style: disc;
+  list-style-position: inside;
+}
+.instructions h2 {
+  font-size: 1.8em;
+}
+small {
+  font-size: 0.8em;
+}

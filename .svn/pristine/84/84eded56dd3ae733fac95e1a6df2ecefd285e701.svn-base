@@ -14,6 +14,14 @@ function createSceneGraphModule() {
     var BACK_LEFT_TIRE_PART = 'BACK_LEFT_TIRE_PART';
     var BACK_RIGHT_TIRE_PART = 'BACK_RIGHT_TIRE_PART';
 
+    // Car sub parts
+    var FRONT_BUMPER = 'FRONT_BUMPER';
+    var SIDE_BUMPER = 'SIDE_BUMPER';
+    var CAR_LEFT = 'CAR_LEFT';
+    var CAR_RIGHT = 'CAR_RIGHT';
+    var CAR_FRONT = 'CAR_FRONT';
+    var CAR_BACK = 'CAR_BACK';
+
     var GraphNode = function() {
         this.pio = false;
         this.pioLabels = [];
@@ -40,54 +48,18 @@ function createSceneGraphModule() {
             // Any additional transforms of this object after the previous transform
             // has been applied
             this.objectTransform = new AffineTransform();
+            this.objectTransformForHitDetection = new AffineTransform();
 
-            // Rotation transforms are applied differently to this matrix
-            // to make inversed hit detection work
-            this.objectTransformForHitDetection = new AffineTransform(); // (╯°□°）╯︵ ┻━┻
-
-            // Rotation angle (in radians)
             this.rotationAngle = 0;
 
             // Any child nodes of this node
             this.children = {};
 
+            // Add any other properties you need, here
         },
 
-        /**
-         * Add graphNode as child to current node
-         */
-        addChild: function(graphNode) {
-            this.children[graphNode.nodeName] = graphNode;
-        },
-
-        /**
-         * Render this node using the graphics context provided.
-         * Prior to doing any painting, the start_position_transform must be
-         * applied, so the component can render itself in its local, object-centric
-         * coordinate system. See the assignment specs for more details.
-         *
-         * This method should also call each child's render method.
-         * @param context
-         */
-        render: function(context) {
-            // Generic render function - should be overidden by subclass
-            this.context = context;
-            this.context.save();
-
-            context.fillStyle = 'blue';
-            context.fillRect(0, 0, 5, 5);
-
-            _.each(this.children, function(node) {
-                node.render(context);
-            });
-
-            this.context.restore();
-        },
-
-        /**
-         * Apply given transform to canvas context
-         */
         applyTransform: function(matrix) {
+
             if (!this.context) {
                 console.error('Error: no canvas context');
                 return;
@@ -101,17 +73,19 @@ function createSceneGraphModule() {
                 matrix.getTranslateX(),
                 matrix.getTranslateY()
             );
+
         },
 
-        /**
-         * Inverse the given point based on the inverse of the
-         * current node's startPositionTransform and objectTransformForHitDetection
-         */
-        getPointInverse: function(point) {
+        getPointInverse: function(point, nodeName) {
+            nodeName = nodeName ? nodeName : this.nodeName;
             var matrix = this.startPositionTransform.clone().concatenate(this.objectTransformForHitDetection),
                 inverse = matrix.createInverse();
 
             return inverse.transformPoint(point);
+        },
+
+        addChild: function(graphNode) {
+            this.children[graphNode.nodeName] = graphNode;
         },
 
         /**
@@ -130,6 +104,39 @@ function createSceneGraphModule() {
                     }
                 );
             }
+        },
+
+        /**
+         * Render this node using the graphics context provided.
+         * Prior to doing any painting, the start_position_transform must be
+         * applied, so the component can render itself in its local, object-centric
+         * coordinate system. See the assignment specs for more details.
+         *
+         * This method should also call each child's render method.
+         * @param context
+         */
+        render: function(context) {
+            // TODO: Should be overridden by subclass
+            this.context = context;
+            this.context.save();
+
+            context.fillStyle = 'blue';
+            context.fillRect(0, 0, 5, 5);
+
+            _.each(this.children, function(node) {
+                node.render(context);
+            });
+
+            this.context.restore();
+        },
+
+        /**
+         * Convert point to inverse and return results of hit test.
+         * Worst method name ever. But pointInObject() can't be changed _and_
+         * needs to take in an inversed point. ಠ_ಠ
+         */
+        isInversePointInObject: function(point) {
+            return this.pointInObject( this.getPointInverse(point) );
         },
 
         /**
@@ -165,7 +172,7 @@ function createSceneGraphModule() {
 
             _.each(this.children, function(node) {
                 if ( node.pointInObject( node.getPointInverse(invPoint) ) ) {
-                    nodeName = node.getPIONodeName( invPoint );
+                    nodeName = node.getPIONodeName( invPoint ); // UGH WTF
                 }
             });
 
@@ -182,7 +189,7 @@ function createSceneGraphModule() {
                 carMode = 'NONE',
                 newMode;
 
-            // Ugly as sin shhhhhh
+            // Major haxxxx ewwwwwwwwwww
             if (this.nodeName === cursor.activeNode) {
                 if (cursor.activeNode === CAR_PART) {
                     if (invPoint.y < yBuffer) {
@@ -202,8 +209,6 @@ function createSceneGraphModule() {
                     } else {
                         carMode = 'NONE';
                     }
-
-                // Not supposed to be here but w/e haxxxxxx
                 } else if ( cursor.activeNode.match(/TIRE_PART/) ) {
                     if ( (0 < invPoint.y) && (invPoint.y < yBuffer) ) {
                         if (cursor.activeNode.match(/FRONT/)) {
@@ -225,7 +230,6 @@ function createSceneGraphModule() {
                 }
             }
 
-            // Children have moodes too
             _.each(this.children, function(node) {
                 newMode = node.getCarMode(invPoint);
 
@@ -239,14 +243,11 @@ function createSceneGraphModule() {
 
     });
 
-    /*** Car Node ***/
-
     var CarNode = function() {
         this.initGraphNode(new AffineTransform(), CAR_PART)
     };
 
     _.extend(CarNode.prototype, GraphNode.prototype, {
-
         // Overrides parent method
         render: function(context) {
             this.context = context;
@@ -254,7 +255,7 @@ function createSceneGraphModule() {
 
             this.context.save();
 
-            this.applyTransform(this.startPositionTransform);
+            this.applyTransform( this.startPositionTransform.clone() );
 
             // objectTransform needs to be applied at the center of node's rendered element
             this.context.translate(this.settings.width / 2, this.settings.height / 2);
@@ -267,11 +268,66 @@ function createSceneGraphModule() {
             context.strokeStyle = 'black';
             context.rect(0, 0, this.settings.width, this.settings.height);
             context.fill();
-            context.stroke();
             context.closePath();
+            context.stroke();
 
             this.renderCarBodyParts();
-            this.renderCarSubParts();
+
+            var xBuffer = this.settings.width / this.settings.bufferFactor,
+                yBuffer = this.settings.height / this.settings.bufferFactor;
+
+            // last ditch effort for good UI
+            context.globalCompositeOperation = "multiply";
+            context.fillStyle = 'brown';
+            switch (context.settings.carNode.mode) {
+                case 'SCALE_X_POS':
+                case 'SCALE_X_NEG':
+                    context.beginPath();
+                    context.fillRect(0, 0, xBuffer, this.settings.height);
+
+                    context.beginPath();
+                    context.fillRect(this.settings.width - xBuffer, 0, xBuffer, this.settings.height);
+                    break;
+                case 'SCALE_Y_POS':
+                case 'SCALE_Y_NEG':
+                    context.beginPath();
+                    context.fillRect(0, 0, this.settings.width, yBuffer);
+
+                    context.beginPath();
+                    context.fillRect(0, this.settings.height - yBuffer, this.settings.width, yBuffer);
+                    break;
+                case 'ROTATE':
+                    context.beginPath();
+                    context.fillRect(
+                        0,
+                        yBuffer,
+                        this.settings.width,
+                        (this.settings.height / 4) - yBuffer
+                    );
+
+                    context.beginPath();
+                    context.fillRect(
+                        0,
+                        this.settings.height * 3/4,
+                        this.settings.width,
+                        (this.settings.height / 4) - yBuffer
+                    );
+                    break;
+                case 'TRANSLATE':
+                    context.fillRect(
+                        0,
+                        (this.settings.height / 4),
+                        this.settings.width,
+                        (this.settings.height * 3/4) - (this.settings.height / 4)
+                    );
+                    break;
+                case 'SCALE_X_AXLE':
+                    break;
+                case 'ROTATE_TIRE':
+                    break;
+                default:
+                    break;
+            }
 
             _.each(this.children, function(node) {
                 node.render(context);
@@ -280,24 +336,20 @@ function createSceneGraphModule() {
             this.context.restore();
         },
 
-        /**
-         * Render additional car body parts that do not affect
-         * interaction with the car
-         */
         renderCarBodyParts: function() {
+            // Windows
             var windowOffsetX, windowOffsetY, windowHeight, windowWidth,
                 headLightOffsetX, headLightOffsetY, headLightRadius;
 
             windowOffsetX = (this.settings.width / this.settings.bufferFactor);
-            windowOffsetX = Math.max(this.settings.minWindowOffsetX, windowOffsetX);
-
             windowOffsetY = (this.settings.height / this.settings.bufferFactor);
+            windowOffsetX = Math.max(this.settings.minWindowOffsetX, windowOffsetX);
             windowOffsetY = Math.max(this.settings.minWindowOffsetY, windowOffsetY);
 
             windowWidth = this.settings.width - (windowOffsetX * 2);
             windowHeight = ( this.settings.height - (windowOffsetY * 4) ) / 2;
 
-            // Windows
+            console.debug('windowWidth', windowWidth);
             this.context.beginPath();
             this.context.fillStyle = 'white';
             this.context.strokeStyle = 'black';
@@ -334,57 +386,10 @@ function createSceneGraphModule() {
             this.context.strokeStyle = 'black';
             this.context.stroke();
             this.context.closePath();
-        },
-
-        /**
-         * Render car subparts to help clarify buggy controls on mouseover
-         */
-        renderCarSubParts: function() {
-            var xBuffer = this.settings.width / this.settings.bufferFactor,
-                yBuffer = this.settings.height / this.settings.bufferFactor;
-
-            // last ditch effort for good UI
-            this.context.globalCompositeOperation = "multiply";
-            this.context.fillStyle = 'brown';
-            switch (this.context.settings.carNode.mode) {
-                case 'SCALE_X_POS':
-                case 'SCALE_X_NEG':
-                    this.context.beginPath();
-                    this.context.fillRect(0, 0, xBuffer, this.settings.height);
-
-                    this.context.beginPath();
-                    this.context.fillRect(this.settings.width - xBuffer, 0, xBuffer, this.settings.height);
-                    break;
-                case 'SCALE_Y_POS':
-                case 'SCALE_Y_NEG':
-                    this.context.beginPath();
-                    this.context.fillRect(0, 0, this.settings.width, yBuffer);
-
-                    this.context.beginPath();
-                    this.context.fillRect(0, this.settings.height - yBuffer, this.settings.width, yBuffer);
-                    break;
-                case 'ROTATE':
-                    this.context.beginPath();
-                    this.context.fillRect( 0, yBuffer, this.settings.width, (this.settings.height / 4) - yBuffer );
-
-                    this.context.beginPath();
-                    this.context.fillRect( 0, this.settings.height * 3/4, this.settings.width, (this.settings.height / 4) - yBuffer );
-                    break;
-                case 'TRANSLATE':
-                    this.context.fillRect( 0, (this.settings.height / 4), this.settings.width, (this.settings.height * 3/4) - (this.settings.height / 4) );
-                    break;
-                case 'SCALE_X_AXLE':
-                    break;
-                case 'ROTATE_TIRE':
-                    break;
-                default:
-                    break;
-            }
         }
 
-    });
 
-    /*** Axle Node ***/
+    });
 
     /**
      * @param axlePartName Which axle this node represents
@@ -392,6 +397,7 @@ function createSceneGraphModule() {
      */
     var AxleNode = function(axlePartName) {
         this.initGraphNode(new AffineTransform(), axlePartName);
+        // TODO
     };
 
     _.extend(AxleNode.prototype, GraphNode.prototype, {
@@ -417,7 +423,13 @@ function createSceneGraphModule() {
             });
 
             this.context.restore();
-        }
+        },
+
+        // // Overrides parent method
+        // pointInObject: function(point) {
+        //     // User can't select axles
+        //     return false;
+        // }
     });
 
     /**
@@ -426,6 +438,7 @@ function createSceneGraphModule() {
      */
     var TireNode = function(tirePartName) {
         this.initGraphNode(new AffineTransform(), tirePartName);
+        // TODO
     };
 
     _.extend(TireNode.prototype, GraphNode.prototype, {
@@ -447,44 +460,53 @@ function createSceneGraphModule() {
             context.fillStyle = 'black';
             context.fillRect(0, 0, this.settings.width, this.settings.height);
 
-            this.renderTireSubParts();
 
-            _.each(this.children, function(node) {
-                node.render(this.context);
-            });
-
-            this.context.restore();
-        },
-
-        /**
-         * Render tire subparts to help clarify tire controls on mouseover
-         */
-        renderTireSubParts: function() {
             var xBuffer = this.settings.width / this.settings.bufferFactor,
                 yBuffer = this.settings.height / this.settings.bufferFactor;
 
             // last ditch effort for good UI
-            this.context.globalCompositeOperation = "lighter";
-            this.context.fillStyle = 'green';
-            // this.context.fillStyle = this.settings.fillStyle;
-            switch (this.context.settings.carNode.mode) {
+            context.globalCompositeOperation = "lighter";
+            context.fillStyle = 'green';
+            // context.fillStyle = this.settings.fillStyle;
+            switch (context.settings.carNode.mode) {
                 case 'SCALE_X_AXLE':
-                    this.context.fillRect( 0, yBuffer, this.settings.width, this.settings.height - (yBuffer * 2) );
+                    context.fillRect( 0, yBuffer, this.settings.width, this.settings.height - (yBuffer * 2) );
                     break;
                 case 'ROTATE_TIRE':
                     if ( this.nodeName.match(/FRONT/) ) {
-                        this.context.beginPath();
-                        this.context.fillRect( 0, 0, this.settings.width, yBuffer );
+                        context.beginPath();
+                        context.fillRect( 0, 0, this.settings.width, yBuffer );
 
-                        this.context.beginPath();
-                        this.context.fillRect( 0, this.settings.height - yBuffer, this.settings.width, yBuffer );
+                        context.beginPath();
+                        context.fillRect( 0, this.settings.height - yBuffer, this.settings.width, yBuffer );
                     }
                     break;
                 default:
                     break;
             }
+                   //             if ( (0 < invPoint.y) && (invPoint.y < yBuffer) ) {
+                    //     carMode = 'ROTATE_TIRE';
+                    // } else if ( (invPoint.y > (this.settings.height - yBuffer) )
+                    //        && (invPoint.y <= this.settings.height) ) {
+                    //     carMode = 'ROTATE_TIRE';
+                    // } else if ( (0 <= invPoint.y) && (invPoint.y <= this.settings.height)
+                    //        && (0 <= invPoint.x) && (invPoint.x <= this.settings.width) ) {
+                    //     carMode = 'SCALE_X_AXLE';
+                    // } else {
+                    //     carMode = 'NONE';
+                    // }
+
+            _.each(this.children, function(node) {
+                node.render(context);
+            });
+
+            this.context.restore();
         }
 
+        // // Overrides parent method
+        // pointInObject: function(point) {
+        //     // TODO
+        // }
     });
 
     // Return an object containing all of our classes and constants
