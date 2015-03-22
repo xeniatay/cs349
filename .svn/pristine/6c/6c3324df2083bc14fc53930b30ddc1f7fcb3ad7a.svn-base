@@ -1,0 +1,197 @@
+'use strict';
+
+/* Globals */
+var sceneGraphModule,
+    buggyCanvas,
+    cursor;
+
+window.addEventListener('load', function() {
+
+    var appContainer = document.getElementById('app-container'),
+        carModeText = document.querySelector('.car-mode'),
+        buggy;
+
+    sceneGraphModule = createSceneGraphModule();
+    buggyCanvas = new BuggyCanvas();
+    buggy = buggyCanvas.hostElement;
+
+    resetCursor();
+
+    /*** On mouse down ***/
+    buggy.addEventListener('mousedown', function(e) {
+        var curCoord = { x: e.offsetX, y: e.offsetY };
+
+        updateActiveNode(curCoord);
+
+        cursor.isMouseDown = true;
+        cursor.origCoord = curCoord;
+
+        buggy.classList.add('mousedown');
+    });
+
+    /*** On mouse move ***/
+    buggy.addEventListener('mousemove', function(e) {
+        var curCoord = { x: e.offsetX, y: e.offsetY },
+            pointOffset = new Point(curCoord.x - cursor.origCoord.x, curCoord.y - cursor.origCoord.y);
+
+        if (cursor.isMouseDown) {
+            if (cursor.activeNode === sceneGraphModule.CAR_PART) {
+                transformCar(curCoord, pointOffset, buggyCanvas.CAR_PART);
+            } else if (cursor.activeNode.match(/TIRE_PART/)) {
+                transformTire(curCoord, pointOffset);
+            }
+
+            cursor.origCoord = curCoord;
+        } else {
+            updateActiveNode(curCoord);
+        }
+
+        buggyCanvas.drawBuggy();
+    });
+
+    /*** On mouse up ***/
+    buggy.addEventListener('mouseup', function(e) {
+        resetCursor();
+    });
+
+    /**
+     * Resets cursor state and buggy state
+     */
+    function resetCursor() {
+        cursor = {
+            'isMouseDown': false,
+            'origCoord': new Point(0, 0),
+            'selectedNode': 'NONE',
+            'transformMode': 'NONE',
+            'activeNode': 'NONE',
+            'pointInCar': false
+        }
+
+        buggy.classList.remove('mousedown');
+
+        buggyCanvas.carS.fillStyle = buggyCanvas.carS.colours['NONE'];
+        buggyCanvas.drawBuggy();
+    }
+
+    /**
+     * Use mouse position to get current active node and car mode
+     */
+    function updateActiveNode(point) {
+        var invPoint = buggyCanvas.CAR_PART.getPointInverse(point);
+        cursor.pointInCar = buggyCanvas.CAR_PART.pointInObject(invPoint);
+
+        if (cursor.pointInCar) {
+            cursor.activeNode = buggyCanvas.CAR_PART.getPIONodeName(point);
+            buggyCanvas.carS.mode = buggyCanvas.CAR_PART.getCarMode(point);
+            if (cursor.activeNode === sceneGraphModule.CAR_PART) {
+                buggyCanvas.carS.fillStyle = buggyCanvas.carS.colours[buggyCanvas.carS.mode];
+                buggyCanvas.tireS.fillStyle = buggyCanvas.carS.colours['NONE_TIRES'];
+                // TODO cursors look weird when rotated :(
+                buggy.setAttribute('data-mode', buggyCanvas.carS.mode);
+            } else if ( cursor.activeNode.match(/TIRE_PART/) ) {
+                buggyCanvas.carS.fillStyle = buggyCanvas.carS.colours['NONE'];
+                buggyCanvas.tireS.fillStyle = buggyCanvas.carS.colours[buggyCanvas.carS.mode];
+                buggy.setAttribute('data-mode', buggyCanvas.carS.mode);
+            } else {
+                buggyCanvas.carS.fillStyle = buggyCanvas.carS.colours['NONE'];
+                buggyCanvas.tireS.fillStyle = buggyCanvas.carS.colours['NONE_TIRES'];
+                buggyCanvas.carS.mode = 'NONE';
+            }
+        } else {
+            buggyCanvas.carS.fillStyle = buggyCanvas.carS.colours['NONE'];
+            buggyCanvas.tireS.fillStyle = buggyCanvas.carS.colours['NONE_TIRES'];
+            buggyCanvas.carS.mode = 'NONE';
+            buggy.setAttribute('data-mode', 'NONE');
+        }
+
+        setCarModeText();
+    }
+
+    /**
+     * Car transformation
+     */
+    function transformCar(curCoord, offset, node) {
+        switch (buggyCanvas.carS.mode) {
+            case 'SCALE_X_POS':
+                buggyCanvas.scaleContextX(offset, '-1', node);
+                break;
+            case 'SCALE_X_NEG':
+                buggyCanvas.scaleContextX(offset, '1', node);
+                break;
+            case 'SCALE_Y_POS':
+                buggyCanvas.scaleContextY(offset, '-1', node);
+                break;
+            case 'SCALE_Y_NEG':
+                buggyCanvas.scaleContextY(offset, '+1', node);
+                break;
+            case 'ROTATE':
+                buggyCanvas.rotateContext(cursor.origCoord, curCoord, offset, node, 1);
+                break;
+            case 'TRANSLATE':
+                buggyCanvas.translateContext(offset, node);
+                break;
+            default:
+                console.debug('Warning: invalid car transform mode');
+                break;
+        }
+    }
+
+    /**
+     * Tire transformation
+     */
+    function transformTire(curCoord, pointOffset) {
+        switch (buggyCanvas.carS.mode) {
+            case 'SCALE_X_AXLE':
+                buggyCanvas.scaleAxles(pointOffset, cursor.activeNode);
+                break;
+            case 'ROTATE_TIRE':
+                var theta = buggyCanvas.getRotationAngle(
+                    cursor.origCoord,
+                    curCoord,
+                    pointOffset,
+                    buggyCanvas.tireNodes[cursor.activeNode],
+                    -1
+                );
+
+                theta = theta * 9; // arbitrary factor
+
+                buggyCanvas.rotateContextByAngle(theta, buggyCanvas.tireNodes.FRONT_LEFT_TIRE_PART);
+                buggyCanvas.rotateContextByAngle(theta, buggyCanvas.tireNodes.FRONT_RIGHT_TIRE_PART);
+                break;
+            default:
+                break;
+        }
+    }
+
+    /**
+     * Display car mode so that users know what to do
+     */
+    function setCarModeText() {
+        switch (buggyCanvas.carS.mode) {
+            case 'SCALE_X_POS':
+            case 'SCALE_X_NEG':
+                carModeText.innerHTML = 'Scale Car Body Horizontally';
+                break;
+            case 'SCALE_Y_POS':
+            case 'SCALE_Y_NEG':
+                carModeText.innerHTML = 'Scale Car Body Vertically';
+                break;
+            case 'ROTATE':
+                carModeText.innerHTML = 'Rotate Car Body';
+                break;
+            case 'TRANSLATE':
+                carModeText.innerHTML = 'Translate Car Body';
+                break;
+            case 'SCALE_X_AXLE':
+                carModeText.innerHTML = 'Scale All Axles';
+                break;
+            case 'ROTATE_TIRE':
+                carModeText.innerHTML = 'Rotate Front Tires';
+                break;
+            default:
+                carModeText.innerHTML = 'None <small>(Hover over buggy to start!)</small>';
+                break;
+        }
+    }
+});
+

@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+<head lang="en">
+    <meta charset="UTF-8">
+    <title>Buggui!</title>
+
+    <!--
+    All of your CSS must go in css/buggui.css. Do not add styles to individual elements.
+    All of your CSS must be your own -- you may not use third-party CSS, like Bootstrap.
+    -->
+    <link rel="stylesheet" href="css/buggui.css"/>
+    <style>
+        .marking-button {
+            float:right;
+        }
+        .marking-div-clear {
+            clear:both;
+        }
+    </style>
+</head>
+<body>
+
+<div id="app-container">
+    <header class="clearfix">
+        <div class="pull-left">
+            <h1>Buggui!</h1>
+            <h2>Drive in style!</h2>
+        </div>
+        <div class="pull-right cursor-mode">
+            <p>Cursor mode: </p>
+            <h2 class="car-mode">None <small>(Hover over buggy to start!)</small></p></h2>
+        </div>
+    </header>
+    <div class="canvas-host">
+        <canvas id="buggui-canvas" class="canvas" width="800" height="600">
+        </canvas>
+    </div>
+
+    <div class="instructions">
+        <h2>Instructions</h2>
+        <ul>
+            <li>Position buggy on the screen by selecting it and dragging it with a pointer</li>
+            <li>Rotate buggy about its center by dragging the mouse pointer</li>
+            <li>Make buggy wider or longer by interactively manipulating control points on the car</li>
+            <li>Make buggy axles longer by interactively pulling the tires out</li>
+            <li>Turn the buggy's front wheels by dragging them with the mouse</li>
+        </ul>
+    </div>
+</div>
+
+<!-- Ensure this is in your document so TAs can run unit tests -->
+<div id="unit-tests" class="footer">
+    <button class="marking-button btn pull-right">Mark Me!</button>
+    <a href="unit_tests.html">Run Unit Tests</a>
+</div>
+
+<script src="js/ext/underscore.js"></script>
+<script src="js/ext/affinetransform.js"></script>
+<script src="js/scene_graph.js"></script>
+<script src="js/buggycanvas.js"></script>
+<script src="js/buggui.js"></script>
+<script src="js/markers_code.js"></script>
+</body>
+</html>
