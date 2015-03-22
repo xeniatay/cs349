@@ -7,3 +7,4 @@ List of assignments: https://hci.cs.uwaterloo.ca/courses/CS349/w15/about.html#as
 
 [Assignment 2: Fotag](https://rawgit.com/xeniatay/cs349/master/a2/fotag.html)
 
+[Assignment 3: Buggui](https://rawgit.com/xeniatay/cs349/master/a3/buggui.html)
