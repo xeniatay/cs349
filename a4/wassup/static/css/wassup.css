@@ -1,3 +1,24 @@
-.logo {
-    width: 250px;
+/* Palette color codes */
+/* Palette URL: http://paletton.com/#uid=71J0u0kllllaFw0g0qFqFg0w0aF */
+/* Main Primary color */
+/* Main Secondary color (1) */
+/* Main Secondary color (2) */
+/* Main Complement color */
+/*** VARIABLES ***/
+/*** STYLES ***/
+@font-face {
+  font-family: 'Montserrat';
+  src: url(../fonts/Montserrat/Montserrat-Regular.ttf);
+}
+html,
+body {
+  margin: 0 auto;
+  padding: 10px;
+  font-family: 'Montserrat';
+  font-size: 16px;
+  color: #01345b;
+}
+/* Canvas */
+.sup-canvas {
+  border: 5px solid #000000;
 }

@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html>
   <head>
+    <link rel="stylesheet" type="text/css" href="/static/css/ext/bootstrap.css" />
     <link rel="stylesheet" type="text/css" href="/static/css/wassup.css" />
   </head>
   <body>
@@ -12,11 +13,10 @@
     </p>
     %end
 
-    <form method="POST" id="" action="/logged_in" enctype="multipart/form-data">
+    <form method="POST" id="login-form" action="/logged_in" enctype="multipart/form-data">
       Desired username: <input type="text" name="user_id" />
       Full name: <input type="text" name="full_name" />
       <input type="submit" value="Log In" />
-
     </form>
 
     <script src="static/js/ext/underscore.js"></script>

@@ -11,11 +11,11 @@ p5
 sS'user_id'
 p7
 g3
-sS'friends_list'
-p8
-(lp9
 sS'full_name'
-p10
+p8
 S'xenia'
-p11
+p9
+sS'friends_list'
+p10
+(lp11
 sss.

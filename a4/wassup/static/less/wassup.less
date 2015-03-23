@@ -1,0 +1,31 @@
+// @import 'reset.less';
+// @import 'utilities.less';
+// @import 'icons.less';
+@import 'colors.less';
+
+/*** VARIABLES ***/
+
+@mobile: ~"all and (max-width: 630px)";
+@tablet: ~"all and (max-width: 759px)";
+@desktop: ~"all and (min-width: 760px)";
+
+/*** STYLES ***/
+
+@font-face {
+  font-family: 'Montserrat';
+  src: url(../fonts/Montserrat/Montserrat-Regular.ttf);
+}
+
+html,
+body {
+  margin: 0 auto;
+  padding: 10px;
+  font-family: 'Montserrat';
+  font-size: 16px;
+  color: @color-tertiary-4;
+}
+
+/* Canvas */
+.sup-canvas {
+  border: 5px solid @black;
+}

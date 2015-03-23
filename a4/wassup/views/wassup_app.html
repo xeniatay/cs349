@@ -1,15 +1,49 @@
 <!DOCTYPE html>
 <html>
   <head>
+    <link rel="stylesheet" type="text/css" href="/static/css/ext/bootstrap.css" />
     <link rel="stylesheet" type="text/css" href="/static/css/wassup.css" />
   </head>
   <body>
-    <img class="logo" src="/static/wassup_logo.png"/>
-    <p>
-      TODO
-    </p>
+    <header class="row">
+      <div class="col-xs-12">
+        <form method="post" action="/logout">
+          <button type="submit" class="btn btn-primary pull-right btn-logout">Logout</button>
+        </form>
+      </div>
 
-    <script src="static/js/ext/underscore.js"></script>
-    <script type="text/javascript" src="/static/js/wassup.js"></script>
+      <img class="logo col-sm-4 col-xs-12" src="/static/wassup_logo.png"/>
+
+      <div class="col-sm-8 col-xs-12">
+        <div class="pull-right">
+          <h2>Server</h2>
+          <button class="btn">Private</button>
+          <button class="btn">Public</button>
+        </div>
+      </div>
+    </header>
+
+    <section class="main-container row">
+      <div class="friends-list col-sm-4 col-xs-12">
+        Friends List
+      </div>
+
+      <div class="chat-area col-sm-8 col-xs-12">
+        <p class="notification">
+          You got __ sups
+        </p>
+
+        <canvas class="sup-canvas" width="400" height="400">
+        </canvas>
+
+        <div class="sup-controls">
+        </div>
+      </div>
+
+    </section>
   </body>
+  <script src="static/js/ext/underscore.js"></script>
+  <script src="static/js/ext/jquery-1.11.2.min.js"></script>
+  <script src="static/js/ext/bootstrap.js"></script>
+  <script type="text/javascript" src="/static/js/wassup.js"></script>
 </html>
