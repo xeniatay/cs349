@@ -31,7 +31,6 @@ WASSUP_LOGIN_FILE_NAME = 'wassup_login.html'
 # DB constants
 USERS_KEY = 'users'
 USER_ID_KEY = 'user_id'
-EXISTS_KEY = 'exists'
 SENDER_ID_KEY = 'sender_id'
 FULL_NAME_KEY = 'full_name'
 FRIENDS_LIST_KEY = 'friends_list'
@@ -40,7 +39,7 @@ SUP_ID_KEY = 'sup_id'
 DATE_KEY = 'date'
 
 # Communication constants
-PROTOCOL_VERSION = '1.1'
+PROTOCOL_VERSION = '1.0'
 PROTOCOL_VERSION_KEY = 'protocol_version'
 MESSAGE_ID_KEY = 'message_id'
 COMMAND_KEY = 'command'
@@ -50,7 +49,6 @@ REPLY_DATA_KEY = 'reply_data'
 
 # Commands
 CREATE_USER_COMMAND = 'create_user'
-USER_EXISTS_COMMAND = 'user_exists'
 ADD_FRIEND_COMMAND = 'add_friend'
 REMOVE_FRIEND_COMMAND = 'remove_friend'
 GET_FRIENDS_COMMAND = 'get_friends'
@@ -116,12 +114,6 @@ def app_db_get_user_db(app_db, user_id):
   if not user_id in app_db[USERS_KEY]:
     raise Exception("user_id not in DB: " + user_id)
   return app_db[USERS_KEY][user_id]
-
-def app_db_user_exists(app_db, user_id):
-  '''
-  Checks whether the given user_id exists in the user DB or not
-  '''
-  return user_id in app_db[USERS_KEY]
 
 
 # The user DB
@@ -268,7 +260,6 @@ def handle_post():
     # The actual commands that handle the requests
     command_handlers = {
       CREATE_USER_COMMAND: handle_create_user,
-      USER_EXISTS_COMMAND: handle_user_exists,
       ADD_FRIEND_COMMAND: handle_add_friend,
       REMOVE_FRIEND_COMMAND: handle_remove_friend,
       GET_FRIENDS_COMMAND: handle_get_friends,
@@ -306,30 +297,6 @@ def handle_create_user(
   app_db_add_user(app_db, new_user_id, full_name)
   app_db_write_to_file(app_db)
   return generate_reply(message_id, command, 'Created user')
-
-def handle_user_exists(
-    protocol_version,
-    user_id,
-    message_id,
-    command,
-    command_data):
-  '''
-  command_data is a dictionary with the following key-value pairs:
-  - user_id: The user ID
-
-  Returns a dictionary with the following key/value pairs:
-  - user_id: The user ID
-  - exists: Boolean
-  '''
-  if not (USER_ID_KEY in command_data):
-    return generate_error(message_id, command, 'Missing user_id in ' + command + ' request')
-  user_id = command_data[USER_ID_KEY]
-  app_db = app_db_load_from_file()
-  user_exists = app_db_user_exists(app_db, user_id)
-  return generate_reply(message_id, command, {
-    USER_ID_KEY: user_id,
-    EXISTS_KEY: user_exists
-  })
 
 def handle_add_friend(
     protocol_version,
@@ -391,17 +358,11 @@ def handle_get_friends(
   friends_list = user_db_get_friends_list(user_db)
   return_list = []
   for friend_id in friends_list:
-    if app_db_user_exists(app_db, friend_id):
-      friend_db = app_db_get_user_db(app_db, friend_id)
-      return_list.append({
-        USER_ID_KEY: friend_id,
-        FULL_NAME_KEY: user_db_get_user_full_name(friend_db)
-        })
-    else:
-      return_list.append({
-        USER_ID_KEY: friend_id,
-        FULL_NAME_KEY: ''
-      })
+    friend_db = app_db_get_user_db(app_db, friend_id)
+    return_list.append({
+      USER_ID_KEY: friend_id,
+      FULL_NAME_KEY: user_db_get_user_full_name(friend_db)
+    })
   return generate_reply(message_id, command, return_list)
 
 def handle_send_sup(
