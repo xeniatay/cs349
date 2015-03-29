@@ -1,3 +1,5 @@
+var friendsList;
+
 window.addEventListener('load', function() {
 
     var loggedIn = hasCookie('user_id');
@@ -8,13 +10,18 @@ window.addEventListener('load', function() {
         if ( location.pathname.match(/login/) ) {
             location = location.origin;
         }
+
         document.body.classList.add('logged-in');
+
+        friendsList = new FriendsList();
+        friendsList.updateFriendsList();
     }
 
 });
 
 // Example derived from: https://developer.mozilla.org/en-US/docs/AJAX/Getting_Started
-function handleAjaxRequest(command) {
+function handleAjaxRequest(command, command_data, callback) {
+    command_data = command_data || null;
 
     // Create the request object
     var httpRequest = new XMLHttpRequest();
@@ -26,7 +33,17 @@ function handleAjaxRequest(command) {
         // 200 means we got an OK response from the server
         if (httpRequest.readyState === 4 && httpRequest.status === 200) {
             // Parse the response text as a JSON object
-            // var responseObj = JSON.parse(httpRequest.responseText);
+            var responseObj = JSON.parse(httpRequest.responseText);
+
+            if (responseObj.error !== "") {
+                console.error(responseObj.command, responseObj.error);
+            } else {
+                console.debug(responseObj.command, responseObj.reply_data);
+            }
+
+            if (callback) {
+                callback.call(friendsList, responseObj);
+            }
 
             // TODO: Actually do something with the data returned
         }
@@ -34,14 +51,18 @@ function handleAjaxRequest(command) {
 
     // This opens a POST connection with the server at the given URL
     httpRequest.open('POST', 'http://localhost:8080/post');
+    console.debug('hascallback?', !!callback);
 
     // Set the data type being sent as JSON
     httpRequest.setRequestHeader('Content-Type', 'application/json');
 
     // Send the JSON object, serialized as a string
-    // TODO: You will need to actually send something and respond to it
     var objectToSend = {
-        'command': command
+        'command': command,
+        'command_data': command_data,
+        'message_id': _.uniqueId('messageId-'),
+        'user_id': getCookie('user_id'),
+        'protocol_version': 1.2
     };
 
     httpRequest.send(JSON.stringify(objectToSend));
@@ -54,4 +75,13 @@ function handleAjaxRequest(command) {
 function hasCookie(sKey) {
     if (!sKey) { return false; }
     return (new RegExp("(?:^|;\\s*)" + encodeURIComponent(sKey).replace(/[\-\.\+\*]/g, "\\$&") + "\\s*\\=")).test(document.cookie);
+}
+
+/**
+ * Gets value of cookie
+ * Derived from: https://developer.mozilla.org/en-US/docs/Web/API/Document/cookie
+ */
+function getCookie(sKey) {
+    if (!sKey) { return null; }
+    return decodeURIComponent(document.cookie.replace(new RegExp("(?:(?:^|.*;)\\s*" + encodeURIComponent(sKey).replace(/[\-\.\+\*]/g, "\\$&") + "\\s*\\=\\s*([^;]*).*$)|^.*$"), "$1")) || null;
 }
