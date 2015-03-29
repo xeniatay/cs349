@@ -32,6 +32,7 @@
         </div>
         <ul class="friends-list">
         </ul>
+        <button type="button" class="btn btn-primary btn-send-sup">Send Sup!</button>
       </div>
 
       <div class="chat-area col-sm-8 col-xs-12">
@@ -49,11 +50,12 @@
     </section>
 
     <template id="template-single-friend">
-      <li>
+      <input type="checkbox" id="" class="sr-only">
+      <label for="">
         <span class="friend-name"></span>
         <span class="friend-id"></span>
         <span class="btn-delete btn-delete-friend">&times;</span>
-      </li>
+      </label>
     </template>
   </body>
   <script src="static/js/ext/underscore.js"></script>

@@ -26,6 +26,7 @@ _.extend(FriendsList.prototype, {
         this.friendTemplate = document.createElement('li');
         this.friendTemplate.innerHTML = document.querySelector('#template-single-friend').innerHTML;
 
+        this.btnSendSup = document.querySelector('.btn-send-sup');
         this.btnAddFriend = document.querySelector('.btn-add-friend');
         this.inputAddFriend = document.querySelector('.new-friend-input');
 
@@ -37,19 +38,23 @@ _.extend(FriendsList.prototype, {
             this.addFriend();
         }.bind(this));
 
-        this.inputAddFriend.addEventListener('keydown', function(e) {
+        this.inputAddFriend.addEventListener('keydown', (function(e) {
+            // TODO disable send sup button if no friend selected
+
             if (e.keyCode === 13) {  // enter
                 this.addFriend();
             }
-        }.bind(this));
+        }).bind(this));
 
         this.el.addEventListener('click', function(e) {
             if (e.target.className.indexOf('btn-delete-friend') > 0) {
-                var friend = e.target.parentNode.querySelector('.friend-id').innerHTML;
-                handleAjaxRequest('remove_friend', {'user_id': friend}, friendsList.updateFriendsList);
+                this.removeFriend(e);
             }
-
         });
+
+        this.btnSendSup.addEventListener('click', (function(e) {
+            this.sendSups();
+        }).bind(this));
     },
 
     updateFriendsList: function() {
@@ -67,7 +72,8 @@ _.extend(FriendsList.prototype, {
             friendEl.classList.add('single-friend');
             friendEl.querySelector('.friend-name').innerHTML = friend.full_name;
             friendEl.querySelector('.friend-id').innerHTML = friend.user_id;
-            friendEl.setAttribute('data-userid', friend.user_id);
+            friendEl.querySelector('label').setAttribute('for', friend.user_id);
+            friendEl.querySelector('input').setAttribute('id', friend.user_id);
 
             this.el.appendChild(friendEl);
         }, this);
@@ -75,14 +81,34 @@ _.extend(FriendsList.prototype, {
 
     addFriend: function() {
         // TODO if friend already exists, show error msg
-
         var newFriend = this.inputAddFriend.value;
         handleAjaxRequest('user_exists', {'user_id': newFriend }, function(data) {
-            handleAjaxRequest('add_friend', {'user_id': data.reply_data.user_id}, friendsList.updateFriendsList);
+            if (data.reply_data.exists) {
+                handleAjaxRequest('add_friend', {'user_id': data.reply_data.user_id}, friendsList.updateFriendsList);
+            }
         });
     },
 
-    removeFriend: function() {
+    removeFriend: function(e) {
+        var friend = e.target.parentNode.querySelector('.friend-id').innerHTML;
+        handleAjaxRequest('remove_friend', {'user_id': friend}, friendsList.updateFriendsList);
+    },
+
+    sendSups: function() {
+        var selected = document.querySelectorAll('.single-friend input:checked'),
+            data = {};
+
+        if (selected) {
+            _.each(selected, function(friend) {
+                data = {
+                    'user_id': friend.getAttribute('id'),
+                    'sup_id': _.uniq(),
+                    'date': new Date()
+                }
+            });
+
+            handleAjaxRequest('send_sup', data, null);
+        }
 
     }
 

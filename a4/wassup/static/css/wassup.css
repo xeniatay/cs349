@@ -32,7 +32,17 @@ li {
 /* Friends List */
 .friends-list {
   padding: 0;
+  height: 200px;
 }
-.single-friend {
+.single-friend label {
   display: block;
+  cursor: pointer;
+  padding: 5px 10px;
+  margin: 0;
+}
+.single-friend label:hover {
+  background: #efefef;
+}
+.single-friend input:checked ~ label {
+  background: #cfcfcf;
 }

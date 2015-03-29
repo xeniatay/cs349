@@ -51,7 +51,6 @@ function handleAjaxRequest(command, command_data, callback) {
 
     // This opens a POST connection with the server at the given URL
     httpRequest.open('POST', 'http://localhost:8080/post');
-    console.debug('hascallback?', !!callback);
 
     // Set the data type being sent as JSON
     httpRequest.setRequestHeader('Content-Type', 'application/json');
