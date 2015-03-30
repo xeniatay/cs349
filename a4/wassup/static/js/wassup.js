@@ -1,4 +1,5 @@
-var friendsList;
+var friendsList,
+    sups;
 
 window.addEventListener('load', function() {
 
@@ -15,6 +16,9 @@ window.addEventListener('load', function() {
 
         friendsList = new FriendsList();
         friendsList.updateFriendsList();
+
+        sups = new Sups();
+        sups.getSups();
     }
 
 });

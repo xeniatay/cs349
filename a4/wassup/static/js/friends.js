@@ -107,9 +107,13 @@ _.extend(FriendsList.prototype, {
                 }
             });
 
+            // TODO success handler
             handleAjaxRequest('send_sup', data, null);
         }
+    },
 
+    clearSups: function() {
+        handleAjaxRequest('clear_sups', null, null);
     }
 
 });
