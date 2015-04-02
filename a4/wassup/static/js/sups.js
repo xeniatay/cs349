@@ -9,6 +9,22 @@ var Sups = function() {
 };
 
 _.extend(Sups.prototype, {
+
+  FONTS: [
+    'Verdana',
+    'Arial',
+    'Century Gothic',
+    'Georgia',
+    'Times New Roman',
+    'Trebuchet MS',
+    'Palatino Linotype',
+    'Comic Sans',
+    'Impact',
+    'Tahoma',
+    'Courier New',
+    'Lucida Console'
+  ],
+
   initialize: function() {
     this.currentSup = 0;
     this.canvas = document.querySelector('.sup-canvas');
@@ -28,14 +44,37 @@ _.extend(Sups.prototype, {
   },
 
   drawSup: function() {
-    this.context.font="30px Verdana";
-    this.context.fillText('SUP', 10, 50);
-    // var gradient=this.context.createLinearGradient(0,0,this.canvas.width,0);
-    // gradient.addColorStop("0","magenta");
-    // gradient.addColorStop("0.5","blue");
-    // gradient.addColorStop("1.0","red");
-    // this.context.fillStyle=gradient;
+    this.generateSupSettings();
 
+    var textString = 'SUP',
+        textWidth = this.context.measureText(textString ).width,
+        settings = this.sups[this.currentSup].settings;
 
+    this.context.font = settings.fontSize + "px " + settings.fontName;
+    this.context.textAlign = 'center';
+    this.context.textBaseline = 'middle';
+
+    this.context.translate( (this.canvas.width / 2) - (textWidth / 2), (this.canvas.height / 2) );
+    this.context.rotate( Math.PI / 180 * settings.rotateAngle );
+
+    this.context.fillStyle = 'rgb(' + settings.red + ',' + settings.blue + ',' + settings.green + ')';
+    this.context.fillText(textString, 0, 0);
+  },
+
+  generateSupSettings: function() {
+    if (this.sups[this.currentSup].settings) {
+      return;
+    }
+
+    var settings = {
+      red: _.random(50, 240),
+      green: _.random(50, 240),
+      blue: _.random(50, 240),
+      fontSize: _.random(100, 200),
+      fontName: this.FONTS[ _.random( this.FONTS.length - 1 ) ],
+      rotateAngle: _.random(-60, 60)
+    };
+
+    this.sups[ this.currentSup ].settings = settings;
   }
  });
