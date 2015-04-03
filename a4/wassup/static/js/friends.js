@@ -65,12 +65,11 @@ _.extend(FriendsList.prototype, {
     },
 
     updateFriendsList: function() {
+        this.loadingFriends();
         handleAjaxRequest('get_friends', null, friendsList.displayFriends);
     },
 
     displayFriends: function(data) {
-        // Wipe original data
-        this.inputAddFriend.value = "";
         this.el.innerHTML = "";
 
         _.each(data.reply_data, function(friend) {
@@ -95,11 +94,24 @@ _.extend(FriendsList.prototype, {
     addFriend: function() {
         // TODO if friend already exists, show error msg
         var newFriend = this.inputAddFriend.value;
+        this.loadingFriends();
         handleAjaxRequest('user_exists', {'user_id': newFriend }, function(data) {
             if (data.reply_data.exists) {
                 handleAjaxRequest('add_friend', {'user_id': data.reply_data.user_id}, friendsList.updateFriendsList);
+            } else {
+                var friendError = document.querySelector('.friend-error');
+                friendError.style.opacity = 1;
+                window.setTimeout(function() {
+                  friendError.style.opacity = 0;
+                }, 2000)
+                this.updateFriendsList();
             }
         });
+    },
+
+    loadingFriends: function() {
+        this.inputAddFriend.value = "";
+        this.el.innerHTML = "<li class='friend-loading'>Loading...</li>";
     },
 
     removeFriend: function(e) {

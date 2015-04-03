@@ -5,12 +5,18 @@
   </head>
   <body class="container">
     <header class="row">
-      <div class="logo col-sm-4 col-xs-12">
+      <div class="logo col-xs-4">
         WASSUP!
       </div>
 
-      <div class="col-sm-8 col-xs-12">
+      <div class="col-xs-8 show-mobile">
         <form method="post" action="/logout" class="pull-right">
+          <button type="submit" class="btn btn-warning pull-right btn-logout">Logout</button>
+        </form>
+      </div>
+
+      <div class="col-xs-12 col-sm-8">
+        <form method="post" action="/logout" class="pull-right hide-mobile">
           <button type="submit" class="btn btn-warning pull-right btn-logout">Logout</button>
         </form>
 
@@ -29,7 +35,8 @@
 
     <section class="main-container row">
       <div class="friends-container col-md-4 col-xs-12">
-        <h3>Friends</h3>
+        <h3 class="friendslist-heading">Friends</h3>
+        <span class="friend-error">Error: User does not exist!</span>
         <div class="form-group form-inline add-friend-form">
           <input type="text" class="form-control new-friend-input">
           <button type="button" class="btn btn-info btn-add-friend">Add</button>
@@ -42,6 +49,10 @@
       </div>
 
       <div class="chat-area col-md-8 col-xs-12">
+        <div class="loading-msg">
+          Loading sups...
+        </div>
+
         <div class="no-sups-msg hidden">
           You have no sups! Add a friend and WASSUP them!
 
@@ -50,7 +61,7 @@
             Refresh
           </button>
         </div>
-        <div class="has-sups hideSupCanvas">
+        <div class="hide-sup-canvas">
           <div class="clearfix">
             <div class="sup-sender-info pull-left">
               From <span class="friend-name"></span>
@@ -59,17 +70,17 @@
               <span class="sup-date"></span>:
             </div>
 
-            <button class="btn btn-info btn-reload-sups pull-right">
-              <i class="glyphicon glyphicon-refresh"></i>
-              Refresh
-            </button>
-            <button class="btn btn-danger btn-clear-sups pull-right">
-              <i class="glyphicon glyphicon-remove-circle"></i>
-              Clear All
-            </button>
+            <div class="clear-and-refresh pull-right">
+              <button class="btn btn-danger btn-clear-sups">
+                <i class="glyphicon glyphicon-remove-circle"></i>
+                Clear All
+              </button>
+              <button class="btn btn-info btn-reload-sups">
+                <i class="glyphicon glyphicon-refresh"></i>
+                Refresh
+              </button>
+            </div>
           </div>
-
-          <hr>
 
           <div class="canvas-wrapper clearfix row">
             <div class="sup-nav col-xs-2" data-dir="prev">
@@ -87,12 +98,17 @@
             </div>
           </div>
 
-          <div class="sup-controls pull-right">
-            <span class="current-sup"></span> of <span class="number-of-sups"></span> Sups
+          <div class="sup-controls ">
+            <div class="pull-left new-sup-alert">
+              You've got SUPS!
+            </div>
+            <div class="pull-right">
+              <span class="current-sup"></span> of <span class="number-of-sups"></span> Sups
+            </div>
           </div>
         </div>
-      </div>
 
+      </div>
     </section>
 
     <template id="template-single-friend">

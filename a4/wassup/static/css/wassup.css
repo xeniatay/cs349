@@ -6597,6 +6597,11 @@ header {
 .server-controllers {
   padding-right: 30px;
 }
+@media all and (max-width: 768px) {
+  .server-controllers {
+    padding-right: 0;
+  }
+}
 .btn-server {
   background: #cfcfcf;
   cursor: pointer;
@@ -6615,8 +6620,6 @@ input[name="server"]:checked + .btn-server {
 /* Friends List */
 .friends-container {
   padding-bottom: 4em;
-  border-bottom: 1px solid #efefef;
-  margin-bottom: 2em;
 }
 .add-friend-form {
   padding: 1em;
@@ -6633,6 +6636,14 @@ input[name="server"]:checked + .btn-server {
     width: 15%;
   }
 }
+@media all and (max-width: 768px) {
+  .add-friend-form input {
+    width: 70% !important;
+  }
+  .add-friend-form button {
+    width: 20%;
+  }
+}
 .friends-list {
   padding: 0;
   padding-top: 3.5em;
@@ -6641,7 +6652,22 @@ input[name="server"]:checked + .btn-server {
   overflow: scroll;
   border: 1px solid #efefef;
 }
+.friend-loading {
+  padding: 10px;
+}
+.single-friend input:checked ~ label {
+  background: #f7bbbe;
+}
+.single-friend input:checked ~ label .btn-delete {
+  color: #494949;
+}
+.single-friend input:checked ~ label .friend-id {
+  color: #3aaab6;
+}
 .single-friend label {
+  -webkit-transition: all 0.1s ease-in-out;
+  -o-transition: all 0.1s ease-in-out;
+  transition: all 0.1s ease-in-out;
   display: block;
   cursor: pointer;
   padding-left: 10px;
@@ -6653,9 +6679,6 @@ input[name="server"]:checked + .btn-server {
 }
 .single-friend label:hover {
   background: #efefef;
-}
-.single-friend input:checked ~ label {
-  background: #cfcfcf;
 }
 .friend-id {
   margin-left: .5em;
@@ -6672,7 +6695,7 @@ input[name="server"]:checked + .btn-server {
   color: #cfcfcf;
 }
 .btn-delete-friend:hover {
-  color: #c84157;
+  color: #c84157 !important;
 }
 .btn-send-sup {
   margin: 0 auto;
@@ -6695,10 +6718,13 @@ input[name="server"]:checked + .btn-server {
 @media all and (max-width: 992px) {
   .chat-area {
     padding-right: 15px;
+    padding-top: 20px;
+    border-top: 3px solid #f7e6ad;
   }
 }
 .sup-sender-info {
-  padding-top: 10px;
+  padding-top: 20px;
+  padding-bottom: 15px;
 }
 .canvas-container {
   position: relative;
@@ -6729,6 +6755,20 @@ input[name="server"]:checked + .btn-server {
 }
 .sup-nav:active {
   background: #bcbcbc;
+}
+.sup-nav.disabled {
+  color: #cfcfcf;
+  background: none;
+}
+@media all and (max-width: 992px) {
+  .sup-nav {
+    font-size: 30px;
+  }
+}
+@media all and (max-width: 768px) {
+  .sup-nav {
+    font-size: 20px;
+  }
 }
 .sup-nav[data-dir="prev"] {
   border-right: 1px solid #efefef;
@@ -6770,6 +6810,56 @@ input[name="server"]:checked + .btn-server {
 .friend-name {
   color: #13656d;
 }
-.hideSupCanvas {
+.hide-sup-canvas {
   opacity: 0;
+}
+.chat-area.has-sups .hide-sup-canvas {
+  opacity: 1;
+}
+.new-sup-alert {
+  -webkit-transition: opacity 0.1s ease-in-out;
+  -o-transition: opacity 0.1s ease-in-out;
+  transition: opacity 0.1s ease-in-out;
+  color: #c49c14;
+  font-size: 1.5em;
+  font-style: italic;
+  opacity: 0;
+}
+@media all and (max-width: 768px) {
+  .new-sup-alert {
+    font-size: 12px;
+  }
+}
+.chat-area.no-sups .loading-msg,
+.chat-area.has-sups .loading-msg {
+  display: none;
+}
+@media all and (max-width: 768px) {
+  .clear-and-refresh {
+    width: 100%;
+    margin-bottom: 20px;
+  }
+}
+.show-mobile {
+  display: none;
+}
+@media all and (max-width: 768px) {
+  .show-mobile {
+    display: block;
+  }
+}
+@media all and (max-width: 768px) {
+  .hide-mobile {
+    display: none;
+  }
+}
+.friend-error {
+  color: #c84157;
+  font-size: 0.9em;
+  padding: 0 0 20px 10px;
+  display: inline-block;
+  opacity: 0;
+}
+.friendslist-heading {
+  display: inline-block;
 }

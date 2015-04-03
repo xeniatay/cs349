@@ -35,7 +35,6 @@ window.addEventListener('load', function() {
                         break;
                 }
 
-                console.debug(serverURL);
                 friendsList.updateFriendsList();
                 supData.initialize();
             });

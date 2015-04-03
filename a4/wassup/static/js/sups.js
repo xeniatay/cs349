@@ -38,13 +38,16 @@ _.extend(Sups.prototype, {
     this.context = this.canvas.getContext('2d');
 
     this.initEvents();
+    this.showLoadingState();
     this.getSups();
   },
 
   initEvents: function() {
     var supNav = document.querySelectorAll('.sup-nav');
 
-    this.btnReloadSups = document.querySelector('.btn-reload-sups');
+    this.prevNav = document.querySelector('[data-dir="prev"]');
+    this.nextNav = document.querySelector('[data-dir="next"]');
+    this.btnReloadSups = document.querySelectorAll('.btn-reload-sups');
     this.numSupsElem = document.querySelector('.number-of-sups');
     this.currentSupElem = document.querySelector('.current-sup');
     this.btnRemoveSup = document.querySelector('.btn-delete-sup');
@@ -61,9 +64,11 @@ _.extend(Sups.prototype, {
       });
     });
 
-    this.btnReloadSups.addEventListener('click', _.bind(function() {
-      this.getSups();
-    }, this) );
+    _.each(this.btnReloadSups, function(btn) {
+      btn.addEventListener('click', _.bind(function() {
+        this.getSups();
+      }, this) );
+    }, this);
 
     this.btnRemoveSup.addEventListener('click', _.bind(function() {
       this.removeSup();
@@ -101,6 +106,12 @@ _.extend(Sups.prototype, {
           });
 
       if (numNewSups > 0) {
+        var newSupAlert = document.querySelector('.new-sup-alert');
+        newSupAlert.style.opacity = 1;
+        window.setTimeout(function() {
+          newSupAlert.style.opacity = 0;
+        }, 2000)
+
         this.curSup = this.curSup + numNewSups;
         this.sups = newSups.concat(this.sups);
       }
@@ -125,16 +136,34 @@ _.extend(Sups.prototype, {
     this.context.restore();
   },
 
+  showLoadingState: function() {
+    var chatArea = document.querySelector('.chat-area');
+    chatArea.classList.remove('no-sups');
+    chatArea.classList.remove('has-sups');
+  },
+
   validateSups: function() {
     var chatArea = document.querySelector('.chat-area');
     if (!this.sups.length) {
       chatArea.classList.add('no-sups');
+      chatArea.classList.remove('has-sups');
       // this.clearCanvas();
     } else {
       chatArea.classList.remove('no-sups');
-      var supContainer = document.querySelector('.has-sups');
-      supContainer.classList.remove('hideSupCanvas');
+      chatArea.classList.add('has-sups');
+      this.prevNav.classList.remove('disabled');
+      this.nextNav.classList.remove('disabled');
     }
+
+    if (this.sups.length === 1) {
+      this.prevNav.classList.add('disabled');
+      this.nextNav.classList.add('disabled');
+    } else if ( (this.curSup + 1) === this.sups.length) {
+      this.nextNav.classList.add('disabled');
+    } else if ( this.curSup === 0 ){
+      this.prevNav.classList.add('disabled');
+    }
+
   },
 
   updateSupInfo: function() {
@@ -154,7 +183,7 @@ _.extend(Sups.prototype, {
   drawSup: function() {
     this.generateSupSettings();
 
-    var textString = 'SUP',
+    var textString = 'SUP?',
         textWidth = this.context.measureText(textString).width,
         settings = this.supSettings[this.curSupId];
 
@@ -178,7 +207,7 @@ _.extend(Sups.prototype, {
       red: _.random(50, 240),
       green: _.random(50, 240),
       blue: _.random(50, 240),
-      fontSize: _.random(100, 200),
+      fontSize: _.random(70, 150),
       fontName: this.FONTS[ _.random( this.FONTS.length - 1 ) ],
       rotateAngle: _.random(-60, 60)
     };
