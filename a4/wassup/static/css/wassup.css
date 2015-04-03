@@ -6770,3 +6770,6 @@ input[name="server"]:checked + .btn-server {
 .friend-name {
   color: #13656d;
 }
+.hideSupCanvas {
+  opacity: 0;
+}

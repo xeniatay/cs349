@@ -133,7 +133,7 @@ _.extend(Sups.prototype, {
     } else {
       chatArea.classList.remove('no-sups');
       var supContainer = document.querySelector('.has-sups');
-      supContainer.classList.remove('hidden');
+      supContainer.classList.remove('hideSupCanvas');
     }
   },
 
