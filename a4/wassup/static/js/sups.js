@@ -171,13 +171,14 @@ _.extend(Sups.prototype, {
     var curSup = this.sups[this.curSup],
         date = new Date(curSup.date),
         hours = date.getHours() % 12,
-        AMorPM = (date.getHours() > 12) ? 'pm' : 'am';
+        AMorPM = (date.getHours() > 12) ? 'pm' : 'am',
+        minutes = (date.getMinutes() < 10) ? '0' + date.getMinutes() : date.getMinutes();
 
     this.currentSupElem.innerHTML = this.curSup + 1;
     this.numSupsElem.innerHTML = this.sups.length;
     this.senderName.innerHTML = curSup.sender_full_name;
     // this.senderId.innerHTML = curSup.sender_id;
-    this.senderDate.innerHTML = this.DAYS[ date.getDay() ] + ", " + date.getHours() + ":" + date.getMinutes() + AMorPM ;
+    this.senderDate.innerHTML = this.DAYS[ date.getDay() ] + ", " + date.getHours() + ":" + minutes + AMorPM ;
   },
 
   drawSup: function() {
