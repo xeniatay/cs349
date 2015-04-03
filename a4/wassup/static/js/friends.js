@@ -49,6 +49,13 @@ _.extend(FriendsList.prototype, {
         this.el.addEventListener('click', _.bind(function(e) {
             if (e.target.className.indexOf('btn-delete-friend') > 0) {
                 this.removeFriend(e);
+            } else {
+                var checked = document.querySelectorAll('.single-friend input:checked');
+                if (checked.length) {
+                    this.btnSendSup.removeAttribute('disabled');
+                } else {
+                    this.btnSendSup.setAttribute('disabled', 'disabled');
+                }
             }
         }, this));
 
@@ -77,6 +84,12 @@ _.extend(FriendsList.prototype, {
 
             this.el.appendChild(friendEl);
         }, this);
+
+        // if (data.reply_data.length) {
+        //     this.btnSendSup.removeAttribute('disabled');
+        // } else {
+        //     this.btnSendSup.setAttribute('disabled', true);
+        // }
     },
 
     addFriend: function() {

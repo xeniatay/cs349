@@ -34,7 +34,7 @@ _.extend(Sups.prototype, {
 
     this.canvas = document.querySelector('.sup-canvas');
     this.canvas.width = this.canvas.offsetWidth;
-    this.canvas.height = 440;
+    this.canvas.height = 400;
     this.context = this.canvas.getContext('2d');
 
     this.initEvents();
@@ -47,7 +47,7 @@ _.extend(Sups.prototype, {
     this.btnReloadSups = document.querySelector('.btn-reload-sups');
     this.numSupsElem = document.querySelector('.number-of-sups');
     this.currentSupElem = document.querySelector('.current-sup');
-    this.btnRemoveSup = document.querySelector('.btn-remove-sup');
+    this.btnRemoveSup = document.querySelector('.btn-delete-sup');
     this.btnClearSups = document.querySelector('.btn-clear-sups');
     this.senderName = document.querySelector('.sup-sender-info .friend-name');
     // this.senderId = document.querySelector('.sup-sender-info .friend-id');
@@ -109,13 +109,13 @@ _.extend(Sups.prototype, {
   },
 
   displaySups: function() {
-    this.updateSupInfo();
+    this.validateSups();
 
     if (!this.sups.length) {
-      this.clearCanvas();
-      // TODO empty warning
       return;
     }
+
+    this.updateSupInfo();
 
     var sup = this.sups[this.curSup];
     this.curSupId = this.sups[ this.curSup ].sup_id;
@@ -123,6 +123,18 @@ _.extend(Sups.prototype, {
     this.clearCanvas();
     this.drawSup();
     this.context.restore();
+  },
+
+  validateSups: function() {
+    var chatArea = document.querySelector('.chat-area');
+    if (!this.sups.length) {
+      chatArea.classList.add('no-sups');
+      // this.clearCanvas();
+    } else {
+      chatArea.classList.remove('no-sups');
+      var supContainer = document.querySelector('.has-sups');
+      supContainer.classList.remove('hidden');
+    }
   },
 
   updateSupInfo: function() {
@@ -143,7 +155,7 @@ _.extend(Sups.prototype, {
     this.generateSupSettings();
 
     var textString = 'SUP',
-        textWidth = this.context.measureText(textString ).width,
+        textWidth = this.context.measureText(textString).width,
         settings = this.supSettings[this.curSupId];
 
     this.context.font = settings.fontSize + "px " + settings.fontName;
