@@ -46,11 +46,11 @@ _.extend(FriendsList.prototype, {
             }
         }).bind(this));
 
-        this.el.addEventListener('click', function(e) {
+        this.el.addEventListener('click', _.bind(function(e) {
             if (e.target.className.indexOf('btn-delete-friend') > 0) {
                 this.removeFriend(e);
             }
-        });
+        }, this));
 
         this.btnSendSup.addEventListener('click', (function(e) {
             this.sendSups();
@@ -102,18 +102,27 @@ _.extend(FriendsList.prototype, {
             _.each(selected, function(friend) {
                 data = {
                     'user_id': friend.getAttribute('id'),
-                    'sup_id': _.uniqueId(),
+                    'sup_id': this.generateUUID(),
                     'date': new Date()
                 }
-            });
+            }, this);
 
             // TODO success handler
             handleAjaxRequest('send_sup', data, null);
         }
     },
 
-    clearSups: function() {
-        handleAjaxRequest('clear_sups', null, null);
+    /*
+     * From: http://stackoverflow.com/a/8809472
+     */
+    generateUUID: function() {
+        var d = new Date().getTime();
+        var uuid = 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+            var r = (d + Math.random()*16)%16 | 0;
+            d = Math.floor(d/16);
+            return (c=='x' ? r : (r&0x3|0x8)).toString(16);
+        });
+        return uuid;
     }
 
 });

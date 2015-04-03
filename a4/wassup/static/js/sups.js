@@ -43,6 +43,8 @@ _.extend(Sups.prototype, {
     this.btnReloadSups = document.querySelector('.btn-reload-sups');
     this.numSupsElem = document.querySelector('.number-of-sups');
     this.currentSupElem = document.querySelector('.current-sup');
+    this.btnRemoveSup = document.querySelector('.btn-remove-sup');
+    this.btnClearSups = document.querySelector('.btn-clear-sups');
 
     _.each(supNav, function(nav) {
       nav.addEventListener('click', function() {
@@ -54,7 +56,15 @@ _.extend(Sups.prototype, {
 
     this.btnReloadSups.addEventListener('click', _.bind(function() {
       this.getSups();
-    }).this);
+    }, this) );
+
+    this.btnRemoveSup.addEventListener('click', _.bind(function() {
+      this.removeSup();
+    }, this) );
+
+    this.btnClearSups.addEventListener('click', _.bind(function() {
+      this.clearSups();
+    }, this) );
 
     window.setInterval(_.bind(function() {
         this.getSups()
@@ -74,7 +84,8 @@ _.extend(Sups.prototype, {
     if (!this.sups) {
       // Initial sups
       this.sups = allSups;
-      this.curSup = 0;
+      _.flatten( this.sups );
+      this.curSup = this.sups.length ? 0 : -1;
     } else {
       var numNewSups = allSups.length - this.sups.length,
           existingSupIDs = _.pluck(this.sups, 'sup_id'),
@@ -84,7 +95,7 @@ _.extend(Sups.prototype, {
 
       if (numNewSups > 0) {
         this.curSup = this.curSup + numNewSups;
-        this.sups.unshift(newSups);
+        this.sups = newSups.concat(this.sups);
       }
     }
 
@@ -93,6 +104,12 @@ _.extend(Sups.prototype, {
   displaySups: function() {
     this.currentSupElem.innerHTML = this.curSup + 1;
     this.numSupsElem.innerHTML = this.sups.length;
+
+    if (!this.sups.length) {
+      this.clearCanvas();
+      // TODO empty warning
+      return;
+    }
 
     var sup = this.sups[this.curSup];
     this.curSupId = this.sups[ this.curSup ].sup_id;
@@ -122,9 +139,11 @@ _.extend(Sups.prototype, {
 
   generateSupSettings: function() {
     if (this.supSettings[this.curSupId]) {
+      console.debug('SupSetting exists');
       return;
     }
 
+    console.debug('Generate new sup settings', this.curSupId);
     var settings = {
       red: _.random(50, 240),
       green: _.random(50, 240),
@@ -144,10 +163,37 @@ _.extend(Sups.prototype, {
       this.curSup = this.curSup - 1;
     }
 
+    this.validateCurSup();
+    this.displaySups();
+  },
+
+  validateCurSup: function() {
+
     this.curSup = Math.min(this.curSup, this.sups.length - 1);
     this.curSup = Math.max(this.curSup, 0);
 
-    this.displaySups();
+    if (!this.sups.length) {
+      this.curSup = -1;
+    }
+
+  },
+
+  removeSup: function() {
+    var data = { 'sup_id': this.sups[this.curSup].sup_id },
+        currentSup = this.sups[this.curSup];
+
+    handleAjaxRequest('remove_sup', data, _.bind( function() {
+      this.sups = _.without(this.sups, currentSup);
+      this.changeSup('prev');
+    }, this) );
+  },
+
+  clearSups: function() {
+    handleAjaxRequest('clear_sups', null, _.bind(function() {
+      this.sups.length = 0;
+      this.curSup = -1;
+      supData.displaySups();
+    }, this));
   },
 
   /**

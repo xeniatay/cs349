@@ -1,5 +1,5 @@
 var friendsList,
-    sups;
+    supData;
 
 window.addEventListener('load', function() {
 
