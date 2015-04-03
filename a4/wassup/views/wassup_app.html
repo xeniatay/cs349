@@ -3,24 +3,24 @@
   <head>
     <link rel="stylesheet" type="text/css" href="/static/css/wassup.css"/>
   </head>
-  <body>
+  <body class="container">
     <header class="row">
-      <div class="col-xs-12">
-        <form method="post" action="/logout">
-          <button type="submit" class="btn btn-primary pull-right btn-logout">Logout</button>
-        </form>
+      <div class="logo col-sm-4 col-xs-12">
+        WASSUP!
       </div>
 
-      <img class="logo col-sm-4 col-xs-12" src="/static/wassup_logo.png"/>
-
       <div class="col-sm-8 col-xs-12">
-        <div class="pull-right">
+        <form method="post" action="/logout" class="pull-right">
+          <button type="submit" class="btn btn-warning pull-right btn-logout">Logout</button>
+        </form>
+
+        <div class="pull-right server-controllers">
             <input type="radio" id="private-server" name="server" value="private" checked>
-            <label for="private-server" class="btn-server btn-lg" data-type="private">
+            <label for="private-server" class="btn btn-server" data-type="private">
               Private Server
             </label>
             <input type="radio" id="public-server" name="server" value="public">
-            <label for="public-server" class="btn-server btn-lg" data-type="public">
+            <label for="public-server" class="btn btn-server" data-type="public">
               Public Server
             </label>
         </div>
@@ -28,52 +28,70 @@
     </header>
 
     <section class="main-container row">
-      <div class="friends-container col-sm-4 col-xs-12">
+      <div class="friends-container col-md-4 col-xs-12">
         <h3>Friends</h3>
-        <div class="form-group form-inline">
+        <div class="form-group form-inline add-friend-form">
           <input type="text" class="form-control new-friend-input">
-          <button type="button" class="btn btn-primary btn-add-friend">Add</button>
+          <button type="button" class="btn btn-info btn-add-friend">Add</button>
         </div>
         <ul class="friends-list">
         </ul>
-        <button type="button" class="btn btn-primary btn-lg btn-send-sup">Send Sup!</button>
+        <button type="button" class="btn btn-info btn-md btn-send-sup" disabled>
+          Send Sup!
+        </button>
       </div>
 
-      <div class="chat-area col-sm-8 col-xs-12">
-        <div class="sup-sender-info clearfix">
-          From <span class="friend-name"></span>
-          <!-- <span class="friend-id"></span> -->
-          on
-          <span class="sup-date"></span>:
-          <button class="btn btn-primary btn-reload-sups pull-right">
+      <div class="chat-area col-md-8 col-xs-12">
+        <div class="no-sups-msg hidden">
+          You have no sups! Add a friend and WASSUP them!
+
+          <button class="btn btn-info btn-reload-sups pull-right">
             <i class="glyphicon glyphicon-refresh"></i>
             Refresh
           </button>
         </div>
-
-        <hr>
-
-        <div class="canvas-wrapper clearfix row">
-          <div class="sup-nav col-xs-2" data-dir="prev">Previous</div>
-          <div class="canvas-container">
-            <div class="btn-remove-sup">
-              <i class="glyphicon glyphicon-trash"></i>
-              Delete Sup
+        <div class="has-sups hidn">
+          <div class="clearfix">
+            <div class="sup-sender-info pull-left">
+              From <span class="friend-name"></span>
+              <!-- <span class="friend-id"></span> -->
+              on
+              <span class="sup-date"></span>:
             </div>
-            <canvas class="sup-canvas col-xs-8" height="440">
-            </canvas>
+
+            <button class="btn btn-info btn-reload-sups pull-right">
+              <i class="glyphicon glyphicon-refresh"></i>
+              Refresh
+            </button>
+            <button class="btn btn-danger btn-clear-sups pull-right">
+              <i class="glyphicon glyphicon-remove-circle"></i>
+              Clear All
+            </button>
           </div>
-          <div class="sup-nav col-xs-2" data-dir="next">Next</div>
-        </div>
 
-        <hr>
+          <hr>
 
-        <div class="sup-controls">
-          Showing <span class="current-sup"></span> of <span class="number-of-sups"></span> Sups
-          <button class="btn btn-secondary btn-clear-sups">
-            <i class="glyphicon glyphicon-remove-circle"></i>
-            Clear Sups
-          </button>
+          <div class="canvas-wrapper clearfix row">
+            <div class="sup-nav col-xs-2" data-dir="prev">
+              <i class="glyphicon glyphicon-menu-left"></i>
+            </div>
+            <div class="canvas-container clearfix col-xs-8">
+              <canvas class="sup-canvas col-xs-12" height="400"></canvas>
+              <div class="btn-delete-sup">
+                <i class="glyphicon glyphicon-trash"></i>
+                Delete this sup
+              </div>
+            </div>
+            <div class="sup-nav col-xs-2" data-dir="next">
+              <i class="glyphicon glyphicon-menu-right"></i>
+            </div>
+          </div>
+
+          <hr>
+
+          <div class="sup-controls pull-right">
+            <span class="current-sup"></span> of <span class="number-of-sups"></span> Sups
+          </div>
         </div>
       </div>
 
