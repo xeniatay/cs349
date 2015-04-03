@@ -29,6 +29,7 @@ _.extend(Sups.prototype, {
 
   initialize: function() {
 
+    this.sups = [];
     this.supSettings = {};
 
     this.canvas = document.querySelector('.sup-canvas');
@@ -87,7 +88,7 @@ _.extend(Sups.prototype, {
 
   handleNewSups: function(allSups) {
 
-    if (!this.sups) {
+    if (!this.sups.length) {
       // Initial sups
       this.sups = allSups;
       _.flatten( this.sups );
