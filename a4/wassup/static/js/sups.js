@@ -25,13 +25,16 @@ _.extend(Sups.prototype, {
     'Lucida Console'
   ],
 
+  DAYS: ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'],
+
   initialize: function() {
 
     this.supSettings = {};
 
     this.canvas = document.querySelector('.sup-canvas');
+    this.canvas.width = this.canvas.offsetWidth;
+    this.canvas.height = 440;
     this.context = this.canvas.getContext('2d');
-
 
     this.initEvents();
     this.getSups();
@@ -45,6 +48,9 @@ _.extend(Sups.prototype, {
     this.currentSupElem = document.querySelector('.current-sup');
     this.btnRemoveSup = document.querySelector('.btn-remove-sup');
     this.btnClearSups = document.querySelector('.btn-clear-sups');
+    this.senderName = document.querySelector('.sup-sender-info .friend-name');
+    // this.senderId = document.querySelector('.sup-sender-info .friend-id');
+    this.senderDate = document.querySelector('.sup-sender-info .sup-date');
 
     _.each(supNav, function(nav) {
       nav.addEventListener('click', function() {
@@ -102,8 +108,7 @@ _.extend(Sups.prototype, {
   },
 
   displaySups: function() {
-    this.currentSupElem.innerHTML = this.curSup + 1;
-    this.numSupsElem.innerHTML = this.sups.length;
+    this.updateSupInfo();
 
     if (!this.sups.length) {
       this.clearCanvas();
@@ -117,6 +122,20 @@ _.extend(Sups.prototype, {
     this.clearCanvas();
     this.drawSup();
     this.context.restore();
+  },
+
+  updateSupInfo: function() {
+
+    var curSup = this.sups[this.curSup],
+        date = new Date(curSup.date),
+        hours = date.getHours() % 12,
+        AMorPM = (date.getHours() > 12) ? 'pm' : 'am';
+
+    this.currentSupElem.innerHTML = this.curSup + 1;
+    this.numSupsElem.innerHTML = this.sups.length;
+    this.senderName.innerHTML = curSup.sender_full_name;
+    // this.senderId.innerHTML = curSup.sender_id;
+    this.senderDate.innerHTML = this.DAYS[ date.getDay() ] + ", " + date.getHours() + ":" + date.getMinutes() + AMorPM ;
   },
 
   drawSup: function() {
@@ -139,11 +158,9 @@ _.extend(Sups.prototype, {
 
   generateSupSettings: function() {
     if (this.supSettings[this.curSupId]) {
-      console.debug('SupSetting exists');
       return;
     }
 
-    console.debug('Generate new sup settings', this.curSupId);
     var settings = {
       red: _.random(50, 240),
       green: _.random(50, 240),

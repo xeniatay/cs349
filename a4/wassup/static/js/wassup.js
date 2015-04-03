@@ -1,5 +1,8 @@
 var friendsList,
-    supData;
+    supData,
+    PUBLIC_SERVER = 'http://104.197.3.113/post',
+    PRIVATE_SERVER = 'http://localhost:8080/post',
+    serverURL = PRIVATE_SERVER;
 
 window.addEventListener('load', function() {
 
@@ -17,6 +20,24 @@ window.addEventListener('load', function() {
         friendsList = new FriendsList();
         friendsList.updateFriendsList();
         supData = new Sups();
+
+        var btnServers = document.querySelectorAll('.btn-server');
+
+        _.each(btnServers, function(btn) {
+            btn.addEventListener('click', function(e) {
+                switch( e.target.getAttribute('data-type') ) {
+                    case ('public'):
+                        serverURL = PUBLIC_SERVER;
+                        break;
+                    case ('private'):
+                    default:
+                        serverURL = PRIVATE_SERVER;
+                        break;
+                }
+
+                console.debug(serverURL);
+            });
+        });
 
     }
 
@@ -53,7 +74,8 @@ function handleAjaxRequest(command, command_data, callback) {
     });
 
     // This opens a POST connection with the server at the given URL
-    httpRequest.open('POST', 'http://localhost:8080/post');
+    httpRequest.open('POST', serverURL);
+                console.debug(serverURL);
 
     // Set the data type being sent as JSON
     httpRequest.setRequestHeader('Content-Type', 'application/json');

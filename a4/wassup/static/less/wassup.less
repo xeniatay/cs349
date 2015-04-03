@@ -1,6 +1,9 @@
 // @import 'reset.less';
 // @import 'utilities.less';
 // @import 'icons.less';
+
+@import '../bootstrap/less/bootstrap.less';
+@import 'bootstrap-overrides.less';
 @import 'colors.less';
 
 /*** VARIABLES ***/
@@ -8,6 +11,8 @@
 @mobile: ~"all and (max-width: 630px)";
 @tablet: ~"all and (max-width: 759px)";
 @desktop: ~"all and (min-width: 760px)";
+
+@body-color: @color-tertiary-4;
 
 /*** STYLES ***/
 
@@ -22,7 +27,8 @@ body {
   padding: 10px;
   font-family: 'Montserrat';
   font-size: 16px;
-  color: @color-tertiary-4;
+  color: @body-color;
+  max-width: 1000px;
 }
 
 li {
@@ -37,16 +43,38 @@ li {
   }
 }
 
-/* Canvas */
-.sup-canvas {
-  border: 5px solid @black;
+/* Header */
+.btn-server {
+  background: @light-gray;
+  padding-top: 15px;
+  padding-bottom: 15px;
+  margin: 20px 0;
+  cursor: pointer;
+
+  &:hover {
+    background: @middle-gray;
+  }
 }
+
+input[name="server"] {
+  display: none;
+}
+
+input[name="server"]:checked + .btn-server {
+  background: @brand-secondary-dark;
+  color: @white;
+}
+
+
 
 /* Friends List */
 
 .friends-list {
   padding: 0;
-  height: 200px;
+  min-height: 1.5em;
+  max-height: 280px;
+  overflow: scroll;
+  border: 1px solid @light-gray;
 }
 
 .single-friend label {
@@ -63,4 +91,59 @@ li {
 .single-friend input:checked ~ label {
   background: @middle-gray;
 }
+
+.friend-id {
+  margin-left: .5em;
+  font-style: italic;
+  font-size: 0.85em;
+  color: lighten(@body-color, 20%);
+}
+
+.btn-delete-friend {
+  float: right;
+}
+
+.btn-send-sup {
+  margin: 0 auto;
+  position: absolute;
+  width: 70%;
+  left: 0;
+  right: 0;
+}
+
+/* Chat Area */
+.canvas-container {
+  position: relative;
+}
+
+.sup-canvas {
+  float: left;
+  border: 1px solid @white;
+
+  &:hover {
+    border: 1px solid @light-gray;
+  }
+}
+
+.sup-nav {
+  float: left;
+  line-height: 400px;
+  text-align: center;
+
+  &:hover {
+    background: @light-gray;
+    cursor: pointer;
+  }
+
+  &:active {
+    background: darken(@light-gray, 20%);
+  }
+}
+
+.btn-remove-sup {
+  position: absolute;
+  right: 50px;
+  top: 50px;
+}
+
 
