@@ -102,7 +102,7 @@ _.extend(FriendsList.prototype, {
             _.each(selected, function(friend) {
                 data = {
                     'user_id': friend.getAttribute('id'),
-                    'sup_id': _.uniq(),
+                    'sup_id': _.uniqueId(),
                     'date': new Date()
                 }
             });

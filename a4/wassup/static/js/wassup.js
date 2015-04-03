@@ -16,9 +16,8 @@ window.addEventListener('load', function() {
 
         friendsList = new FriendsList();
         friendsList.updateFriendsList();
+        supData = new Sups();
 
-        sups = new Sups();
-        sups.getSups();
     }
 
 });

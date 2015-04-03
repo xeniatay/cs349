@@ -26,21 +26,80 @@ _.extend(Sups.prototype, {
   ],
 
   initialize: function() {
-    this.currentSup = 0;
+
+    this.supSettings = {};
+
     this.canvas = document.querySelector('.sup-canvas');
     this.context = this.canvas.getContext('2d');
+
+
+    this.initEvents();
+    this.getSups();
+  },
+
+  initEvents: function() {
+    var supNav = document.querySelectorAll('.sup-nav');
+
+    this.btnReloadSups = document.querySelector('.btn-reload-sups');
+    this.numSupsElem = document.querySelector('.number-of-sups');
+    this.currentSupElem = document.querySelector('.current-sup');
+
+    _.each(supNav, function(nav) {
+      nav.addEventListener('click', function() {
+          var dir = this.getAttribute('data-dir');
+
+          supData.changeSup(dir);
+      });
+    });
+
+    this.btnReloadSups.addEventListener('click', _.bind(function() {
+      this.getSups();
+    }).this);
+
+    window.setInterval(_.bind(function() {
+        this.getSups()
+    }, this), 30000);
   },
 
   getSups: function() {
     handleAjaxRequest('get_sups', null, (function(data) {
-      this.sups = data.reply_data;
+      // this.sups = data.reply_data;
+      this.handleNewSups(data.reply_data);
       this.displaySups();
     }).bind(this));;
   },
 
+  handleNewSups: function(allSups) {
+
+    if (!this.sups) {
+      // Initial sups
+      this.sups = allSups;
+      this.curSup = 0;
+    } else {
+      var numNewSups = allSups.length - this.sups.length,
+          existingSupIDs = _.pluck(this.sups, 'sup_id'),
+          newSups = _.reject(allSups, function(sup) {
+            return _.contains(existingSupIDs, sup.sup_id);
+          });
+
+      if (numNewSups > 0) {
+        this.curSup = this.curSup + numNewSups;
+        this.sups.unshift(newSups);
+      }
+    }
+
+  },
+
   displaySups: function() {
-    var sup = this.sups[this.currentSup];
+    this.currentSupElem.innerHTML = this.curSup + 1;
+    this.numSupsElem.innerHTML = this.sups.length;
+
+    var sup = this.sups[this.curSup];
+    this.curSupId = this.sups[ this.curSup ].sup_id;
+
+    this.clearCanvas();
     this.drawSup();
+    this.context.restore();
   },
 
   drawSup: function() {
@@ -48,7 +107,7 @@ _.extend(Sups.prototype, {
 
     var textString = 'SUP',
         textWidth = this.context.measureText(textString ).width,
-        settings = this.sups[this.currentSup].settings;
+        settings = this.supSettings[this.curSupId];
 
     this.context.font = settings.fontSize + "px " + settings.fontName;
     this.context.textAlign = 'center';
@@ -62,7 +121,7 @@ _.extend(Sups.prototype, {
   },
 
   generateSupSettings: function() {
-    if (this.sups[this.currentSup].settings) {
+    if (this.supSettings[this.curSupId]) {
       return;
     }
 
@@ -75,6 +134,33 @@ _.extend(Sups.prototype, {
       rotateAngle: _.random(-60, 60)
     };
 
-    this.sups[ this.currentSup ].settings = settings;
-  }
+    this.supSettings[this.curSupId] = settings;
+  },
+
+  changeSup: function(dir) {
+    if (dir === 'next') {
+      this.curSup = this.curSup + 1;
+    } else {
+      this.curSup = this.curSup - 1;
+    }
+
+    this.curSup = Math.min(this.curSup, this.sups.length - 1);
+    this.curSup = Math.max(this.curSup, 0);
+
+    this.displaySups();
+  },
+
+  /**
+   * Tabula Rasa ᕦ(ò_óˇ)ᕤ
+   * From: http://stackoverflow.com/questions/2142535/how-to-clear-the-canvas-for-redrawing
+   */
+  clearCanvas: function() {
+      this.context.save();
+
+      // Use the identity matrix while clearing the canvas
+      this.context.setTransform(1, 0, 0, 1, 0, 0);
+      this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
+  },
+
+
  });

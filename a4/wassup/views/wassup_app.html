@@ -37,13 +37,18 @@
 
       <div class="chat-area col-sm-8 col-xs-12">
         <p class="notification">
-          You got __ sups
+          You have <span class="number-of-sups"></span> sups
+          <br>
+          Current sup: <span class="current-sup"></span>
         </p>
+
+        <button class="btn btn-primary btn-reload-sups">Refresh</button>
+        <br>
 
         <canvas class="sup-canvas" width="400" height="400">
         </canvas>
-        <div class="left">Left</div>
-        <div class="right">Right</div>
+        <div class="sup-nav" data-dir="prev">Previous</div>
+        <div class="sup-nav" data-dir="next">Next</div>
 
         <div class="sup-controls">
         </div>
