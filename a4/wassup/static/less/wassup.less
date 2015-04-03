@@ -8,11 +8,11 @@
 
 /*** VARIABLES ***/
 
-@mobile: ~"all and (max-width: 630px)";
-@tablet: ~"all and (max-width: 759px)";
-@desktop: ~"all and (min-width: 760px)";
+@mobile: ~"all and (max-width: 768)";
+@tablet: ~"all and (max-width: 992px)";
+@desktop: ~"all and (min-width: 1200px)";
 
-@body-color: @color-tertiary-4;
+@body-color: @brand-info;
 
 /*** STYLES ***/
 
@@ -23,36 +23,55 @@
 
 html,
 body {
+  height: 100%;
+
+  @media @tablet {
+    height: auto;
+  }
+}
+
+html {
+  background: @light-gray;
+}
+
+body {
   margin: 0 auto;
-  padding: 10px;
+  padding-bottom: 30px;
+  max-width: 1000px;
+  background: @white;
   font-family: 'Montserrat';
   font-size: 16px;
   color: @body-color;
-  max-width: 1000px;
 }
 
 li {
   list-style: none;
 }
 
-.btn-delete {
-  cursor: pointer;
-  color: red;
-
-  &:hover {
-  }
+/* Header */
+header {
+  background: @black;
+  padding: 15px 10px;
+  margin-bottom: 30px;
 }
 
-/* Header */
+.logo {
+  font-size: 30px;
+  color: @brand-warning;
+}
+
+.server-controllers {
+  padding-right: 30px;
+}
+
 .btn-server {
-  background: @light-gray;
-  padding-top: 15px;
-  padding-bottom: 15px;
-  margin: 20px 0;
+  background: @middle-gray;
   cursor: pointer;
+  color: @light-gray;
 
   &:hover {
-    background: @middle-gray;
+    background: lighten(@brand-tertiary-darker, 15%);
+    color: @light-gray;
   }
 }
 
@@ -61,16 +80,37 @@ input[name="server"] {
 }
 
 input[name="server"]:checked + .btn-server {
-  background: @brand-secondary-dark;
-  color: @white;
+  background: @brand-tertiary-darker;
 }
 
-
-
 /* Friends List */
+.friends-container {
+  padding-bottom: 4em;
+  border-bottom: 1px solid @light-gray;
+  margin-bottom: 2em;
+}
+
+.add-friend-form {
+  padding: 1em;
+  padding-left: 10px;
+  position: absolute;
+  width: 100%;
+
+  @media @tablet {
+    input {
+      display: inline-block;
+      width: 80% !important;
+    }
+
+    button {
+      width: 15%;
+    }
+  }
+}
 
 .friends-list {
   padding: 0;
+  padding-top: 3.5em;
   min-height: 1.5em;
   max-height: 280px;
   overflow: scroll;
@@ -80,8 +120,13 @@ input[name="server"]:checked + .btn-server {
 .single-friend label {
   display: block;
   cursor: pointer;
-  padding: 5px 10px;
+  padding-left: 10px;
   margin: 0;
+
+  .friend-name,
+  .friend-id {
+    line-height: 2.6;
+  }
 
   &:hover {
     background: @light-gray;
@@ -101,49 +146,113 @@ input[name="server"]:checked + .btn-server {
 
 .btn-delete-friend {
   float: right;
+  padding: 10px;
+  font-size: 1.3em;
+  line-height: 1;
+  cursor: pointer;
+  color: @middle-gray;
+
+  &:hover {
+    color: @brand-danger;
+  }
 }
 
 .btn-send-sup {
   margin: 0 auto;
   position: absolute;
   width: 70%;
+  max-width: 200px;
   left: 0;
   right: 0;
 }
 
 /* Chat Area */
+.chat-area.no-sups {
+  .has-sups { display: none; }
+  .no-sups-msg { display: block !important; }
+}
+
+.chat-area {
+  padding-right: 30px;
+
+  @media @tablet {
+    padding-right: 15px;
+  }
+}
+
+.sup-sender-info {
+  padding-top: 10px;
+}
+
 .canvas-container {
   position: relative;
 }
 
 .sup-canvas {
-  float: left;
-  border: 1px solid @white;
-
-  &:hover {
-    border: 1px solid @light-gray;
-  }
+  padding: 0;
 }
 
 .sup-nav {
+  .transition(all .05s ease-in-out);
   float: left;
   line-height: 400px;
   text-align: center;
+  font-size: 50px;
+
+  &:after {
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 2em;
+    font-size: 15px;
+  }
 
   &:hover {
-    background: @light-gray;
+    background: lighten(@brand-primary, 45%);
+    color: @brand-primary-darker;
     cursor: pointer;
   }
 
-  &:active {
-    background: darken(@light-gray, 20%);
+  &:active { background: darken(@light-gray, 20%); }
+}
+
+.sup-nav[data-dir="prev"] {
+  border-right: 1px solid @light-gray;
+  &:after { content: 'Previous'; }
+}
+
+.sup-nav[data-dir="next"] {
+  border-left: 1px solid @light-gray;
+  &:after { content: 'Next'; }
+}
+
+.btn-delete-sup {
+  .transition(all 0.05s ease-in-out);
+  position: absolute;
+  padding: 0 20px;
+  right: 10px;
+  top: 0;
+  z-index: 2;
+  line-height: 2.5;
+  cursor: pointer;
+  color: @middle-gray;
+
+  &:hover {
+    color: @brand-danger;
+    background: lighten(@light-gray, 4%);
   }
 }
 
-.btn-remove-sup {
-  position: absolute;
-  right: 50px;
-  top: 50px;
+.hr-condensed {
+  margin: 5px;
 }
 
+.sup-controls {
+  margin: 20px;
+  font-size: 0.8em;
+  color: @dark-gray;
+}
 
+.friend-name {
+  color: @brand-primary-darker;
+}

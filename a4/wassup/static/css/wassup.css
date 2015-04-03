@@ -1087,12 +1087,12 @@ textarea {
   line-height: inherit;
 }
 a {
-  color: #2e868f;
+  color: #40bbc8;
   text-decoration: none;
 }
 a:hover,
 a:focus {
-  color: #1b5055;
+  color: #2a8892;
   text-decoration: underline;
 }
 a:focus {
@@ -1328,10 +1328,10 @@ mark,
   color: #777777;
 }
 .text-primary {
-  color: #2e868f;
+  color: #40bbc8;
 }
 a.text-primary:hover {
-  color: #216269;
+  color: #309aa5;
 }
 .text-success {
   color: #3c763d;
@@ -1359,10 +1359,10 @@ a.text-danger:hover {
 }
 .bg-primary {
   color: #fff;
-  background-color: #2e868f;
+  background-color: #40bbc8;
 }
 a.bg-primary:hover {
-  background-color: #216269;
+  background-color: #309aa5;
 }
 .bg-success {
   background-color: #dff0d8;
@@ -3070,8 +3070,8 @@ fieldset[disabled] .btn-default.active {
 }
 .btn-primary {
   color: #ffffff;
-  background-color: #2e868f;
-  border-color: #28747c;
+  background-color: #40bbc8;
+  border-color: #35adb9;
 }
 .btn-primary:hover,
 .btn-primary:focus,
@@ -3080,8 +3080,8 @@ fieldset[disabled] .btn-default.active {
 .btn-primary.active,
 .open > .dropdown-toggle.btn-primary {
   color: #ffffff;
-  background-color: #216269;
-  border-color: #19484e;
+  background-color: #309aa5;
+  border-color: #28808a;
 }
 .btn-primary:active,
 .btn-primary.active,
@@ -3106,11 +3106,11 @@ fieldset[disabled] .btn-primary:active,
 .btn-primary.disabled.active,
 .btn-primary[disabled].active,
 fieldset[disabled] .btn-primary.active {
-  background-color: #2e868f;
-  border-color: #28747c;
+  background-color: #40bbc8;
+  border-color: #35adb9;
 }
 .btn-primary .badge {
-  color: #2e868f;
+  color: #40bbc8;
   background-color: #ffffff;
 }
 .btn-success {
@@ -3294,7 +3294,7 @@ fieldset[disabled] .btn-danger.active {
   background-color: #ffffff;
 }
 .btn-link {
-  color: #2e868f;
+  color: #40bbc8;
   font-weight: normal;
   border-radius: 0;
 }
@@ -3315,7 +3315,7 @@ fieldset[disabled] .btn-link {
 }
 .btn-link:hover,
 .btn-link:focus {
-  color: #1b5055;
+  color: #2a8892;
   text-decoration: underline;
   background-color: transparent;
 }
@@ -3460,7 +3460,7 @@ tbody.collapse.in {
   color: #ffffff;
   text-decoration: none;
   outline: 0;
-  background-color: #2e868f;
+  background-color: #40bbc8;
 }
 .dropdown-menu > .disabled > a,
 .dropdown-menu > .disabled > a:hover,
@@ -3886,7 +3886,7 @@ select[multiple].input-group-sm > .input-group-btn > .btn {
 .nav .open > a:hover,
 .nav .open > a:focus {
   background-color: #eeeeee;
-  border-color: #2e868f;
+  border-color: #40bbc8;
 }
 .nav .nav-divider {
   height: 1px;
@@ -3979,7 +3979,7 @@ select[multiple].input-group-sm > .input-group-btn > .btn {
 .nav-pills > li.active > a:hover,
 .nav-pills > li.active > a:focus {
   color: #ffffff;
-  background-color: #2e868f;
+  background-color: #40bbc8;
 }
 .nav-stacked > li {
   float: none;
@@ -4603,7 +4603,7 @@ fieldset[disabled] .navbar-inverse .btn-link:focus {
   padding: 6px 12px;
   line-height: 1.42857143;
   text-decoration: none;
-  color: #2e868f;
+  color: #40bbc8;
   background-color: #ffffff;
   border: 1px solid #dddddd;
   margin-left: -1px;
@@ -4623,7 +4623,7 @@ fieldset[disabled] .navbar-inverse .btn-link:focus {
 .pagination > li > span:hover,
 .pagination > li > a:focus,
 .pagination > li > span:focus {
-  color: #1b5055;
+  color: #2a8892;
   background-color: #eeeeee;
   border-color: #dddddd;
 }
@@ -4635,8 +4635,8 @@ fieldset[disabled] .navbar-inverse .btn-link:focus {
 .pagination > .active > span:focus {
   z-index: 2;
   color: #ffffff;
-  background-color: #2e868f;
-  border-color: #2e868f;
+  background-color: #40bbc8;
+  border-color: #40bbc8;
   cursor: default;
 }
 .pagination > .disabled > span,
@@ -4751,11 +4751,11 @@ a.label:focus {
   background-color: #5e5e5e;
 }
 .label-primary {
-  background-color: #2e868f;
+  background-color: #40bbc8;
 }
 .label-primary[href]:hover,
 .label-primary[href]:focus {
-  background-color: #216269;
+  background-color: #309aa5;
 }
 .label-success {
   background-color: #64a16c;
@@ -4819,7 +4819,7 @@ a.badge:focus {
 }
 .list-group-item.active > .badge,
 .nav-pills > .active > a > .badge {
-  color: #2e868f;
+  color: #40bbc8;
   background-color: #ffffff;
 }
 .list-group-item > .badge {
@@ -4890,7 +4890,7 @@ a.badge:focus {
 a.thumbnail:hover,
 a.thumbnail:focus,
 a.thumbnail.active {
-  border-color: #2e868f;
+  border-color: #40bbc8;
 }
 .thumbnail .caption {
   padding: 9px;
@@ -5004,7 +5004,7 @@ a.thumbnail.active {
   line-height: 20px;
   color: #ffffff;
   text-align: center;
-  background-color: #2e868f;
+  background-color: #40bbc8;
   -webkit-box-shadow: inset 0 -1px 0 rgba(0, 0, 0, 0.15);
   box-shadow: inset 0 -1px 0 rgba(0, 0, 0, 0.15);
   -webkit-transition: width 0.6s ease;
@@ -5156,8 +5156,8 @@ a.list-group-item:focus {
 .list-group-item.active:focus {
   z-index: 2;
   color: #ffffff;
-  background-color: #2e868f;
-  border-color: #2e868f;
+  background-color: #40bbc8;
+  border-color: #40bbc8;
 }
 .list-group-item.active .list-group-item-heading,
 .list-group-item.active:hover .list-group-item-heading,
@@ -5173,7 +5173,7 @@ a.list-group-item:focus {
 .list-group-item.active .list-group-item-text,
 .list-group-item.active:hover .list-group-item-text,
 .list-group-item.active:focus .list-group-item-text {
-  color: #a6dde3;
+  color: #def3f6;
 }
 .list-group-item-success {
   color: #3c763d;
@@ -5521,22 +5521,22 @@ a.list-group-item-danger.active:focus {
   border-bottom-color: #dddddd;
 }
 .panel-primary {
-  border-color: #2e868f;
+  border-color: #40bbc8;
 }
 .panel-primary > .panel-heading {
   color: #ffffff;
-  background-color: #2e868f;
-  border-color: #2e868f;
+  background-color: #40bbc8;
+  border-color: #40bbc8;
 }
 .panel-primary > .panel-heading + .panel-collapse > .panel-body {
-  border-top-color: #2e868f;
+  border-top-color: #40bbc8;
 }
 .panel-primary > .panel-heading .badge {
-  color: #2e868f;
+  color: #40bbc8;
   background-color: #ffffff;
 }
 .panel-primary > .panel-footer + .panel-collapse > .panel-body {
-  border-bottom-color: #2e868f;
+  border-bottom-color: #40bbc8;
 }
 .panel-success {
   border-color: #d6e9c6;
@@ -6561,41 +6561,81 @@ button.close {
 }
 html,
 body {
+  height: 100%;
+}
+@media all and (max-width: 992px) {
+  html,
+  body {
+    height: auto;
+  }
+}
+html {
+  background: #efefef;
+}
+body {
   margin: 0 auto;
-  padding: 10px;
+  padding-bottom: 30px;
+  max-width: 1000px;
+  background: #ffffff;
   font-family: 'Montserrat';
   font-size: 16px;
-  color: #01345b;
-  max-width: 1000px;
+  color: #3aaab8;
 }
 li {
   list-style: none;
 }
-.btn-delete {
-  cursor: pointer;
-  color: red;
-}
 /* Header */
+header {
+  background: #000000;
+  padding: 15px 10px;
+  margin-bottom: 30px;
+}
+.logo {
+  font-size: 30px;
+  color: #edca51;
+}
+.server-controllers {
+  padding-right: 30px;
+}
 .btn-server {
-  background: #efefef;
-  padding-top: 15px;
-  padding-bottom: 15px;
-  margin: 20px 0;
+  background: #cfcfcf;
   cursor: pointer;
+  color: #efefef;
 }
 .btn-server:hover {
-  background: #cfcfcf;
+  background: #f3a088;
+  color: #efefef;
 }
 input[name="server"] {
   display: none;
 }
 input[name="server"]:checked + .btn-server {
-  background: #ea4e4e;
-  color: #ffffff;
+  background: #ec6842;
 }
 /* Friends List */
+.friends-container {
+  padding-bottom: 4em;
+  border-bottom: 1px solid #efefef;
+  margin-bottom: 2em;
+}
+.add-friend-form {
+  padding: 1em;
+  padding-left: 10px;
+  position: absolute;
+  width: 100%;
+}
+@media all and (max-width: 992px) {
+  .add-friend-form input {
+    display: inline-block;
+    width: 80% !important;
+  }
+  .add-friend-form button {
+    width: 15%;
+  }
+}
 .friends-list {
   padding: 0;
+  padding-top: 3.5em;
   min-height: 1.5em;
   max-height: 280px;
   overflow: scroll;
@@ -6604,8 +6644,12 @@ input[name="server"]:checked + .btn-server {
 .single-friend label {
   display: block;
   cursor: pointer;
-  padding: 5px 10px;
+  padding-left: 10px;
   margin: 0;
+}
+.single-friend label .friend-name,
+.single-friend label .friend-id {
+  line-height: 2.6;
 }
 .single-friend label:hover {
   background: #efefef;
@@ -6617,43 +6661,112 @@ input[name="server"]:checked + .btn-server {
   margin-left: .5em;
   font-style: italic;
   font-size: 0.85em;
-  color: #026ec0;
+  color: #81ced7;
 }
 .btn-delete-friend {
   float: right;
+  padding: 10px;
+  font-size: 1.3em;
+  line-height: 1;
+  cursor: pointer;
+  color: #cfcfcf;
+}
+.btn-delete-friend:hover {
+  color: #c84157;
 }
 .btn-send-sup {
   margin: 0 auto;
   position: absolute;
   width: 70%;
+  max-width: 200px;
   left: 0;
   right: 0;
 }
 /* Chat Area */
+.chat-area.no-sups .has-sups {
+  display: none;
+}
+.chat-area.no-sups .no-sups-msg {
+  display: block !important;
+}
+.chat-area {
+  padding-right: 30px;
+}
+@media all and (max-width: 992px) {
+  .chat-area {
+    padding-right: 15px;
+  }
+}
+.sup-sender-info {
+  padding-top: 10px;
+}
 .canvas-container {
   position: relative;
 }
 .sup-canvas {
-  float: left;
-  border: 1px solid #ffffff;
-}
-.sup-canvas:hover {
-  border: 1px solid #efefef;
+  padding: 0;
 }
 .sup-nav {
+  -webkit-transition: all 0.05s ease-in-out;
+  -o-transition: all 0.05s ease-in-out;
+  transition: all 0.05s ease-in-out;
   float: left;
   line-height: 400px;
   text-align: center;
+  font-size: 50px;
+}
+.sup-nav:after {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 2em;
+  font-size: 15px;
 }
 .sup-nav:hover {
-  background: #efefef;
+  background: #f2fafb;
+  color: #13656d;
   cursor: pointer;
 }
 .sup-nav:active {
   background: #bcbcbc;
 }
-.btn-remove-sup {
+.sup-nav[data-dir="prev"] {
+  border-right: 1px solid #efefef;
+}
+.sup-nav[data-dir="prev"]:after {
+  content: 'Previous';
+}
+.sup-nav[data-dir="next"] {
+  border-left: 1px solid #efefef;
+}
+.sup-nav[data-dir="next"]:after {
+  content: 'Next';
+}
+.btn-delete-sup {
+  -webkit-transition: all 0.05s ease-in-out;
+  -o-transition: all 0.05s ease-in-out;
+  transition: all 0.05s ease-in-out;
   position: absolute;
-  right: 50px;
-  top: 50px;
+  padding: 0 20px;
+  right: 10px;
+  top: 0;
+  z-index: 2;
+  line-height: 2.5;
+  cursor: pointer;
+  color: #cfcfcf;
+}
+.btn-delete-sup:hover {
+  color: #c84157;
+  background: #f9f9f9;
+}
+.hr-condensed {
+  margin: 5px;
+}
+.sup-controls {
+  margin: 20px;
+  font-size: 0.8em;
+  color: #2f2f2f;
+}
+.friend-name {
+  color: #13656d;
 }
