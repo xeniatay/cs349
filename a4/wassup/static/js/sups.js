@@ -5,7 +5,7 @@
  */
 
 var Sups = function() {
-    this.initialize();
+  this.initialize();
 };
 
 _.extend(Sups.prototype, {
@@ -58,9 +58,9 @@ _.extend(Sups.prototype, {
 
     _.each(supNav, function(nav) {
       nav.addEventListener('click', function() {
-          var dir = this.getAttribute('data-dir');
+        var dir = this.getAttribute('data-dir');
 
-          supData.changeSup(dir);
+        supData.changeSup(dir);
       });
     });
 
@@ -79,7 +79,7 @@ _.extend(Sups.prototype, {
     }, this) );
 
     window.setInterval(_.bind(function() {
-        this.getSups()
+      this.getSups()
     }, this), 30000);
   },
 
@@ -160,7 +160,7 @@ _.extend(Sups.prototype, {
       this.nextNav.classList.add('disabled');
     } else if ( (this.curSup + 1) === this.sups.length) {
       this.nextNav.classList.add('disabled');
-    } else if ( this.curSup === 0 ){
+    } else if ( this.curSup === 0 ) {
       this.prevNav.classList.add('disabled');
     }
 
@@ -261,12 +261,11 @@ _.extend(Sups.prototype, {
    * From: http://stackoverflow.com/questions/2142535/how-to-clear-the-canvas-for-redrawing
    */
   clearCanvas: function() {
-      this.context.save();
+    this.context.save();
 
-      // Use the identity matrix while clearing the canvas
-      this.context.setTransform(1, 0, 0, 1, 0, 0);
-      this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
+    // Use the identity matrix while clearing the canvas
+    this.context.setTransform(1, 0, 0, 1, 0, 0);
+    this.context.clearRect(0, 0, this.canvas.width, this.canvas.height);
   },
 
-
- });
+});
