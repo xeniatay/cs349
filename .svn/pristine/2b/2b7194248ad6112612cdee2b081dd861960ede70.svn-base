@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <link rel="stylesheet" type="text/css" href="/static/css/wassup.css"/>
+  </head>
+  <body class="container">
+    <header class="row">
+      <div class="logo col-xs-4">
+        WASSUP!
+      </div>
+
+      <div class="col-xs-8 show-mobile">
+        <form method="post" action="/logout" class="pull-right">
+          <button type="submit" class="btn btn-warning pull-right btn-logout">Logout</button>
+        </form>
+      </div>
+
+      <div class="col-xs-12 col-sm-8">
+        <form method="post" action="/logout" class="pull-right hide-mobile">
+          <button type="submit" class="btn btn-warning pull-right btn-logout">Logout</button>
+        </form>
+
+        <div class="pull-right server-controllers">
+            <input type="radio" id="private-server" name="server" value="private" checked>
+            <label for="private-server" class="btn btn-server" data-type="private">
+              Private Server
+            </label>
+            <input type="radio" id="public-server" name="server" value="public">
+            <label for="public-server" class="btn btn-server" data-type="public">
+              Public Server
+            </label>
+        </div>
+      </div>
+    </header>
+
+    <section class="main-container row">
+      <div class="friends-container col-md-4 col-xs-12">
+        <h3 class="friendslist-heading">Friends</h3>
+        <span class="friend-error">Error: User does not exist!</span>
+        <div class="form-group form-inline add-friend-form">
+          <input type="text" class="form-control new-friend-input">
+          <button type="button" class="btn btn-info btn-add-friend">Add</button>
+        </div>
+        <ul class="friends-list">
+        </ul>
+        <button type="button" class="btn btn-info btn-md btn-send-sup" disabled>
+          Send Sup!
+        </button>
+      </div>
+
+      <div class="chat-area col-md-8 col-xs-12">
+        <div class="loading-msg">
+          Loading sups...
+        </div>
+
+        <div class="no-sups-msg hidden">
+          You have no sups! Add a friend and WASSUP them!
+
+          <button class="btn btn-info btn-reload-sups pull-right">
+            <i class="glyphicon glyphicon-refresh"></i>
+            Refresh
+          </button>
+        </div>
+        <div class="hide-sup-canvas">
+          <div class="clearfix">
+            <div class="sup-sender-info pull-left">
+              From <span class="friend-name"></span>
+              <!-- <span class="friend-id"></span> -->
+              on
+              <span class="sup-date"></span>:
+            </div>
+
+            <div class="clear-and-refresh pull-right">
+              <button class="btn btn-danger btn-clear-sups">
+                <i class="glyphicon glyphicon-remove-circle"></i>
+                Clear All
+              </button>
+              <button class="btn btn-info btn-reload-sups">
+                <i class="glyphicon glyphicon-refresh"></i>
+                Refresh
+              </button>
+            </div>
+          </div>
+
+          <div class="canvas-wrapper clearfix row">
+            <div class="sup-nav col-xs-2" data-dir="prev">
+              <i class="glyphicon glyphicon-menu-left"></i>
+            </div>
+            <div class="canvas-container clearfix col-xs-8">
+              <canvas class="sup-canvas col-xs-12" height="400"></canvas>
+              <div class="btn-delete-sup">
+                <i class="glyphicon glyphicon-trash"></i>
+                Delete this sup
+              </div>
+            </div>
+            <div class="sup-nav col-xs-2" data-dir="next">
+              <i class="glyphicon glyphicon-menu-right"></i>
+            </div>
+          </div>
+
+          <div class="sup-controls ">
+            <div class="pull-left new-sup-alert">
+              You've got SUPS!
+            </div>
+            <div class="pull-right">
+              <span class="current-sup"></span> of <span class="number-of-sups"></span> Sups
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <template id="template-single-friend">
+      <input type="checkbox" id="" class="sr-only">
+      <label for="" class="clearfix">
+        <span class="friend-name"></span>
+        <span class="friend-id"></span>
+        <span class="btn-delete btn-delete-friend">&times;</span>
+      </label>
+    </template>
+  </body>
+  <script src="static/js/ext/underscore.js"></script>
+  <script src="static/js/ext/jquery-1.11.2.min.js"></script>
+  <script src="static/js/ext/bootstrap.js"></script>
+  <script type="text/javascript" src="/static/js/wassup.js"></script>
+  <script type="text/javascript" src="/static/js/friends.js"></script>
+  <script type="text/javascript" src="/static/js/sups.js"></script>
+</html>
